@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNo
 import { seedState } from "./seed";
 import type { AppState, Txn } from "./types";
 
-const KEY = "ebl-sky-banking-v1";
+const KEY = "ebl-sky-banking-v2";
 
 type Action =
   | { type: "patch"; payload: Partial<AppState> }
