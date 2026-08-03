@@ -93,9 +93,9 @@ export function UpcomingPanel() {
           key={s.id}
           icon="Clock"
           tint="blue"
-          title={s.title}
-          subtitle={`${s.next} · ${s.frequency}`}
-          right={<StatusBadge status={s.status} />}
+          title={s.name}
+          subtitle={`${s.start} · ${s.frequency} · ${money(s.amount)}`}
+          right={<StatusBadge status={s.active ? "Active" : "Paused"} />}
           onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "scheduled-transfer" } })}
         />
       ))}
