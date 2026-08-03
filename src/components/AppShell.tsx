@@ -1,16 +1,20 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X } from "lucide-react";
+import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
+import { BirthdayNotice } from "./BirthdayNotice";
+import { SupportFab } from "./SupportFab";
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
+  { to: "/pay-transfer", label: "Pay & Transfer", icon: ArrowLeftRight },
   { to: "/my-banking", label: "My Banking", icon: Landmark },
   { to: "/qr", label: "QR", icon: QrCode },
   { to: "/explore", label: "Explore", icon: Compass },
-];
+] as const;
+
 
 export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   const { state, patch } = useApp();
