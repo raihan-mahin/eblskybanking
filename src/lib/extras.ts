@@ -68,10 +68,28 @@ export const maskMobile = (m: string) => {
   return `${clean.slice(0, 3)}XX XXX ${clean.slice(-3)}`;
 };
 
-export const lookupMobile = (m: string) => {
+const FALLBACK_NAMES = ["Tanvir Ahmed", "Farhana Islam", "Sabbir Hossain", "Mehjabin Chowdhury", "Rafiul Karim", "Nabila Rahman", "Imran Kabir", "Sadia Noor"];
+const FALLBACK_BANKS = ["Eastern Bank PLC", "Eastern Bank PLC", "BRAC Bank", "City Bank", "Dutch-Bangla Bank"];
+
+export const lookupMobile = (m: string): DirectoryEntry | null => {
   const clean = m.replace(/[^0-9]/g, "");
-  return RECIPIENT_DIRECTORY.find((d) => d.mobile === clean) ?? null;
+  const hit = RECIPIENT_DIRECTORY.find((d) => d.mobile === clean);
+  if (hit) return hit;
+  if (!/^01[3-9]\d{8}$/.test(clean)) return null;
+  const seed = clean.split("").reduce((a, c) => a + Number(c), 0);
+  const bank = FALLBACK_BANKS[seed % FALLBACK_BANKS.length]!;
+  return {
+    id: "dir-" + clean,
+    name: FALLBACK_NAMES[seed % FALLBACK_NAMES.length]!,
+    mobile: clean,
+    bank,
+    account: `${bank === "Eastern Bank PLC" ? "1101" : "3402"}${clean.slice(3, 7)}${clean.slice(-4)}`,
+    verified: seed % 4 !== 0,
+    type: bank === "Eastern Bank PLC" ? "EBL Account" : "Other Bank",
+    avatarTint: (["yellow", "green", "blue", "purple", "pink"] as const)[seed % 5]!,
+  };
 };
+
 
 /* ---------------- 4. Recharge operator detection ---------------- */
 
