@@ -163,7 +163,7 @@ export function TxnFlow(p: TxnFlowProps) {
       <div className="space-y-3.5">
         <FormField label="Pay From">
           <Select value={accountId} onChange={setAccountId}
-            options={state.accounts.map((a) => a.id)}
+            options={state.accounts.map((a) => ({ value: a.id, label: `${a.name} · ${a.masked}` }))}
             placeholder="Select account or card" />
           <p className="mt-1 text-[12px] text-muted-foreground">
             {account.name} · {account.masked} · {money(account.balance)}

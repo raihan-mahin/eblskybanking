@@ -224,14 +224,17 @@ export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cx(inputCls, props.className)} />;
 }
 
+export type Option = string | { value: string; label: string };
+
 export function Select({
   value, onChange, options, placeholder,
-}: { value: string; onChange: (v: string) => void; options: string[]; placeholder?: string }) {
+}: { value: string; onChange: (v: string) => void; options: Option[]; placeholder?: string }) {
+  const items = options.map((o) => (typeof o === "string" ? { value: o, label: o } : o));
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)} className={cx(inputCls, "appearance-none")}>
       <option value="">{placeholder ?? "Select"}</option>
-      {options.map((o) => (
-        <option key={o} value={o}>{o}</option>
+      {items.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
       ))}
     </select>
   );
