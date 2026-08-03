@@ -50,20 +50,34 @@ const INTENTS: Intent[] = [
 ];
 
 
-export function SupportPanel({ tickets }: { tickets?: boolean }) {
+export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: boolean }) {
   const { state, patch } = useApp();
   const nav = useNavigate();
   const toast = useToast();
-  const [log, setLog] = useState<{ role: "user" | "bot"; text: string; action?: string; target?: string }[]>([
+  const [log, setLog] = useState<{ role: "user" | "bot" | "agent"; text: string; action?: string; target?: string }[]>([
     { role: "bot", text: "Hello Mahin! How can I help with your banking today?" },
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
-  const [ticket, setTicket] = useState(!!tickets);
+  const [ticket, setTicket] = useState(!!tickets && !human);
   const [auth, setAuth] = useState<null | string>(null);
+  const [handoff, setHandoff] = useState<"none" | "queued" | "live">(state.supportHandoff.escalated ? "live" : "none");
   const [form, setForm] = useState({ category: "Transaction", txnId: "", subject: "", description: "", contact: "Mobile" });
 
-  const push = (m: { role: "user" | "bot"; text: string; action?: string; target?: string }) => setLog((l) => [...l, m]);
+  const push = (m: { role: "user" | "bot" | "agent"; text: string; action?: string; target?: string }) => setLog((l) => [...l, m]);
+
+  const escalate = () => {
+    if (handoff !== "none") return;
+    setHandoff("queued");
+    const id = "TCK-" + Math.floor(100000 + Math.random() * 899999);
+    push({ role: "bot", text: "Connecting you to a human agent. Your chat history and account context are being transferred…" });
+    setTimeout(() => {
+      setHandoff("live");
+      patch({ supportHandoff: { escalated: true, ticketId: id } });
+      push({ role: "agent", text: `Hi Mahin, I'm Nusrat from EBL Sky care (ref ${id}). I can see your chat with the assistant — how can I help?` });
+    }, 1800);
+  };
+
 
   const localAnswer = (q: string): { text: string; action?: string; target?: string } | null => {
     const l = q.toLowerCase();
