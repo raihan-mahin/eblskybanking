@@ -101,8 +101,8 @@ export function BottomNavigation() {
           return (
             <Link key={t.to} to={t.to} className="press flex flex-col items-center gap-1 px-0.5 pt-2.5 pb-2">
               <t.icon className={cx("size-[22px]", active ? "text-foreground" : "text-muted-foreground")} strokeWidth={active ? 2 : 1.6} />
+              <span className={cx("text-center text-[10.5px] leading-tight", active ? "font-medium text-foreground" : "text-muted-foreground")}>{t.label}</span>
 
-              <span className={cx("text-[11.5px]", active ? "font-medium text-foreground" : "text-muted-foreground")}>{t.label}</span>
               <span className={cx("h-[3px] w-7 rounded-full", active ? "bg-brand" : "bg-transparent")} />
             </Link>
           );
