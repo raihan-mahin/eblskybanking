@@ -161,7 +161,7 @@ export function RechargePanel({ initial }: { initial?: Record<string, string> | 
       <SectionCard title="Saved numbers">
         <div className="grid grid-cols-3 gap-2">
           {SAVED_MOBILES.map((s) => (
-            <button key={s.number} onClick={() => { setMobile(s.number); setOverride(null); setPack(null); }}
+            <button key={s.number} onClick={() => { setMobile(s.number); setOverride(null); setPack(null); setContactName(s.name); }}
               className="press rounded-xl border border-border p-2.5 text-left">
               <p className="truncate text-[12.5px] font-medium">{s.name}</p>
               <p className="truncate text-[11px] text-muted-foreground">{maskMobile(s.number)}</p>
