@@ -133,6 +133,14 @@ export const SERVICES: Service[] = [
   s("partner-offers", "Partner Offers", "cards", "Discounts from local partners", "BadgePercent", "yellow", "management", "none", ["offer", "partner", "discount", "cineplex", "yum cha"]),
   s("islamic-mode", "EBL Islamic Mode", "community", "One-tap Shariah-compliant banking", "Moon", "green", "settings", "none", ["islamic", "halal", "shariah", "mode"]),
   s("human-support", "Human Agent Support", "security", "Escalate to a human agent", "Headphones", "blue", "assistant", "none", ["human", "agent", "call", "escalate", "support"]),
+  s("other-bank-transfer", "Other Bank Transfer", "payments", "Send to another bank via NPSB/BEFTN", "Landmark", "blue", "transaction", "confirm", ["other bank", "npsb", "beftn", "transfer"]),
+  s("scheduled-recharge", "Scheduled Recharge", "payments", "Automate your mobile recharge", "Repeat", "purple", "scheduling", "confirm", ["schedule", "recharge", "auto"]),
+  s("e-challan", "e-Challan", "bills", "Pay traffic and government challan", "Car", "yellow", "transaction", "confirm", ["challan", "traffic", "government", "fine"]),
+  s("my-card", "My Card", "cards", "Your card details and controls", "CreditCard", "blue", "management", "confirm", ["card", "my card"]),
+  s("next-reward", "Next Reward", "cards", "Your active reward challenge", "Award", "yellow", "dashboard", "none", ["next", "reward", "challenge", "unlock"]),
+  s("loan-calculator", "Loan Calculator", "cards", "Estimate EMI and loan cost", "Coins", "blue", "information", "none", ["loan", "emi", "calculator"]),
+  s("islamic-accounts", "Islamic Accounts", "community", "Shariah-compliant accounts", "Landmark", "green", "information", "none", ["islamic", "account", "mudaraba"]),
+  s("islamic-savings", "Islamic Savings", "community", "Mudaraba savings & deposits", "PiggyBank", "green", "savings", "confirm", ["islamic", "savings", "mudaraba", "dps"]),
 
 ];
 
