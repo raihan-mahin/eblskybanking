@@ -5,21 +5,24 @@ import { TxnFlow } from "@/components/TxnFlow";
 import { Icon } from "@/components/Icon";
 import { AuthenticationSheet } from "@/components/AuthenticationSheet";
 import { TXN_CONFIGS, OTHER_BANK_CONFIG } from "./txnConfigs";
+import { PhoneTransferPanel } from "./PhoneTransfer";
 import { useApp, money } from "@/lib/store";
 import type { SplitPay } from "@/lib/types";
 
 /* ---------------- Fund Transfer ---------------- */
 
-export function FundTransferPanel() {
+export function FundTransferPanel({ initialPrefill }: { initialPrefill?: Record<string, string> | undefined }) {
   const nav = useNavigate();
   const { state } = useApp();
-  const [mode, setMode] = useState<string | null>(null);
+  const [mode, setMode] = useState<string | null>(initialPrefill?.["mobile"] ? "phone" : null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
 
+  if (mode === "phone") return <PhoneTransferPanel initialMobile={initialPrefill?.["mobile"]} />;
   if (mode === "other") return <TxnFlow serviceId="fund-transfer" {...OTHER_BANK_CONFIG} />;
   if (mode === "ebl")
     return (
       <TxnFlow serviceId="fund-transfer" title="EBL Transfer" category="Transfer"
+        initialAmount={initialPrefill?.["amount"]}
         fields={[
           { key: "beneficiary", label: "Beneficiary", type: "select", options: state.beneficiaries.filter((b) => b.kind === "ebl").map((b) => `${b.name} · ${b.account}`) },
           { key: "account", label: "Or Enter Account Number", type: "text", placeholder: "EBL account number", optional: true },
@@ -35,8 +38,9 @@ export function FundTransferPanel() {
   return (
     <>
       <SectionCard title="Transfer Options">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {[
+            ["phone", "Mobile No.", "Find by phone", "Send", "green"],
             ["own", "My Account", "To Own Account", "Wallet", "yellow"],
             ["ebl", "EBL", "To EBL Account", "Landmark", "yellow"],
             ["other", "Other Bank", "To Other Bank", "ArrowLeftRight", "green"],
@@ -49,6 +53,7 @@ export function FundTransferPanel() {
           ))}
         </div>
       </SectionCard>
+
 
       <SectionCard title="Smart Shortcuts">
         <div className="grid grid-cols-2 gap-2">

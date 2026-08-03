@@ -7,6 +7,7 @@ import { byId, SERVICES } from "@/lib/services";
 
 export function HistoryPanel() {
   const { state } = useApp();
+  const nav = useNavigate();
   const [q, setQ] = useState("");
   const [tab, setTab] = useState("all");
   const list = state.transactions.filter(
@@ -24,25 +25,36 @@ export function HistoryPanel() {
       />
       <SectionCard title="Transactions" subtitle={`${list.length} records`}>
         {list.map((t) => (
-          <ListRow
-            key={t.id}
-            icon={byId(t.serviceId)?.icon ?? "Receipt"}
-            tint={t.direction === "credit" ? "green" : "gray"}
-            title={t.title}
-            subtitle={`${t.date} · Ref ${t.ref}`}
-            right={
-              <span className={t.direction === "credit" ? "text-[14px] font-semibold text-success" : "text-[14px] font-semibold"}>
-                {t.direction === "credit" ? "+" : "-"}
-                {money(t.amount)}
-              </span>
-            }
-          />
+          <div key={t.id}>
+            <ListRow
+              icon={byId(t.serviceId)?.icon ?? "Receipt"}
+              tint={t.direction === "credit" ? "green" : "gray"}
+              title={t.title}
+              subtitle={`${t.date} · Ref ${t.ref}`}
+              right={
+                <span className={t.direction === "credit" ? "text-[14px] font-semibold text-success" : "text-[14px] font-semibold"}>
+                  {t.direction === "credit" ? "+" : "-"}
+                  {money(t.amount)}
+                </span>
+              }
+            />
+            <button
+              onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "disputes" }, search: { txn: t.id } })}
+              className="press -mt-2 mb-2 block text-[12px] font-medium text-primary"
+            >
+              Report an issue
+            </button>
+          </div>
         ))}
         {list.length === 0 && <p className="py-6 text-center text-[13.5px] text-muted-foreground">No transactions found.</p>}
+      </SectionCard>
+      <SectionCard title="Disputes" subtitle="Track reported transaction issues">
+        <ListRow icon="ShieldCheck" tint="pink" title="Transaction disputes" subtitle={`${state.disputes.length} cases`} onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "disputes" } })} />
       </SectionCard>
     </>
   );
 }
+
 
 export function BeneficiariesPanel() {
   const { state, patch } = useApp();

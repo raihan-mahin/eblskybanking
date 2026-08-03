@@ -26,14 +26,18 @@ export interface TxnFlowProps {
   forceOtp?: boolean;
   submitLabel?: string;
   intro?: string;
+  initialValues?: Record<string, string> | undefined;
+  initialAmount?: string | undefined;
+  banner?: string | undefined;
   onDone?: (amount: number, values: Record<string, string>) => void;
 }
 
 export function TxnFlow(p: TxnFlowProps) {
   const { state, commitTxn, notify } = useApp();
   const nav = useNavigate();
-  const [values, setValues] = useState<Record<string, string>>({});
-  const [amount, setAmount] = useState(p.fixedAmount ? String(p.fixedAmount) : "");
+  const [values, setValues] = useState<Record<string, string>>(p.initialValues ?? {});
+  const [amount, setAmount] = useState(p.fixedAmount ? String(p.fixedAmount) : (p.initialAmount ?? ""));
+
   const [note, setNote] = useState("");
   const [accountId, setAccountId] = useState(state.accounts[0].id);
   const [stage, setStage] = useState<"form" | "review" | "done" | "error">("form");

@@ -1,3 +1,4 @@
+import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK } from "./extras";
 import type { AppState } from "./types";
 
 const uid = (p: string, i: number) => `${p}-${i}`;
@@ -242,4 +243,55 @@ export const seedState = (): AppState => ({
     { id: "i12", text: "Early Salary Access of ৳20,000 is available.", action: "View Transactions", target: "early-salary", tone: "info" },
   ],
   giftCards: [],
+  dashboard: { order: DEFAULT_DASHBOARD_ORDER, hidden: [] },
+  quickBanking: DEFAULT_QUICK,
+  recentEntities: [
+    {
+      id: "re1", serviceId: "recharge", label: "Recharge Rahim", entity: "Rahim Uddin", masked: "016XX XXX 900",
+      detail: "Airtel · ৳300 last time", date: "Today, 5:10 PM", amount: 300, icon: "Smartphone", tint: "green",
+      prefill: { mobile: "01677889900", operator: "Airtel", amount: "300" },
+    },
+    {
+      id: "re2", serviceId: "fund-transfer", label: "Send to Arnav", entity: "Arnav Hasan", masked: "2050 **** **** 1234",
+      detail: "Eastern Bank PLC · ৳2,500 last time", date: "Yesterday, 8:02 PM", amount: 2500, icon: "ArrowLeftRight", tint: "yellow",
+      prefill: { mobile: "01711223344", beneficiary: "Arnav Hasan", amount: "2500" },
+    },
+    {
+      id: "re3", serviceId: "bill-electricity", label: "Pay DESCO bill", entity: "DESCO", masked: "Acc 4453 **** 21",
+      detail: "Electricity · ৳1,840 last time", date: "Today, 4:20 PM", amount: 1840, icon: "Zap", tint: "blue",
+      prefill: { biller: "DESCO", account: "44531234521", amount: "1840" },
+    },
+    {
+      id: "re4", serviceId: "bill-internet", label: "Pay Link3 bill", entity: "Link3", masked: "ID link3-88213",
+      detail: "Internet · ৳1,200 last time", date: "8 May, 2025", amount: 1200, icon: "Globe", tint: "purple",
+      prefill: { biller: "Link3", account: "link3-88213", amount: "1200" },
+    },
+    {
+      id: "re5", serviceId: "mfs-transfer", label: "bKash to Ammu", entity: "Ammu", masked: "014XX XXX 911",
+      detail: "bKash · ৳5,000 last time", date: "3 May, 2025", amount: 5000, icon: "Smartphone", tint: "pink",
+      prefill: { wallet: "01412009911", provider: "bKash", amount: "5000" },
+    },
+    {
+      id: "re6", serviceId: "tuition-fee", label: "Tuition — BRAC University", entity: "BRAC University", masked: "Student 21301****",
+      detail: "Education · ৳12,500 last time", date: "12 May, 2025", amount: 12500, icon: "GraduationCap", tint: "green",
+      prefill: { institution: "BRAC University", student: "21301234", amount: "12500" },
+    },
+  ],
+  disputes: [
+    {
+      id: "DSP-100011", txnId: "EBL482910334", txnTitle: "MFS Transfer — Nagad", amount: 2500, date: "2 May, 2025",
+      issue: "Money deducted but recipient not credited", description: "Nagad transfer failed but the amount was debited.",
+      contact: "Mobile", attachment: false, status: "Under Review", expected: "Expected resolution by 9 May, 2025",
+      timeline: [
+        { stage: "Submitted", date: "2 May, 2025", note: "Dispute received and reference created." },
+        { stage: "Under Review", date: "3 May, 2025", note: "Our team is checking the transaction with the partner." },
+      ],
+    },
+  ],
+  islamic: { mode: "conventional", hasAccount: true },
+  offers: { saved: [], used: [] },
+  nfcShares: [],
+  birthday: { name: "Mahin", date: "Today", offerId: "po-birthday", read: false, saved: false, dismissed: false },
+  supportHandoff: { escalated: false, ticketId: null },
+
 });

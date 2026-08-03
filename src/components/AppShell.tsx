@@ -1,16 +1,20 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X } from "lucide-react";
+import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
+import { BirthdayNotice } from "./BirthdayNotice";
+import { SupportFab } from "./SupportFab";
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
+  { to: "/pay-transfer", label: "Pay & Transfer", icon: ArrowLeftRight },
   { to: "/my-banking", label: "My Banking", icon: Landmark },
   { to: "/qr", label: "QR", icon: QrCode },
   { to: "/explore", label: "Explore", icon: Compass },
-];
+] as const;
+
 
 export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   const { state, patch } = useApp();
@@ -55,7 +59,9 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
         <p className="-mt-2 mb-2 text-[13px] text-muted-foreground">{state.user.mobile}</p>
         {[
           ["profile", "Profile", "IdCard"], ["accounts", "Accounts", "Landmark"], ["rewards", "Rewards", "Award"],
-          ["personalization", "Personalization", "Star"], ["security-settings", "Security", "ShieldCheck"],
+          ["personalization", "Personalization", "Star"], ["customize-dashboard", "Customize Dashboard", "ListChecks"],
+          ["islamic-mode", "EBL Islamic Mode", "Moon"], ["disputes", "Transaction Disputes", "ShieldCheck"],
+          ["security-settings", "Security", "ShieldCheck"],
           ["accessibility", "Accessibility", "Accessibility"], ["notifications", "Notifications", "Bell"],
           ["help-support", "Help and Support", "LifeBuoy"],
         ].map(([id, label, icon]) => (
@@ -72,6 +78,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
             Mark all read
           </button>
         </div>
+        <div className="mb-2"><BirthdayNotice compact /></div>
         {state.notifications.map((n) => (
           <div key={n.id} className={cx("border-b border-border py-3 last:border-0", !n.read && "bg-tint-yellow/40")}>
             <p className="text-[14.5px] font-medium">{n.title}</p>
@@ -88,13 +95,14 @@ export function BottomNavigation() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-5">
         {TABS.map((t) => {
           const active = path === t.to;
           return (
-            <Link key={t.to} to={t.to} className="press flex flex-col items-center gap-1 pt-2.5 pb-2">
-              <t.icon className={cx("size-6", active ? "text-foreground" : "text-muted-foreground")} strokeWidth={active ? 2 : 1.6} />
-              <span className={cx("text-[11.5px]", active ? "font-medium text-foreground" : "text-muted-foreground")}>{t.label}</span>
+            <Link key={t.to} to={t.to} className="press flex flex-col items-center gap-1 px-0.5 pt-2.5 pb-2">
+              <t.icon className={cx("size-[22px]", active ? "text-foreground" : "text-muted-foreground")} strokeWidth={active ? 2 : 1.6} />
+              <span className={cx("text-center text-[10.5px] leading-tight", active ? "font-medium text-foreground" : "text-muted-foreground")}>{t.label}</span>
+
               <span className={cx("h-[3px] w-7 rounded-full", active ? "bg-brand" : "bg-transparent")} />
             </Link>
           );
@@ -120,8 +128,10 @@ export function AppShell({
       )}
     >
       <AppHeader title={title} back={back} />
+      <SupportFab />
       <main className="-mt-6 space-y-3 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
       <VoiceAssistant />
+
       {!hideNav && <BottomNavigation />}
     </div>
   );

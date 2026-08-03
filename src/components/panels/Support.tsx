@@ -27,22 +27,57 @@ const INTENTS: Intent[] = [
   { q: "Why did my transaction fail?", a: "Common causes are insufficient balance, an incorrect OTP, an invalid recipient, an expired scheduled date or a transaction limit. You can retry or raise a ticket.", action: "Open Transfer History", target: "transaction-history" },
   { q: "How do I purchase a Netflix gift card?", a: "Open Entertainment Gift Cards, choose Netflix, pick a value, enter the recipient and confirm.", action: "Open Netflix Gift Card", target: "gift-netflix" },
   { q: "How do I enable Auto Pay?", a: "Create an Auto Pay instruction with the biller, amount, frequency and start date, then confirm to activate.", action: "Open Auto Pay", target: "auto-pay" },
+
+  // Incremental feature intents
+  { q: "How do I customize my dashboard?", a: "Open Customize Dashboard from Home or Personalization, use the arrows to reorder modules and the toggles to hide the ones you don't need. Your layout is saved on this device.", action: "Open Customize Dashboard", target: "customize-dashboard" },
+  { q: "How do I hide a Home module?", a: "In Customize Dashboard, switch off the toggle beside any module such as Rewards or Cards. Turn it back on any time, or reset to the default layout.", action: "Open Customize Dashboard", target: "customize-dashboard" },
+  { q: "How do I see my credit card in the carousel?", a: "On Home, swipe the balance card sideways. Accounts come first, then each card with available credit, used amount and quick actions.", action: "Open Cards", target: "card-services" },
+  { q: "How do I send money using a phone number?", a: "Open Send by Mobile Number, type the recipient's 11-digit number and tap Find recipient. We show the masked account, bank and a verified badge before you continue.", action: "Open Send by Mobile Number", target: "phone-transfer" },
+  { q: "Why is the recipient account masked?", a: "For privacy we only show the first and last four digits of the linked account. Confirm the name and bank before sending.", action: "Open Send by Mobile Number", target: "phone-transfer" },
+  { q: "How does operator detection work in recharge?", a: "The first three digits of the number decide the operator: 017 and 013 are Grameenphone, 018 Robi, 016 Airtel, 019 and 014 Banglalink, 015 Teletalk. You can always change it manually.", action: "Open Mobile Recharge", target: "recharge" },
+  { q: "How do I buy an internet package?", a: "Open Mobile Recharge, enter the number, then use the Internet, Minutes, SMS or Bundle tab to pick a package and confirm.", action: "Open Mobile Recharge", target: "recharge" },
+  { q: "What partner offers are available?", a: "Partner Offers includes local campaigns such as Star Cineplex, Yum Cha, Star Kabab, Richman, Gentle Park, ILLIYEEN, US-Bangla Airlines and 10 Minute School. These are prototype demo offers.", action: "Open Partner Offers", target: "partner-offers" },
+  { q: "How do I redeem a partner offer?", a: "Open the offer, review the terms, then redeem it with your points. The voucher is added to your rewards history.", action: "Open Partner Offers", target: "partner-offers" },
+  { q: "What is EBL Islamic Mode?", a: "Islamic Mode switches the app to Shariah-compliant products such as Mudaraba DPS, Mudaraba deposits, Islamic financing, Hajj savings and Zakat. Turn it on or off any time.", action: "Open Islamic Mode", target: "islamic-mode" },
+  { q: "How do I report a transaction issue?", a: "Open the transaction in History or Receipts and tap Report an issue, or open Transaction Disputes. Pick the issue type, describe it, attach a screenshot and submit.", action: "Open Transaction Disputes", target: "disputes" },
+  { q: "How do I track my dispute?", a: "Transaction Disputes shows a timeline for every case: Submitted, Under Review, Additional Information Required and Resolved, with the expected resolution date.", action: "Open Transaction Disputes", target: "disputes" },
+  { q: "How do I share my account details?", a: "Open Share Account Details from My Banking. You can copy masked details, use the share sheet, or send them by NFC by holding the phones together.", action: "Open Share Account Details", target: "account-sharing" },
+  { q: "Does NFC sharing work on every phone?", a: "Web NFC only works on supported Android devices. On other devices the prototype shows a simulated share and records it in your sharing history.", action: "Open Share Account Details", target: "account-sharing" },
+  { q: "Where is Pay & Transfer?", a: "Pay & Transfer is the second item in the bottom navigation. It groups Send Money, Bills, Mobile, Cards, Education and Scheduled payments.", action: "Open Pay & Transfer", target: "__pay" },
+  { q: "How do I repeat a recent payment?", a: "On Home switch to the Recent tab and tap an item — the transfer, bill or recharge opens with the recipient and amount already filled in.", action: "Open Pay & Transfer", target: "__pay" },
+  { q: "Do I have a birthday offer?", a: "Yes — your pinned birthday notification carries 50% off up to ৳500 at Yum Cha, valid for 7 days from your birthday. Save it to Rewards to use later.", action: "Open Partner Offers", target: "partner-offers" },
+  { q: "Can I talk to a human agent?", a: "Yes. Tap Human Agent and I will hand over your chat history to the next available agent, or you can call 16230.", action: "Talk to a human agent", target: "__human" },
 ];
 
-export function SupportPanel({ tickets }: { tickets?: boolean }) {
+
+export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: boolean }) {
   const { state, patch } = useApp();
   const nav = useNavigate();
   const toast = useToast();
-  const [log, setLog] = useState<{ role: "user" | "bot"; text: string; action?: string; target?: string }[]>([
+  const [log, setLog] = useState<{ role: "user" | "bot" | "agent"; text: string; action?: string; target?: string }[]>([
     { role: "bot", text: "Hello Mahin! How can I help with your banking today?" },
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
-  const [ticket, setTicket] = useState(!!tickets);
+  const [ticket, setTicket] = useState(!!tickets && !human);
   const [auth, setAuth] = useState<null | string>(null);
+  const [handoff, setHandoff] = useState<"none" | "queued" | "live">(state.supportHandoff.escalated ? "live" : "none");
   const [form, setForm] = useState({ category: "Transaction", txnId: "", subject: "", description: "", contact: "Mobile" });
 
-  const push = (m: { role: "user" | "bot"; text: string; action?: string; target?: string }) => setLog((l) => [...l, m]);
+  const push = (m: { role: "user" | "bot" | "agent"; text: string; action?: string; target?: string }) => setLog((l) => [...l, m]);
+
+  const escalate = () => {
+    if (handoff !== "none") return;
+    setHandoff("queued");
+    const id = "TCK-" + Math.floor(100000 + Math.random() * 899999);
+    push({ role: "bot", text: "Connecting you to a human agent. Your chat history and account context are being transferred…" });
+    setTimeout(() => {
+      setHandoff("live");
+      patch({ supportHandoff: { escalated: true, ticketId: id } });
+      push({ role: "agent", text: `Hi Mahin, I'm Nusrat from EBL Sky care (ref ${id}). I can see your chat with the assistant — how can I help?` });
+    }, 1800);
+  };
+
 
   const localAnswer = (q: string): { text: string; action?: string; target?: string } | null => {
     const l = q.toLowerCase();
@@ -60,6 +95,12 @@ export function SupportPanel({ tickets }: { tickets?: boolean }) {
   const ask = (q: string) => {
     push({ role: "user", text: q });
     setInput("");
+    if (/human|agent|person|representative/i.test(q)) { escalate(); return; }
+    if (handoff === "live") {
+      setTyping(true);
+      setTimeout(() => { setTyping(false); push({ role: "agent", text: "Thanks, I'm checking that on your account now. This is a prototype conversation, so responses are simulated." }); }, 900);
+      return;
+    }
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
@@ -69,13 +110,14 @@ export function SupportPanel({ tickets }: { tickets?: boolean }) {
         ?? INTENTS.find((i) => q.toLowerCase().split(" ").filter((w) => w.length > 4).some((w) => i.q.toLowerCase().includes(w)));
       const reply = local ?? (intent ? { text: intent.a, action: intent.action, target: intent.target } : null);
       if (!reply) {
-        push({ role: "bot", text: "I could not find an exact answer. Try one of the suggested topics or create a support ticket.", action: "Create Ticket", target: "__ticket" });
+        push({ role: "bot", text: "I could not find an exact answer. Try one of the suggested topics, talk to a human agent, or create a support ticket.", action: "Create Ticket", target: "__ticket" });
         return;
       }
       if (local && sensitive) { setAuth(q); return; }
       push({ role: "bot", ...reply });
     }, 600);
   };
+
 
   const submitTicket = () => {
     if (!form.subject || !form.description) return toast.show("Add a subject and description");
@@ -92,19 +134,29 @@ export function SupportPanel({ tickets }: { tickets?: boolean }) {
     <>
       <SectionCard>
         <div className="mb-3 flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-full bg-tint-purple text-[15px]">AI</span>
+          <span className={cx("grid size-10 place-items-center rounded-full text-[15px]", handoff === "live" ? "bg-tint-green" : "bg-tint-purple")}>
+            {handoff === "live" ? "NA" : "AI"}
+          </span>
           <div>
-            <p className="text-[16px] font-semibold">AI Support</p>
-            <p className="text-[12.5px] text-success">● Online</p>
+            <p className="text-[16px] font-semibold">{handoff === "live" ? "Nusrat · Human agent" : "AI Support"}</p>
+            <p className={cx("text-[12.5px]", handoff === "queued" ? "text-muted-foreground" : "text-success")}>
+              {handoff === "queued" ? "● Connecting to an agent…" : handoff === "live" ? "● Live agent connected" : "● Online"}
+            </p>
           </div>
         </div>
         <div className="space-y-2.5">
           {log.map((m, i) => (
-            <div key={i} className={cx("max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13.5px]", m.role === "user" ? "ml-auto bg-brand-soft" : "bg-muted")}>
+            <div key={i} className={cx("max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13.5px]", m.role === "user" ? "ml-auto bg-brand-soft" : m.role === "agent" ? "bg-tint-green" : "bg-muted")}>
+              {m.role === "agent" && <p className="mb-0.5 text-[11px] font-medium text-muted-foreground">Human agent</p>}
               {m.text}
               {m.action && (
                 <button
-                  onClick={() => (m.target === "__ticket" ? setTicket(true) : nav({ to: "/service/$serviceId", params: { serviceId: m.target! } }))}
+                  onClick={() => {
+                    if (m.target === "__ticket") return setTicket(true);
+                    if (m.target === "__human") return escalate();
+                    if (m.target === "__pay") return nav({ to: "/pay-transfer" });
+                    nav({ to: "/service/$serviceId", params: { serviceId: m.target! } });
+                  }}
                   className="press mt-2 block rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">
                   {m.action}
                 </button>
@@ -114,18 +166,22 @@ export function SupportPanel({ tickets }: { tickets?: boolean }) {
           {typing && <div className="w-16 rounded-2xl bg-muted px-3.5 py-2.5 text-[13.5px]">…</div>}
         </div>
         <div className="mt-3 flex gap-2">
-          <TextInput value={input} placeholder="Type your question" onChange={(e) => setInput(e.target.value)} />
+          <TextInput value={input} placeholder={handoff === "live" ? "Message the agent" : "Type your question"} onChange={(e) => setInput(e.target.value)} />
           <Button className="w-20" onClick={() => input && ask(input)}>Send</Button>
         </div>
-        <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto">
-          {INTENTS.map((i) => (
-            <button key={i.q} onClick={() => ask(i.q)} className="press rounded-full border border-border px-3 py-1.5 text-[12px]">{i.q}</button>
-          ))}
-        </div>
+        {handoff !== "live" && (
+          <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto">
+            {INTENTS.map((i) => (
+              <button key={i.q} onClick={() => ask(i.q)} className="press rounded-full border border-border px-3 py-1.5 text-[12px]">{i.q}</button>
+            ))}
+          </div>
+        )}
         <div className="mt-3 grid grid-cols-3 gap-2">
           <Button variant="outline" onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "faqs" } })}>FAQs</Button>
           <Button variant="outline" onClick={() => setTicket(true)}>Create Ticket</Button>
-          <Button variant="outline" onClick={() => toast.show("Connecting you to a human agent…")}>Human</Button>
+          <Button variant="outline" onClick={() => (handoff === "live" ? toast.show("Calling 16230 (demo)") : escalate())}>
+            {handoff === "live" ? "Call 16230" : "Human Agent"}
+          </Button>
         </div>
       </SectionCard>
 

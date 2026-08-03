@@ -164,7 +164,50 @@ export interface Insight {
   tone: "info" | "warn" | "good";
 }
 
+export interface RecentEntity {
+  id: ID;
+  serviceId: string;
+  label: string;
+  entity: string;
+  masked: string;
+  detail: string;
+  date: string;
+  amount: number;
+  icon: string;
+  tint: "yellow" | "green" | "blue" | "purple" | "pink" | "gray";
+  prefill: Record<string, string>;
+}
+
+export interface DisputeUpdate {
+  stage: string;
+  date: string;
+  note: string;
+}
+
+export interface Dispute {
+  id: ID;
+  txnId: string;
+  txnTitle: string;
+  amount: number;
+  date: string;
+  issue: string;
+  description: string;
+  contact: string;
+  attachment: boolean;
+  status: "Submitted" | "Under Review" | "Additional Information Required" | "Resolved" | "Rejected";
+  expected: string;
+  timeline: DisputeUpdate[];
+}
+
+export interface NfcShare {
+  id: ID;
+  accountName: string;
+  method: string;
+  date: string;
+}
+
 export interface AppState {
+
   loggedIn: boolean;
   demoMode: boolean;
   user: { name: string; mobile: string; email: string; greeting: string };
@@ -227,4 +270,14 @@ export interface AppState {
   onboarding: { submitted: boolean; accountNumber?: string; type?: string };
   insights: Insight[];
   giftCards: { id: ID; brand: string; value: number; code: string; date: string }[];
+  dashboard: { order: string[]; hidden: string[] };
+  quickBanking: string[];
+  recentEntities: RecentEntity[];
+  disputes: Dispute[];
+  islamic: { mode: "conventional" | "islamic"; hasAccount: boolean };
+  offers: { saved: string[]; used: string[] };
+  nfcShares: NfcShare[];
+  birthday: { name: string; date: string; offerId: string; read: boolean; saved: boolean; dismissed: boolean };
+  supportHandoff: { escalated: boolean; ticketId: string | null };
 }
+
