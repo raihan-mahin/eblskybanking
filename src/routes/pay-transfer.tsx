@@ -1,61 +1,42 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { AppShell } from "@/components/AppShell";
-import { SectionCard, ServiceTile, ListRow, SearchField, cx } from "@/components/kit";
+import { AppShell, FullSheet } from "@/components/AppShell";
+import { SectionCard, ServiceTile, ListRow, SearchField } from "@/components/kit";
 import { useApp, money } from "@/lib/store";
 import { byId, searchServices } from "@/lib/services";
+import { PAY_GROUPS, type PayGroup } from "@/lib/extras";
 
 export const Route = createFileRoute("/pay-transfer")({
   head: () => ({
     meta: [
       { title: "Pay & Transfer — EBL Sky Banking" },
-      { name: "description", content: "Send money, pay bills, recharge, split payments and manage scheduled transfers in one hub." },
+      { name: "description", content: "Fund transfer, bill payment, recharge, fees and scheduled payments in one hub." },
       { property: "og:title", content: "Pay & Transfer — EBL Sky Banking" },
-      { property: "og:description", content: "Send money, pay bills, recharge, split payments and manage scheduled transfers in one hub." },
+      { property: "og:description", content: "Fund transfer, bill payment, recharge, fees and scheduled payments in one hub." },
     ],
   }),
   component: PayTransferPage,
 });
 
-const GROUPS: { title: string; subtitle: string; ids: string[] }[] = [
-  {
-    title: "Send Money",
-    subtitle: "Transfer to accounts and wallets",
-    ids: ["fund-transfer", "phone-transfer", "other-bank-transfer", "mfs-transfer", "beneficiaries", "split-pay"],
-  },
-  {
-    title: "Bills & Utilities",
-    subtitle: "Never miss a due date",
-    ids: ["bill-payment", "bill-electricity", "bill-gas", "bill-water", "bill-internet", "saved-billers"],
-  },
-  {
-    title: "Mobile & Internet",
-    subtitle: "Recharge and packages",
-    ids: ["recharge", "bill-tv", "gift-cards"],
-  },
-  {
-    title: "Cards & Credit",
-    subtitle: "Pay and control your cards",
-    ids: ["card-payment", "card-controls", "card-services"],
-  },
-  {
-    title: "Education & Government",
-    subtitle: "Fees, tolls and official payments",
-    ids: ["tuition-fee", "education-payments", "visa-fee", "e-toll", "donation", "zakat"],
-  },
-  {
-    title: "Scheduled & Automatic",
-    subtitle: "Set it once and relax",
-    ids: ["auto-pay", "scheduled-transfer", "upcoming-payments", "transaction-history"],
-  },
-];
+const SHORTCUTS = ["re2", "re1", "re4"];
 
 function PayTransferPage() {
   const nav = useNavigate();
   const { state } = useApp();
   const [q, setQ] = useState("");
+  const [seeAll, setSeeAll] = useState<PayGroup | null>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const results = searchServices(q);
+
+  const shortcuts = SHORTCUTS
+    .map((id) => state.recentEntities.find((r) => r.id === id))
+    .filter((r): r is NonNullable<typeof r> => !!r);
+
+  const tile = (id: string, label?: string) => {
+    const s = byId(id);
+    if (!s) return null;
+    return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={label ?? s.title} onClick={() => go(id)} />;
+  };
 
   return (
     <AppShell title="Pay & Transfer">
@@ -70,16 +51,16 @@ function PayTransferPage() {
         </SectionCard>
       ) : (
         <>
-          {state.recentEntities.length > 0 && (
-            <SectionCard title="Repeat a payment" subtitle="Prefilled from your history">
-              <div className={cx("grid grid-cols-3 gap-2")}>
-                {state.recentEntities.slice(0, 6).map((r) => (
+          {shortcuts.length > 0 && (
+            <SectionCard title="Recent" subtitle="Prefilled from your history">
+              <div className="grid grid-cols-3 gap-2">
+                {shortcuts.map((r) => (
                   <button
                     key={r.id}
                     onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: r.serviceId }, search: { ref: r.id } })}
                     className="press rounded-2xl border border-border p-2.5 text-left"
                   >
-                    <p className="truncate text-[12.5px] font-semibold">{r.entity}</p>
+                    <p className="truncate text-[12.5px] font-semibold">{r.label}</p>
                     <p className="truncate text-[11px] text-muted-foreground">{r.masked}</p>
                     <p className="mt-1 text-[11.5px] font-medium text-primary">{money(r.amount)}</p>
                   </button>
@@ -88,19 +69,32 @@ function PayTransferPage() {
             </SectionCard>
           )}
 
-          {GROUPS.map((g) => (
-            <SectionCard key={g.title} title={g.title} subtitle={g.subtitle}>
+          {PAY_GROUPS.map((g) => (
+            <SectionCard
+              key={g.title}
+              title={g.title}
+              subtitle={g.subtitle}
+              {...(g.more.length ? { action: "See All", onAction: () => setSeeAll(g) } : {})}
+            >
               <div className="grid grid-cols-3">
-                {g.ids.map((id) => {
-                  const s = byId(id);
-                  if (!s) return null;
-                  return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
-                })}
+                {g.primary.map((p) => tile(p.id, p.label))}
               </div>
             </SectionCard>
           ))}
         </>
       )}
+
+      <FullSheet open={!!seeAll} onClose={() => setSeeAll(null)} title={seeAll?.title ?? "Services"}>
+        <SectionCard title="All services" subtitle={seeAll?.subtitle}>
+          <div className="grid grid-cols-3">
+            {[...(seeAll?.primary.map((p) => p.id) ?? []), ...(seeAll?.more ?? [])].map((id) => {
+              const s = byId(id);
+              if (!s) return null;
+              return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => { setSeeAll(null); go(id); }} />;
+            })}
+          </div>
+        </SectionCard>
+      </FullSheet>
     </AppShell>
   );
 }
