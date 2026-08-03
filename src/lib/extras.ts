@@ -1,0 +1,227 @@
+/* Local mock data for the incremental prototype updates.
+   Everything here is prototype/demo data — not live banking data. */
+
+import type { Tint } from "./services";
+
+/* ---------------- 1. Dashboard modules ---------------- */
+
+export interface DashboardModule {
+  id: string;
+  label: string;
+  description: string;
+  locked?: boolean;
+}
+
+export const DASHBOARD_MODULES: DashboardModule[] = [
+  { id: "quick", label: "Quick Banking / Recent", description: "Your top services and recent actions" },
+  { id: "insights", label: "Smart Insights", description: "Personalised money insights" },
+  { id: "rewards", label: "Rewards", description: "Points, level and progress" },
+  { id: "transactions", label: "Recent Transactions", description: "Latest account activity" },
+  { id: "goals", label: "Savings & Goals", description: "Goal progress and deposits" },
+  { id: "cards", label: "Cards", description: "Card status and controls" },
+  { id: "more", label: "More Services", description: "Extra shortcuts" },
+  { id: "recommended", label: "Recommended for You", description: "Suggested next steps" },
+];
+
+export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
+
+/* ---------------- 2. Quick Banking defaults ---------------- */
+
+export const DEFAULT_QUICK = ["fund-transfer", "bill-payment", "add-money"];
+
+export const QUICK_CATALOGUE = [
+  "fund-transfer", "bill-payment", "add-money", "recharge", "split-pay", "qr-payment",
+  "instant-dps", "rewards", "mfs-transfer", "tuition-fee", "card-payment", "e-toll",
+  "beneficiaries", "auto-pay", "savings-goals", "transaction-history",
+];
+
+/* ---------------- 3. Recipient phone directory (mock) ---------------- */
+
+export interface DirectoryEntry {
+  mobile: string;
+  name: string;
+  bank: string;
+  account: string;
+  accountType: string;
+  verified: boolean;
+}
+
+export const RECIPIENT_DIRECTORY: DirectoryEntry[] = [
+  { mobile: "01711223344", name: "Arnav Hasan", bank: "Eastern Bank PLC", account: "2050000012341234", accountType: "Savings", verified: true },
+  { mobile: "01811223344", name: "Wasif Karim", bank: "City Bank", account: "2050887766551234", accountType: "Current", verified: true },
+  { mobile: "01911556677", name: "Suddhi Roy", bank: "BRAC Bank", account: "1120334455669988", accountType: "Savings", verified: true },
+  { mobile: "01521334455", name: "Taslim Ahmed", bank: "Dutch-Bangla Bank", account: "1450998877665544", accountType: "Savings", verified: true },
+  { mobile: "01312445566", name: "Nusrat Jahan", bank: "Islami Bank Bangladesh PLC", account: "2033445566778899", accountType: "Mudaraba Savings", verified: true },
+  { mobile: "01677889900", name: "Rahim Uddin", bank: "Prime Bank", account: "2088776655443322", accountType: "Savings", verified: true },
+  { mobile: "01412009911", name: "Ammu", bank: "Dutch-Bangla Bank", account: "1029384756102938", accountType: "Savings", verified: true },
+];
+
+export const maskAccount = (acc: string) => {
+  const clean = acc.replace(/\s/g, "");
+  if (clean.length < 8) return clean;
+  return `${clean.slice(0, 4)} **** **** ${clean.slice(-4)}`;
+};
+
+export const maskMobile = (m: string) => {
+  const clean = m.replace(/[^0-9]/g, "");
+  if (clean.length < 7) return m;
+  return `${clean.slice(0, 3)}XX XXX ${clean.slice(-3)}`;
+};
+
+export const lookupMobile = (m: string) => {
+  const clean = m.replace(/[^0-9]/g, "");
+  return RECIPIENT_DIRECTORY.find((d) => d.mobile === clean) ?? null;
+};
+
+/* ---------------- 4. Recharge operator detection ---------------- */
+
+export const OPERATOR_PREFIX: Record<string, string> = {
+  "013": "Grameenphone",
+  "017": "Grameenphone",
+  "014": "Banglalink",
+  "019": "Banglalink",
+  "015": "Teletalk",
+  "016": "Airtel",
+  "018": "Robi",
+};
+
+export const OPERATORS = ["Grameenphone", "Robi", "Airtel", "Banglalink", "Teletalk"];
+
+export const detectOperator = (mobile: string) => {
+  const clean = mobile.replace(/[^0-9]/g, "");
+  if (clean.length < 3) return null;
+  return OPERATOR_PREFIX[clean.slice(0, 3)] ?? null;
+};
+
+export const SAVED_MOBILES: { number: string; name: string }[] = [
+  { number: "01677889900", name: "Rahim Uddin" },
+  { number: "01711223344", name: "Arnav Hasan" },
+  { number: "01712345678", name: "My Number" },
+  { number: "01911556677", name: "Suddhi Roy" },
+];
+
+export const savedMobileName = (m: string) => {
+  const clean = m.replace(/[^0-9]/g, "");
+  return SAVED_MOBILES.find((s) => s.number === clean)?.name ?? null;
+};
+
+/* ---------------- 5. Recharge package catalogue (prototype data) ---------------- */
+
+export type PackType = "Amount" | "Minutes" | "Internet" | "SMS" | "Bundle";
+
+export interface RechargePack {
+  id: string;
+  operator: string;
+  type: PackType;
+  title: string;
+  detail: string;
+  validity: string;
+  price: number;
+  original?: number;
+  badge?: string;
+}
+
+const packs = (operator: string, seed: number): RechargePack[] => [
+  { id: `${operator}-i1`, operator, type: "Internet", title: "5 GB Internet", detail: "5 GB data", validity: "7 days", price: 198 + seed, original: 248 + seed, badge: "Best Internet Deal" },
+  { id: `${operator}-i2`, operator, type: "Internet", title: "25 GB Internet", detail: "25 GB data", validity: "30 days", price: 598 + seed, original: 698 + seed, badge: "Best Value" },
+  { id: `${operator}-m1`, operator, type: "Minutes", title: "200 Minutes", detail: "200 min any operator", validity: "30 days", price: 197 + seed, original: 229 + seed, badge: "Best Minutes Deal" },
+  { id: `${operator}-m2`, operator, type: "Minutes", title: "60 Minutes", detail: "60 min any operator", validity: "7 days", price: 78 + seed },
+  { id: `${operator}-s1`, operator, type: "SMS", title: "500 SMS", detail: "500 SMS any operator", validity: "30 days", price: 49 },
+  { id: `${operator}-b1`, operator, type: "Bundle", title: "Combo 10 GB + 300 Min", detail: "10 GB · 300 min · 100 SMS", validity: "30 days", price: 549 + seed, original: 649 + seed, badge: "Most Popular" },
+  { id: `${operator}-b2`, operator, type: "Bundle", title: "EBL Card Combo", detail: "8 GB · 200 min", validity: "30 days", price: 399 + seed, original: 499 + seed, badge: "EBL User Offer" },
+];
+
+export const RECHARGE_PACKS: RechargePack[] = [
+  ...packs("Grameenphone", 0),
+  ...packs("Robi", 2),
+  ...packs("Airtel", 1),
+  ...packs("Banglalink", 3),
+  ...packs("Teletalk", -4),
+];
+
+export const AMOUNT_PRESETS = [29, 49, 99, 199, 300, 500, 1000];
+
+/* ---------------- 6. Reward partner offers (mock campaigns) ---------------- */
+
+export interface PartnerOffer {
+  id: string;
+  partner: string;
+  category: string;
+  title: string;
+  discount: string;
+  maxBenefit: number;
+  minSpend: number;
+  points: number;
+  expiry: string;
+  terms: string[];
+  color: string;
+  icon: string;
+  tint: Tint;
+}
+
+export const REWARD_CATEGORIES = [
+  "Movies & Entertainment", "Dining", "Shopping & Fashion", "Travel", "Education", "Bills & Recharge", "Birthday Offers",
+];
+
+export const PARTNER_OFFERS: PartnerOffer[] = [
+  { id: "po-cineplex", partner: "Star Cineplex", category: "Movies & Entertainment", title: "10% off selected movie tickets", discount: "10%", maxBenefit: 300, minSpend: 0, points: 400, expiry: "31 Dec 2026", terms: ["Valid on selected shows", "Cannot be combined with other campaigns", "Prototype demo offer"], color: "#7C3AED", icon: "Tv", tint: "purple" },
+  { id: "po-yumcha", partner: "Yum Cha", category: "Dining", title: "15% discount on dine-in", discount: "15%", maxBenefit: 500, minSpend: 1500, points: 600, expiry: "31 Dec 2026", terms: ["Minimum spend ৳1,500", "Dine-in only", "Prototype demo offer"], color: "#DC2626", icon: "HeartHandshake", tint: "pink" },
+  { id: "po-starkabab", partner: "Star Kabab", category: "Dining", title: "10% discount on total bill", discount: "10%", maxBenefit: 300, minSpend: 1000, points: 350, expiry: "31 Dec 2026", terms: ["Minimum spend ৳1,000", "Prototype demo offer"], color: "#B45309", icon: "HeartHandshake", tint: "yellow" },
+  { id: "po-richman", partner: "Richman", category: "Shopping & Fashion", title: "12% discount on selected purchases", discount: "12%", maxBenefit: 1000, minSpend: 2000, points: 700, expiry: "31 Dec 2026", terms: ["Selected items only", "Prototype demo offer"], color: "#1F2937", icon: "ShoppingBag", tint: "gray" },
+  { id: "po-illiyeen", partner: "ILLIYEEN", category: "Shopping & Fashion", title: "10% discount on selected purchases", discount: "10%", maxBenefit: 800, minSpend: 1500, points: 500, expiry: "31 Dec 2026", terms: ["Selected items only", "Prototype demo offer"], color: "#0F766E", icon: "ShoppingBag", tint: "green" },
+  { id: "po-gentlepark", partner: "Gentle Park", category: "Shopping & Fashion", title: "15% discount on selected purchases", discount: "15%", maxBenefit: 1200, minSpend: 2500, points: 900, expiry: "31 Dec 2026", terms: ["Selected items only", "Prototype demo offer"], color: "#1D4ED8", icon: "ShoppingBag", tint: "blue" },
+  { id: "po-usbangla", partner: "US-Bangla Airlines", category: "Travel", title: "8% off domestic tickets", discount: "8%", maxBenefit: 1500, minSpend: 5000, points: 1200, expiry: "31 Dec 2026", terms: ["Domestic routes only", "Prototype demo offer"], color: "#0EA5E9", icon: "Plane", tint: "blue" },
+  { id: "po-tenminute", partner: "10 Minute School", category: "Education", title: "20% off course bundles", discount: "20%", maxBenefit: 1000, minSpend: 1000, points: 600, expiry: "31 Dec 2026", terms: ["Selected courses", "Prototype demo offer"], color: "#F59E0B", icon: "GraduationCap", tint: "yellow" },
+  { id: "po-recharge", partner: "EBL Recharge", category: "Bills & Recharge", title: "৳100 recharge voucher", discount: "৳100", maxBenefit: 100, minSpend: 0, points: 800, expiry: "31 Dec 2026", terms: ["One voucher per month", "Prototype demo offer"], color: "#16A34A", icon: "Smartphone", tint: "green" },
+  { id: "po-birthday", partner: "Yum Cha", category: "Birthday Offers", title: "50% off up to ৳500 on your birthday", discount: "50%", maxBenefit: 500, minSpend: 0, points: 0, expiry: "Valid for 7 days from your birthday", terms: ["Valid only in your birthday month", "One-time use", "Prototype demo offer"], color: "#DB2777", icon: "Gift", tint: "pink" },
+];
+
+export const offerById = (id: string) => PARTNER_OFFERS.find((o) => o.id === id);
+
+/* ---------------- 7. Islamic mode ---------------- */
+
+export const ISLAMIC_SERVICES: { id: string; label: string; icon: string; tint: Tint; target: string }[] = [
+  { id: "is-account", label: "Islamic Account", icon: "Landmark", tint: "green", target: "accounts" },
+  { id: "is-mudaraba", label: "Mudaraba DPS", icon: "PiggyBank", tint: "green", target: "dps" },
+  { id: "is-deposit", label: "Mudaraba Deposit", icon: "Coins", tint: "green", target: "fdr" },
+  { id: "is-finance", label: "Islamic Financing", icon: "Banknote", tint: "green", target: "loans" },
+  { id: "is-zakat", label: "Zakat", icon: "HeartHandshake", tint: "green", target: "zakat" },
+  { id: "is-hajj", label: "Hajj Savings", icon: "Moon", tint: "green", target: "savings-goals" },
+];
+
+/* ---------------- 8. Disputes ---------------- */
+
+export const DISPUTE_ISSUES = [
+  "Money deducted but recipient not credited",
+  "Duplicate charge",
+  "Incorrect amount",
+  "Unauthorized transaction",
+  "Bill not updated",
+  "Recharge not received",
+  "Gift card not received",
+  "Other",
+];
+
+export const DISPUTE_STAGES = ["Submitted", "Under Review", "Additional Information Required", "Resolved", "Rejected"];
+
+/* ---------------- 9. Human support queue ---------------- */
+
+export const SUPPORT_QUEUE = {
+  agents: 4,
+  position: 2,
+  wait: "About 3 minutes",
+  helpline: "16230",
+};
+
+export const HANDOFF_KEYWORDS = ["human", "agent", "representative", "person", "talk to a person", "not helpful", "didn't help", "did not help"];
+
+/* ---------------- 10. Demo indicative rates ---------------- */
+
+export const DEMO_RATES: { pair: string; rate: string }[] = [
+  { pair: "USD / BDT", rate: "121.50" },
+  { pair: "EUR / BDT", rate: "132.10" },
+  { pair: "GBP / BDT", rate: "155.40" },
+  { pair: "SAR / BDT", rate: "32.35" },
+];
+
+export const DEMO_RATE_TIMESTAMP = "Locally configured · 01 Jan 2026, 10:00 AM";
