@@ -95,6 +95,12 @@ export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: bo
   const ask = (q: string) => {
     push({ role: "user", text: q });
     setInput("");
+    if (/human|agent|person|representative/i.test(q)) { escalate(); return; }
+    if (handoff === "live") {
+      setTyping(true);
+      setTimeout(() => { setTyping(false); push({ role: "agent", text: "Thanks, I'm checking that on your account now. This is a prototype conversation, so responses are simulated." }); }, 900);
+      return;
+    }
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
@@ -104,13 +110,14 @@ export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: bo
         ?? INTENTS.find((i) => q.toLowerCase().split(" ").filter((w) => w.length > 4).some((w) => i.q.toLowerCase().includes(w)));
       const reply = local ?? (intent ? { text: intent.a, action: intent.action, target: intent.target } : null);
       if (!reply) {
-        push({ role: "bot", text: "I could not find an exact answer. Try one of the suggested topics or create a support ticket.", action: "Create Ticket", target: "__ticket" });
+        push({ role: "bot", text: "I could not find an exact answer. Try one of the suggested topics, talk to a human agent, or create a support ticket.", action: "Create Ticket", target: "__ticket" });
         return;
       }
       if (local && sensitive) { setAuth(q); return; }
       push({ role: "bot", ...reply });
     }, 600);
   };
+
 
   const submitTicket = () => {
     if (!form.subject || !form.description) return toast.show("Add a subject and description");
