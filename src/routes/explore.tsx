@@ -39,9 +39,10 @@ function ExplorePage() {
   const results = searchServices(q);
 
   const openItem = (i: ExploreItem) => {
-    if (i.route === "/home") return nav({ to: "/home" });
+    if (i.route === "/home") { nav({ to: "/home" }); return; }
     if (i.serviceId) go(i.serviceId);
   };
+
 
   const tileFor = (i: ExploreItem) => {
     const svc = i.serviceId ? byId(i.serviceId) : undefined;
