@@ -270,4 +270,14 @@ export interface AppState {
   onboarding: { submitted: boolean; accountNumber?: string; type?: string };
   insights: Insight[];
   giftCards: { id: ID; brand: string; value: number; code: string; date: string }[];
+  dashboard: { order: string[]; hidden: string[] };
+  quickBanking: string[];
+  recentEntities: RecentEntity[];
+  disputes: Dispute[];
+  islamic: { mode: "conventional" | "islamic"; hasAccount: boolean };
+  offers: { saved: string[]; used: string[] };
+  nfcShares: NfcShare[];
+  birthday: { name: string; date: string; offerId: string; read: boolean; saved: boolean; dismissed: boolean };
+  supportHandoff: { escalated: boolean; ticketId: string | null };
 }
+
