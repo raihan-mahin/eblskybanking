@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SectionCard, ListRow, Button, SearchField, ServiceTile, StatusBadge, ProgressBar, FormField, TextInput, Select, Sheet, Toggle, useToast, cx } from "@/components/kit";
 import { TxnFlow } from "@/components/TxnFlow";
+import { Icon } from "@/components/Icon";
 import { AuthenticationSheet } from "@/components/AuthenticationSheet";
 import { TXN_CONFIGS, OTHER_BANK_CONFIG } from "./txnConfigs";
 import { useApp, money } from "@/lib/store";
@@ -157,7 +158,6 @@ export function BillsPanel() {
 }
 
 function ServiceTileIcon({ name }: { name: string }) {
-  const { Icon } = require("@/components/Icon") as typeof import("@/components/Icon");
   return <Icon name={name} className="size-5 text-foreground" />;
 }
 
@@ -304,6 +304,8 @@ export function SplitPayPanel() {
 
 export function CardsPanel({ focus }: { focus?: string }) {
   const { state, patch, notify } = useApp();
+  const nav = useNavigate();
+  const goto = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const toast = useToast();
   const [sel, setSel] = useState(state.cards[0].id);
   const [auth, setAuth] = useState<null | (() => void)>(null);
@@ -352,10 +354,10 @@ export function CardsPanel({ focus }: { focus?: string }) {
           onClick={() => secure(() => { patch({ cards: [...state.cards, { ...card, id: "card" + Date.now(), name: "EBL Platinum Card", masked: "4455 XXXX XXXX 9021", active: false, pinSet: false }] }); toast.show("Card added — activate to use"); })} />
         <ListRow icon="ShieldCheck" title="Activate Card" subtitle={card.active ? "Active" : "Tap to activate"}
           onClick={() => secure(() => { update({ active: true }); toast.show("Card activated"); })} />
-        <ListRow icon="CreditCard" title="Card Payment" subtitle="Pay your card bill" onClick={() => location.assign("/service/card-payment")} />
-        <ListRow icon="FileText" title="Card Statement" subtitle="Last 3 months" onClick={() => location.assign("/service/statements")} />
-        <ListRow icon="Receipt" title="Unbilled Transactions" subtitle={money(4230)} onClick={() => location.assign("/service/transaction-history")} />
-        <ListRow icon="KeyRound" title="Reset Card PIN" subtitle="Requires OTP" onClick={() => location.assign("/service/reset-card-pin")} />
+        <ListRow icon="CreditCard" title="Card Payment" subtitle="Pay your card bill" onClick={() => goto("card-payment")} />
+        <ListRow icon="FileText" title="Card Statement" subtitle="Last 3 months" onClick={() => goto("statements")} />
+        <ListRow icon="Receipt" title="Unbilled Transactions" subtitle={money(4230)} onClick={() => goto("transaction-history")} />
+        <ListRow icon="KeyRound" title="Reset Card PIN" subtitle="Requires OTP" onClick={() => goto("reset-card-pin")} />
       </SectionCard>
 
       <AuthenticationSheet open={!!auth} onClose={() => setAuth(null)} purpose="Confirm card action"
