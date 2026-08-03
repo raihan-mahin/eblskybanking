@@ -5,6 +5,7 @@ import { TxnFlow } from "@/components/TxnFlow";
 import { Icon } from "@/components/Icon";
 import { AuthenticationSheet } from "@/components/AuthenticationSheet";
 import { TXN_CONFIGS, OTHER_BANK_CONFIG } from "./txnConfigs";
+import { PhoneTransferPanel } from "./PhoneTransfer";
 import { useApp, money } from "@/lib/store";
 import type { SplitPay } from "@/lib/types";
 
