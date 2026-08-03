@@ -59,7 +59,9 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
         <p className="-mt-2 mb-2 text-[13px] text-muted-foreground">{state.user.mobile}</p>
         {[
           ["profile", "Profile", "IdCard"], ["accounts", "Accounts", "Landmark"], ["rewards", "Rewards", "Award"],
-          ["personalization", "Personalization", "Star"], ["security-settings", "Security", "ShieldCheck"],
+          ["personalization", "Personalization", "Star"], ["customize-dashboard", "Customize Dashboard", "ListChecks"],
+          ["islamic-mode", "EBL Islamic Mode", "Moon"], ["disputes", "Transaction Disputes", "ShieldCheck"],
+          ["security-settings", "Security", "ShieldCheck"],
           ["accessibility", "Accessibility", "Accessibility"], ["notifications", "Notifications", "Bell"],
           ["help-support", "Help and Support", "LifeBuoy"],
         ].map(([id, label, icon]) => (
@@ -76,6 +78,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
             Mark all read
           </button>
         </div>
+        <div className="mb-2"><BirthdayNotice compact /></div>
         {state.notifications.map((n) => (
           <div key={n.id} className={cx("border-b border-border py-3 last:border-0", !n.read && "bg-tint-yellow/40")}>
             <p className="text-[14.5px] font-medium">{n.title}</p>
@@ -92,12 +95,13 @@ export function BottomNavigation() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-5">
         {TABS.map((t) => {
           const active = path === t.to;
           return (
-            <Link key={t.to} to={t.to} className="press flex flex-col items-center gap-1 pt-2.5 pb-2">
-              <t.icon className={cx("size-6", active ? "text-foreground" : "text-muted-foreground")} strokeWidth={active ? 2 : 1.6} />
+            <Link key={t.to} to={t.to} className="press flex flex-col items-center gap-1 px-0.5 pt-2.5 pb-2">
+              <t.icon className={cx("size-[22px]", active ? "text-foreground" : "text-muted-foreground")} strokeWidth={active ? 2 : 1.6} />
+
               <span className={cx("text-[11.5px]", active ? "font-medium text-foreground" : "text-muted-foreground")}>{t.label}</span>
               <span className={cx("h-[3px] w-7 rounded-full", active ? "bg-brand" : "bg-transparent")} />
             </Link>
