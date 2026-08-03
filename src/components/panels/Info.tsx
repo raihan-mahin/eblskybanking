@@ -507,6 +507,10 @@ export function PersonalizationPanel() {
         </div>
         <p className="mt-2 text-[12.5px] text-muted-foreground">Home and Explore reorder services based on how often you use them.</p>
       </SectionCard>
+      <SectionCard title="Dashboard layout" subtitle="Reorder or hide Home modules">
+        <DashboardCustomizer />
+      </SectionCard>
+
       <SectionCard title="Most used services">
         {top.length ? top.map(([id, n]) => (
           <div key={id} className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
