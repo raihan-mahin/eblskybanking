@@ -27,6 +27,8 @@ export interface TxnFlowProps {
   submitLabel?: string;
   intro?: string;
   initialValues?: Record<string, string> | undefined;
+  /** Masked/pretty values shown on review, receipt and auth screens only. */
+  displayValues?: Record<string, string> | undefined;
   initialAmount?: string | undefined;
   banner?: string | undefined;
   onDone?: (amount: number, values: Record<string, string>) => void;
