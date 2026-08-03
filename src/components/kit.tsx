@@ -39,11 +39,13 @@ export function ListRow({
   icon?: string; tint?: Tint; title: string; subtitle?: string;
   right?: ReactNode; onClick?: () => void; className?: string;
 }) {
+  const Tag = onClick ? "button" : "div";
   return (
-    <button
+    <Tag
       onClick={onClick}
       className={cx(
-        "press flex w-full items-center gap-3 border-b border-border py-3 text-left last:border-0",
+        "flex w-full items-center gap-3 border-b border-border py-3 text-left last:border-0",
+        onClick && "press",
         className,
       )}
     >
@@ -56,8 +58,8 @@ export function ListRow({
         <span className="block truncate text-[15px] font-medium">{title}</span>
         {subtitle && <span className="block truncate text-[12.5px] text-muted-foreground">{subtitle}</span>}
       </span>
-      {right ?? <ChevronRight className="size-5 shrink-0 text-muted-foreground" />}
-    </button>
+      {right ?? (onClick ? <ChevronRight className="size-5 shrink-0 text-muted-foreground" /> : null)}
+    </Tag>
   );
 }
 
