@@ -134,19 +134,29 @@ export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: bo
     <>
       <SectionCard>
         <div className="mb-3 flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-full bg-tint-purple text-[15px]">AI</span>
+          <span className={cx("grid size-10 place-items-center rounded-full text-[15px]", handoff === "live" ? "bg-tint-green" : "bg-tint-purple")}>
+            {handoff === "live" ? "NA" : "AI"}
+          </span>
           <div>
-            <p className="text-[16px] font-semibold">AI Support</p>
-            <p className="text-[12.5px] text-success">● Online</p>
+            <p className="text-[16px] font-semibold">{handoff === "live" ? "Nusrat · Human agent" : "AI Support"}</p>
+            <p className={cx("text-[12.5px]", handoff === "queued" ? "text-muted-foreground" : "text-success")}>
+              {handoff === "queued" ? "● Connecting to an agent…" : handoff === "live" ? "● Live agent connected" : "● Online"}
+            </p>
           </div>
         </div>
         <div className="space-y-2.5">
           {log.map((m, i) => (
-            <div key={i} className={cx("max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13.5px]", m.role === "user" ? "ml-auto bg-brand-soft" : "bg-muted")}>
+            <div key={i} className={cx("max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13.5px]", m.role === "user" ? "ml-auto bg-brand-soft" : m.role === "agent" ? "bg-tint-green" : "bg-muted")}>
+              {m.role === "agent" && <p className="mb-0.5 text-[11px] font-medium text-muted-foreground">Human agent</p>}
               {m.text}
               {m.action && (
                 <button
-                  onClick={() => (m.target === "__ticket" ? setTicket(true) : nav({ to: "/service/$serviceId", params: { serviceId: m.target! } }))}
+                  onClick={() => {
+                    if (m.target === "__ticket") return setTicket(true);
+                    if (m.target === "__human") return escalate();
+                    if (m.target === "__pay") return nav({ to: "/pay-transfer" });
+                    nav({ to: "/service/$serviceId", params: { serviceId: m.target! } });
+                  }}
                   className="press mt-2 block rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">
                   {m.action}
                 </button>
@@ -156,19 +166,25 @@ export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: bo
           {typing && <div className="w-16 rounded-2xl bg-muted px-3.5 py-2.5 text-[13.5px]">…</div>}
         </div>
         <div className="mt-3 flex gap-2">
-          <TextInput value={input} placeholder="Type your question" onChange={(e) => setInput(e.target.value)} />
+          <TextInput value={input} placeholder={handoff === "live" ? "Message the agent" : "Type your question"} onChange={(e) => setInput(e.target.value)} />
           <Button className="w-20" onClick={() => input && ask(input)}>Send</Button>
         </div>
-        <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto">
-          {INTENTS.map((i) => (
-            <button key={i.q} onClick={() => ask(i.q)} className="press rounded-full border border-border px-3 py-1.5 text-[12px]">{i.q}</button>
-          ))}
-        </div>
+        {handoff !== "live" && (
+          <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto">
+            {INTENTS.map((i) => (
+              <button key={i.q} onClick={() => ask(i.q)} className="press rounded-full border border-border px-3 py-1.5 text-[12px]">{i.q}</button>
+            ))}
+          </div>
+        )}
         <div className="mt-3 grid grid-cols-3 gap-2">
           <Button variant="outline" onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "faqs" } })}>FAQs</Button>
           <Button variant="outline" onClick={() => setTicket(true)}>Create Ticket</Button>
-          <Button variant="outline" onClick={() => toast.show("Connecting you to a human agent…")}>Human</Button>
+          <Button variant="outline" onClick={() => (handoff === "live" ? toast.show("Calling 16230 (demo)") : escalate())}>
+            {handoff === "live" ? "Call 16230" : "Human Agent"}
+          </Button>
         </div>
+      </SectionCard>
+
       </SectionCard>
 
       <SectionCard title="Your tickets">
