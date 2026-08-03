@@ -14,10 +14,22 @@ import {
 import { SupportPanel, HelpPanel } from "@/components/panels/Support";
 import { SecurityPanel, AccessibilityPanel } from "@/components/panels/Security";
 import { HistoryPanel, BeneficiariesPanel, UpcomingPanel, BudgetPanel, RelatedPanel } from "@/components/panels/Generic";
+import { PhoneTransferPanel } from "@/components/panels/PhoneTransfer";
+import { RechargePanel } from "@/components/panels/Recharge";
+import { PartnerOffersPanel } from "@/components/panels/PartnerOffers";
+import { DisputesPanel } from "@/components/panels/Disputes";
+import { AccountSharingPanel } from "@/components/panels/Sharing";
+import { IslamicPanel } from "@/components/panels/Islamic";
+import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { byId } from "@/lib/services";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/service/$serviceId")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    ref: typeof search["ref"] === "string" ? search["ref"] : undefined,
+    txn: typeof search["txn"] === "string" ? search["txn"] : undefined,
+    mobile: typeof search["mobile"] === "string" ? search["mobile"] : undefined,
+  }),
   head: ({ params }) => {
     const svc = byId(params.serviceId);
     const title = `${svc?.title ?? "Service"} — EBL Sky Banking`;
@@ -39,11 +51,27 @@ const SECURITY_IDS = [
   "faceid-setup", "biometric-reset", "trusted-devices", "login-history", "active-sessions", "language",
 ];
 
-function PanelFor({ id }: { id: string }) {
+interface PanelArgs {
+  id: string;
+  prefill?: Record<string, string> | undefined;
+  txn?: string | undefined;
+  mobile?: string | undefined;
+}
+
+function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
   if (SECURITY_IDS.includes(id)) return <SecurityPanel focus={id} />;
 
   switch (id) {
-    case "fund-transfer": return <FundTransferPanel />;
+    case "fund-transfer": return <FundTransferPanel initialPrefill={prefill} />;
+    case "phone-transfer": return <PhoneTransferPanel initialMobile={mobile ?? prefill?.["mobile"]} />;
+    case "recharge": return <RechargePanel initial={prefill} />;
+    case "partner-offers": return <PartnerOffersPanel />;
+    case "disputes": return <DisputesPanel txnId={txn} />;
+    case "account-sharing": return <AccountSharingPanel />;
+    case "islamic-mode": return <IslamicPanel />;
+    case "customize-dashboard": return <DashboardCustomizer />;
+    case "human-support": return <SupportPanel tickets human />;
+
     case "bill-payment":
     case "bill-reminder":
     case "saved-billers":
@@ -96,9 +124,9 @@ function PanelFor({ id }: { id: string }) {
     case "loans": return <LoansPanel />;
     case "limits": return <LimitsPanel />;
     case "personalization": return <PersonalizationPanel />;
+    case "islamic": return <IslamicPanel />;
     case "donation":
     case "zakat":
-    case "islamic":
     case "e-toll":
     case "vehicle":
     case "entertainment":
@@ -113,19 +141,21 @@ function PanelFor({ id }: { id: string }) {
     default: break;
   }
 
-  if (id === "other-bank-transfer") return <TxnFlow serviceId={id} {...OTHER_BANK_CONFIG} />;
+  if (id === "other-bank-transfer") return <TxnFlow serviceId={id} {...OTHER_BANK_CONFIG} initialValues={prefill} initialAmount={prefill?.["amount"]} />;
 
   const cfg = TXN_CONFIGS[id];
-  if (cfg) return <TxnFlow serviceId={id} {...cfg} />;
+  if (cfg) return <TxnFlow serviceId={id} {...cfg} initialValues={prefill} initialAmount={prefill?.["amount"]} />;
 
   return <RelatedPanel serviceId={id} />;
 }
 
 function ServicePage() {
   const { serviceId } = Route.useParams();
-  const { useService } = useApp();
+  const { ref, txn, mobile } = Route.useSearch();
+  const { useService, state } = useApp();
   const nav = useNavigate();
   const svc = byId(serviceId);
+  const prefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
 
   useEffect(() => {
     if (svc) useService(svc.id);
@@ -146,7 +176,7 @@ function ServicePage() {
 
   return (
     <AppShell title={svc.title} back>
-      <PanelFor id={svc.id} />
+      <PanelFor id={svc.id} prefill={prefill} txn={txn} mobile={mobile} />
     </AppShell>
   );
 }
