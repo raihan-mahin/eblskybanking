@@ -27,7 +27,28 @@ const INTENTS: Intent[] = [
   { q: "Why did my transaction fail?", a: "Common causes are insufficient balance, an incorrect OTP, an invalid recipient, an expired scheduled date or a transaction limit. You can retry or raise a ticket.", action: "Open Transfer History", target: "transaction-history" },
   { q: "How do I purchase a Netflix gift card?", a: "Open Entertainment Gift Cards, choose Netflix, pick a value, enter the recipient and confirm.", action: "Open Netflix Gift Card", target: "gift-netflix" },
   { q: "How do I enable Auto Pay?", a: "Create an Auto Pay instruction with the biller, amount, frequency and start date, then confirm to activate.", action: "Open Auto Pay", target: "auto-pay" },
+
+  // Incremental feature intents
+  { q: "How do I customize my dashboard?", a: "Open Customize Dashboard from Home or Personalization, use the arrows to reorder modules and the toggles to hide the ones you don't need. Your layout is saved on this device.", action: "Open Customize Dashboard", target: "customize-dashboard" },
+  { q: "How do I hide a Home module?", a: "In Customize Dashboard, switch off the toggle beside any module such as Rewards or Cards. Turn it back on any time, or reset to the default layout.", action: "Open Customize Dashboard", target: "customize-dashboard" },
+  { q: "How do I see my credit card in the carousel?", a: "On Home, swipe the balance card sideways. Accounts come first, then each card with available credit, used amount and quick actions.", action: "Open Cards", target: "card-services" },
+  { q: "How do I send money using a phone number?", a: "Open Send by Mobile Number, type the recipient's 11-digit number and tap Find recipient. We show the masked account, bank and a verified badge before you continue.", action: "Open Send by Mobile Number", target: "phone-transfer" },
+  { q: "Why is the recipient account masked?", a: "For privacy we only show the first and last four digits of the linked account. Confirm the name and bank before sending.", action: "Open Send by Mobile Number", target: "phone-transfer" },
+  { q: "How does operator detection work in recharge?", a: "The first three digits of the number decide the operator: 017 and 013 are Grameenphone, 018 Robi, 016 Airtel, 019 and 014 Banglalink, 015 Teletalk. You can always change it manually.", action: "Open Mobile Recharge", target: "recharge" },
+  { q: "How do I buy an internet package?", a: "Open Mobile Recharge, enter the number, then use the Internet, Minutes, SMS or Bundle tab to pick a package and confirm.", action: "Open Mobile Recharge", target: "recharge" },
+  { q: "What partner offers are available?", a: "Partner Offers includes local campaigns such as Star Cineplex, Yum Cha, Star Kabab, Richman, Gentle Park, ILLIYEEN, US-Bangla Airlines and 10 Minute School. These are prototype demo offers.", action: "Open Partner Offers", target: "partner-offers" },
+  { q: "How do I redeem a partner offer?", a: "Open the offer, review the terms, then redeem it with your points. The voucher is added to your rewards history.", action: "Open Partner Offers", target: "partner-offers" },
+  { q: "What is EBL Islamic Mode?", a: "Islamic Mode switches the app to Shariah-compliant products such as Mudaraba DPS, Mudaraba deposits, Islamic financing, Hajj savings and Zakat. Turn it on or off any time.", action: "Open Islamic Mode", target: "islamic-mode" },
+  { q: "How do I report a transaction issue?", a: "Open the transaction in History or Receipts and tap Report an issue, or open Transaction Disputes. Pick the issue type, describe it, attach a screenshot and submit.", action: "Open Transaction Disputes", target: "disputes" },
+  { q: "How do I track my dispute?", a: "Transaction Disputes shows a timeline for every case: Submitted, Under Review, Additional Information Required and Resolved, with the expected resolution date.", action: "Open Transaction Disputes", target: "disputes" },
+  { q: "How do I share my account details?", a: "Open Share Account Details from My Banking. You can copy masked details, use the share sheet, or send them by NFC by holding the phones together.", action: "Open Share Account Details", target: "account-sharing" },
+  { q: "Does NFC sharing work on every phone?", a: "Web NFC only works on supported Android devices. On other devices the prototype shows a simulated share and records it in your sharing history.", action: "Open Share Account Details", target: "account-sharing" },
+  { q: "Where is Pay & Transfer?", a: "Pay & Transfer is the second item in the bottom navigation. It groups Send Money, Bills, Mobile, Cards, Education and Scheduled payments.", action: "Open Pay & Transfer", target: "__pay" },
+  { q: "How do I repeat a recent payment?", a: "On Home switch to the Recent tab and tap an item — the transfer, bill or recharge opens with the recipient and amount already filled in.", action: "Open Pay & Transfer", target: "__pay" },
+  { q: "Do I have a birthday offer?", a: "Yes — your pinned birthday notification carries 50% off up to ৳500 at Yum Cha, valid for 7 days from your birthday. Save it to Rewards to use later.", action: "Open Partner Offers", target: "partner-offers" },
+  { q: "Can I talk to a human agent?", a: "Yes. Tap Human Agent and I will hand over your chat history to the next available agent, or you can call 16230.", action: "Talk to a human agent", target: "__human" },
 ];
+
 
 export function SupportPanel({ tickets }: { tickets?: boolean }) {
   const { state, patch } = useApp();
