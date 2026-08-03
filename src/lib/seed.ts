@@ -1,3 +1,4 @@
+import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK } from "./extras";
 import type { AppState } from "./types";
 
 const uid = (p: string, i: number) => `${p}-${i}`;
