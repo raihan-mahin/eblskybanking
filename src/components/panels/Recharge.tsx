@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Contact } from "lucide-react";
 import { SectionCard, FormField, TextInput, Button, SegmentedTabs, ListRow, cx } from "@/components/kit";
 import { TxnFlow } from "@/components/TxnFlow";
+import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "@/components/ContactPicker";
 import { useApp, money } from "@/lib/store";
 import {
   AMOUNT_PRESETS, detectOperator, maskMobile, OPERATORS, RECHARGE_PACKS, SAVED_MOBILES,
@@ -11,7 +12,7 @@ import {
 const TABS: PackType[] = ["Amount", "Minutes", "Internet", "SMS", "Bundle"];
 
 export function RechargePanel({ initial }: { initial?: Record<string, string> | undefined }) {
-  const { state } = useApp();
+  const { state, patch } = useApp();
   const [mobile, setMobile] = useState(initial?.["mobile"] ?? "");
   const [override, setOverride] = useState<string | null>(initial?.["operator"] ?? null);
   const [tab, setTab] = useState<PackType>("Amount");
@@ -19,6 +20,23 @@ export function RechargePanel({ initial }: { initial?: Record<string, string> | 
   const [pack, setPack] = useState<RechargePack | null>(null);
   const [pay, setPay] = useState(false);
   const [connection, setConnection] = useState("Prepaid");
+  const [picker, setPicker] = useState(false);
+  const [contactName, setContactName] = useState(initial?.["contact"] ?? "");
+  const [pickError, setPickError] = useState("");
+
+  const applyContact = (name: string, number: string) => {
+    setMobile(number); setOverride(null); setPack(null); setContactName(name); setPickError("");
+  };
+
+  const openContacts = async () => {
+    setPickError("");
+    const device = await pickDeviceContact();
+    if (!device) { setPicker(true); return; }
+    const numbers = device.numbers.map(normalizeBdMobile).filter(isValidBdMobile);
+    if (numbers.length === 0) { setPickError("Please select a valid Bangladesh mobile number."); setPicker(true); return; }
+    if (numbers.length > 1) { setPicker(true); return; }
+    applyContact(device.name, numbers[0]!);
+  };
 
   const clean = mobile.replace(/[^0-9]/g, "");
   const detected = detectOperator(clean);
@@ -47,27 +65,59 @@ export function RechargePanel({ initial }: { initial?: Record<string, string> | 
           { key: "package", label: "Package", type: "text", optional: true },
         ]}
         initialValues={{
-          mobile: maskMobile(clean),
+          mobile: clean,
           operator: `${operator} · ${connection}`,
           package: pack ? `${pack.title} (${pack.validity})` : "Plain amount top-up",
         }}
-        onDone={() => setPay(false)}
+        displayValues={{ mobile: maskMobile(clean) }}
+        onDone={(paid) => {
+          const label = contactName || savedName || maskMobile(clean);
+          const id = `re-${clean}`;
+          patch({
+            recentEntities: [
+              {
+                id, serviceId: "recharge", label: `Recharge ${label}`, entity: label,
+                masked: maskMobile(clean), detail: `${operator} · ${connection}`,
+                date: "Just now", amount: paid, icon: "Smartphone", tint: "green" as const,
+                prefill: {
+                  mobile: clean, operator, amount: String(paid),
+                  ...(contactName ? { contact: contactName } : {}),
+                },
+              },
+              ...state.recentEntities.filter((r) => r.id !== id),
+            ],
+          });
+          setPay(false);
+        }}
       />
     );
   }
 
   return (
     <>
+      <ContactPicker open={picker} onClose={() => setPicker(false)} onPick={(c) => applyContact(c.name, c.number)} />
       <SectionCard title="Mobile Recharge" subtitle="We detect the operator from the number">
         <FormField label="Mobile number" hint="Operator is detected from the first three digits">
-          <TextInput
-            inputMode="numeric"
-            value={mobile}
-            placeholder="01XXXXXXXXX"
-            onChange={(e) => { setMobile(e.target.value); setOverride(null); setPack(null); }}
-          />
+          <div className="flex items-center gap-2">
+            <TextInput
+              inputMode="numeric"
+              className="flex-1"
+              value={mobile}
+              placeholder="01XXXXXXXXX"
+              onChange={(e) => { setMobile(e.target.value); setOverride(null); setPack(null); setContactName(""); }}
+            />
+            <button
+              onClick={() => { void openContacts(); }}
+              aria-label="Select from Contacts"
+              className="press grid size-12 shrink-0 place-items-center rounded-xl border border-border bg-tint-yellow"
+            >
+              <Contact className="size-5 text-accent" />
+            </button>
+          </div>
         </FormField>
-        {savedName && <p className="-mt-1 text-[12.5px] text-muted-foreground">Saved as {savedName}</p>}
+        {contactName && <p className="-mt-1 text-[12.5px] text-muted-foreground">Selected contact: {contactName}</p>}
+        {pickError && <p className="-mt-1 text-[12.5px] text-error">{pickError}</p>}
+        {savedName && !contactName && <p className="-mt-1 text-[12.5px] text-muted-foreground">Saved as {savedName}</p>}
 
         {clean.length >= 3 && (
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -111,7 +161,7 @@ export function RechargePanel({ initial }: { initial?: Record<string, string> | 
       <SectionCard title="Saved numbers">
         <div className="grid grid-cols-3 gap-2">
           {SAVED_MOBILES.map((s) => (
-            <button key={s.number} onClick={() => { setMobile(s.number); setOverride(null); setPack(null); }}
+            <button key={s.number} onClick={() => { setMobile(s.number); setOverride(null); setPack(null); setContactName(s.name); }}
               className="press rounded-xl border border-border p-2.5 text-left">
               <p className="truncate text-[12.5px] font-medium">{s.name}</p>
               <p className="truncate text-[11px] text-muted-foreground">{maskMobile(s.number)}</p>

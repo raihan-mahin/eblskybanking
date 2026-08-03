@@ -27,6 +27,8 @@ export interface TxnFlowProps {
   submitLabel?: string;
   intro?: string;
   initialValues?: Record<string, string> | undefined;
+  /** Masked/pretty values shown on review, receipt and auth screens only. */
+  displayValues?: Record<string, string> | undefined;
   initialAmount?: string | undefined;
   banner?: string | undefined;
   onDone?: (amount: number, values: Record<string, string>) => void;
@@ -51,6 +53,8 @@ export function TxnFlow(p: TxnFlowProps) {
   const account = state.accounts.find((a) => a.id === accountId)!;
   const points = pointsFor(p.category, amt);
   const set = (k: string, v: string) => setValues((s) => ({ ...s, [k]: v }));
+  /** Value shown to the user on review/receipt — masked when a display value exists. */
+  const shown = (k: string) => p.displayValues?.[k] ?? values[k] ?? "";
 
   const validate = () => {
     for (const f of fields) if (!f.optional && !values[f.key]) return `${f.label} is required.`;
@@ -69,7 +73,7 @@ export function TxnFlow(p: TxnFlowProps) {
   };
 
   const complete = () => {
-    const target = fields.map((f) => values[f.key]).filter(Boolean).join(" · ");
+    const target = fields.map((f) => shown(f.key)).filter(Boolean).join(" · ");
     const ref = "EBL" + Math.floor(100000000 + Math.random() * 899999999);
     commitTxn({
       title: `${p.title}${target ? " — " + target : ""}`,
@@ -93,7 +97,7 @@ export function TxnFlow(p: TxnFlowProps) {
           {points > 0 && <p className="mt-1 text-[13px] text-success">+{points} Reward Points earned.</p>}
           <dl className="mt-4 space-y-2 text-left text-[13px]">
             {fields.map((f) => values[f.key] && (
-              <Row key={f.key} k={f.label} v={values[f.key]} />
+              <Row key={f.key} k={f.label} v={shown(f.key)} />
             ))}
             <Row k="From" v={account.name} />
             {fee > 0 && <Row k="Fee" v={money(fee)} />}
@@ -133,7 +137,7 @@ export function TxnFlow(p: TxnFlowProps) {
       <>
         <SectionCard title="Review details">
           <dl className="space-y-2 text-[13.5px]">
-            {fields.map((f) => values[f.key] && <Row key={f.key} k={f.label} v={values[f.key]} />)}
+            {fields.map((f) => values[f.key] && <Row key={f.key} k={f.label} v={shown(f.key)} />)}
             <Row k="From account" v={`${account.name} · ${account.masked}`} />
             <Row k="Amount" v={money(amt)} />
             {fee > 0 && <Row k="Fee" v={money(fee)} />}
