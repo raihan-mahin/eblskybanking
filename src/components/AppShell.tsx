@@ -1,11 +1,10 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight } from "lucide-react";
+import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
-import { SupportFab } from "./SupportFab";
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
@@ -48,6 +47,13 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
               </>
             )}
           </div>
+          <button
+            aria-label="AI Help"
+            onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "ai-support" } })}
+            className="press grid size-10 place-items-center"
+          >
+            <Headphones className="size-6" />
+          </button>
           <button onClick={() => setNotif(true)} className="press relative grid size-10 place-items-center">
             <Bell className="size-6" />
             {unread > 0 && <span className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-accent" />}
@@ -128,7 +134,6 @@ export function AppShell({
       )}
     >
       <AppHeader title={title} back={back} />
-      <SupportFab />
       <main className="-mt-6 space-y-3 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
       <VoiceAssistant />
 

@@ -80,12 +80,14 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
       return <BillsPanel />;
     case "split-pay": return <SplitPayPanel />;
     case "card-services":
+    case "my-card":
     case "add-card":
     case "activate-card":
     case "card-controls":
       return <CardsPanel focus={id} />;
     case "auto-pay": return <SchedulePanel autoPay />;
     case "scheduled-transfer":
+    case "scheduled-recharge":
     case "auto-contribution":
     case "payment-intelligence":
       return <SchedulePanel />;
@@ -93,6 +95,7 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "rewards":
     case "reward-offers":
       return <RewardsPanel />;
+    case "next-reward": return <PartnerOffersPanel />;
     case "ai-money-manager":
     case "spending-insights":
       return <MoneyManagerPanel />;
@@ -121,10 +124,15 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "statements": return <DocumentsPanel kind="statements" />;
     case "certificates": return <DocumentsPanel kind="certificates" />;
     case "receipts": return <DocumentsPanel kind="receipts" />;
-    case "loans": return <LoansPanel />;
+    case "loans":
+    case "loan-calculator":
+      return <LoansPanel />;
     case "limits": return <LimitsPanel />;
     case "personalization": return <PersonalizationPanel />;
-    case "islamic": return <IslamicPanel />;
+    case "islamic":
+    case "islamic-accounts":
+      return <IslamicPanel />;
+    case "islamic-savings": return <SavingsPanel focus="dps" />;
     case "donation":
     case "zakat":
     case "e-toll":
