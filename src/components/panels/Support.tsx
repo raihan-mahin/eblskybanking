@@ -185,8 +185,6 @@ export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: bo
         </div>
       </SectionCard>
 
-      </SectionCard>
-
       <SectionCard title="Your tickets">
         {state.tickets.map((t) => (
           <div key={t.id} className="flex items-center justify-between border-b border-border py-3 last:border-0">
