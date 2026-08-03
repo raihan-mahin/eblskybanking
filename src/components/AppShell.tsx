@@ -128,8 +128,10 @@ export function AppShell({
       )}
     >
       <AppHeader title={title} back={back} />
+      <SupportFab />
       <main className="-mt-6 space-y-3 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
       <VoiceAssistant />
+
       {!hideNav && <BottomNavigation />}
     </div>
   );
