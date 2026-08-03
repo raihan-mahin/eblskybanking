@@ -351,10 +351,22 @@ export function GoalsPanel() {
         </div>
       </Sheet>
 
-      <Sheet open={!!add} onClose={() => setAdd(null)} title={`Add to ${add?.title ?? ""}`}>
+      <Sheet open={!!add} onClose={() => setAdd(null)} title={`${mode === "add" ? "Add to" : "Withdraw from"} ${add?.title ?? ""}`}>
+        <p className="mb-2 text-[12.5px] text-muted-foreground">
+          {mode === "add"
+            ? `Available in EBL Savings: ${money(savings?.balance ?? 0)}`
+            : `Saved in this goal: ${money(add?.saved ?? 0)}`}
+        </p>
         <FormField label="Amount"><TextInput inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} /></FormField>
-        <Button className="mt-3" onClick={() => (Number(amount) > 0 ? setAuth(true) : toast.show("Enter an amount"))}>Continue</Button>
+        <Button className="mt-3" onClick={() => {
+          const amt = Number(amount || 0);
+          if (amt <= 0) return toast.show("Enter an amount");
+          if (mode === "add" && amt > (savings?.balance ?? 0)) return toast.show("Amount exceeds your available balance");
+          if (mode === "withdraw" && amt > (add?.saved ?? 0)) return toast.show("Amount exceeds the goal balance");
+          setAuth(true);
+        }}>Continue</Button>
       </Sheet>
+
 
       <AuthenticationSheet open={auth} amount={Number(amount || 0)} onClose={() => setAuth(false)}
         onSuccess={() => { setAuth(false); contribute(); }} />
