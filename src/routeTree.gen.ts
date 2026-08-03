@@ -14,6 +14,7 @@ import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyBankingRouteImport } from './routes/my-banking'
+import { Route as PayTransferRouteImport } from './routes/pay-transfer'
 import { Route as QrRouteImport } from './routes/qr'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServiceServiceIdRouteImport } from './routes/service.$serviceId'
@@ -43,6 +44,11 @@ const MyBankingRoute = MyBankingRouteImport.update({
   path: '/my-banking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PayTransferRoute = PayTransferRouteImport.update({
+  id: '/pay-transfer',
+  path: '/pay-transfer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QrRoute = QrRouteImport.update({
   id: '/qr',
   path: '/qr',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/my-banking': typeof MyBankingRoute
+  '/pay-transfer': typeof PayTransferRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
   '/service/$serviceId': typeof ServiceServiceIdRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/my-banking': typeof MyBankingRoute
+  '/pay-transfer': typeof PayTransferRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
   '/service/$serviceId': typeof ServiceServiceIdRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/my-banking': typeof MyBankingRoute
+  '/pay-transfer': typeof PayTransferRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
   '/service/$serviceId': typeof ServiceServiceIdRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/my-banking'
+    | '/pay-transfer'
     | '/qr'
     | '/settings'
     | '/service/$serviceId'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/my-banking'
+    | '/pay-transfer'
     | '/qr'
     | '/settings'
     | '/service/$serviceId'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/my-banking'
+    | '/pay-transfer'
     | '/qr'
     | '/settings'
     | '/service/$serviceId'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   MyBankingRoute: typeof MyBankingRoute
+  PayTransferRoute: typeof PayTransferRoute
   QrRoute: typeof QrRoute
   SettingsRoute: typeof SettingsRoute
   ServiceServiceIdRoute: typeof ServiceServiceIdRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyBankingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pay-transfer': {
+      id: '/pay-transfer'
+      path: '/pay-transfer'
+      fullPath: '/pay-transfer'
+      preLoaderRoute: typeof PayTransferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/qr': {
       id: '/qr'
       path: '/qr'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   MyBankingRoute: MyBankingRoute,
+  PayTransferRoute: PayTransferRoute,
   QrRoute: QrRoute,
   SettingsRoute: SettingsRoute,
   ServiceServiceIdRoute: ServiceServiceIdRoute,
