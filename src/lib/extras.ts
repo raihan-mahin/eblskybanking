@@ -79,15 +79,14 @@ export const lookupMobile = (m: string): DirectoryEntry | null => {
   const seed = clean.split("").reduce((a, c) => a + Number(c), 0);
   const bank = FALLBACK_BANKS[seed % FALLBACK_BANKS.length]!;
   return {
-    id: "dir-" + clean,
     name: FALLBACK_NAMES[seed % FALLBACK_NAMES.length]!,
     mobile: clean,
     bank,
     account: `${bank === "Eastern Bank PLC" ? "1101" : "3402"}${clean.slice(3, 7)}${clean.slice(-4)}`,
+    accountType: seed % 3 === 0 ? "Current" : "Savings",
     verified: seed % 4 !== 0,
-    type: bank === "Eastern Bank PLC" ? "EBL Account" : "Other Bank",
-    avatarTint: (["yellow", "green", "blue", "purple", "pink"] as const)[seed % 5]!,
   };
+
 };
 
 
