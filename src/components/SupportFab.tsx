@@ -4,7 +4,7 @@ import { Headphones } from "lucide-react";
 export function SupportFab() {
   const nav = useNavigate();
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[86px] z-40">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[152px] z-40">
       <div className="pointer-events-none mx-auto flex w-full max-w-[430px] justify-end px-4">
         <button
           aria-label="Open AI Support"
