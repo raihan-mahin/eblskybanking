@@ -121,11 +121,11 @@ export function SavingsPanel({ focus }: { focus: string }) {
     setOpen(false);
     if (tab === "DPS") {
       patch({ dps: [...state.dps, { id: "dps" + Date.now(), title: "New DPS", monthly: amt, saved: amt, target: amt * 36, matures: "2029" }] });
-      commitTxn({ title: "DPS contribution", subtitle: "Monthly DPS", amount: amt, direction: "debit", category: "DPS", accountId: state.accounts[0].id });
+      commitTxn({ title: "DPS contribution", serviceId: "dps", amount: amt, direction: "debit", category: "DPS", accountId: state.accounts[0].id });
       notify("DPS opened", `Monthly ${money(amt)} · ${tenure}`, "txn");
     } else {
       patch({ fdr: [...state.fdr, { id: "fdr" + Date.now(), title: "New FDR", amount: amt, rate: 8.5, matures: "2027" }] });
-      commitTxn({ title: "Fixed deposit", subtitle: tenure, amount: amt, direction: "debit", category: "FDR", accountId: state.accounts[0].id });
+      commitTxn({ title: "Fixed deposit", serviceId: "fdr", amount: amt, direction: "debit", category: "FDR", accountId: state.accounts[0].id });
       notify("Fixed deposit created", `${money(amt)} at 8.5% · ${tenure}`, "txn");
     }
     setAmount("");
@@ -134,7 +134,7 @@ export function SavingsPanel({ focus }: { focus: string }) {
 
   return (
     <>
-      <SegmentedTabs tabs={["DPS", "FDR"]} value={tab} onChange={setTab} />
+      <SegmentedTabs tabs={[{ id: "DPS", label: "DPS" }, { id: "FDR", label: "FDR" }]} value={tab} onChange={setTab} />
       {tab === "DPS" ? (
         <SectionCard title="Your DPS schemes">
           {state.dps.map((d) => (
@@ -265,7 +265,7 @@ export function NotificationsPanel() {
   const list = state.notifications.filter((n) => !kinds[tab] || n.kind === kinds[tab]);
   return (
     <>
-      <SegmentedTabs tabs={Object.keys(kinds)} value={tab} onChange={setTab} />
+      <SegmentedTabs tabs={Object.keys(kinds).map((k) => ({ id: k, label: k }))} value={tab} onChange={setTab} />
       <SectionCard>
         <button className="press mb-2 text-[13px] text-primary"
           onClick={() => patch({ notifications: state.notifications.map((n) => ({ ...n, read: true })) })}>Mark all as read</button>
@@ -294,7 +294,7 @@ export function AccountsPanel() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[15px] font-semibold">{a.name}</p>
-              <p className="text-[12.5px] text-muted-foreground">{a.number} · {a.type}</p>
+              <p className="text-[12.5px] text-muted-foreground">{a.masked} · {a.type}</p>
             </div>
             <StatusBadge status="Active" />
           </div>
@@ -437,7 +437,7 @@ export function LimitsPanel() {
         {state.cards.map((c) => (
           <div key={c.id} className="border-b border-border py-3 last:border-0">
             <p className="text-[14.5px] font-medium">{c.name}</p>
-            <p className="text-[12.5px] text-muted-foreground">{c.masked} · daily limit {money(c.dailyLimit ?? 50000)}</p>
+            <p className="text-[12.5px] text-muted-foreground">{c.masked} · daily limit {money(c.limit)}</p>
           </div>
         ))}
       </SectionCard>
@@ -456,7 +456,7 @@ export function LifestylePanel({ focus }: { focus: string }) {
   const pay = (title: string, amount: number, category: string) => setAuth({ title, amount, category });
   const done = () => {
     if (!auth) return;
-    commitTxn({ title: auth.title, subtitle: auth.category, amount: auth.amount, direction: "debit", category: auth.category, accountId: state.accounts[0].id });
+    commitTxn({ title: auth.title, serviceId: focus, amount: auth.amount, direction: "debit", category: auth.category, accountId: state.accounts[0].id });
     notify("Payment successful", `${auth.title} · ${money(auth.amount)}`, "txn");
     toast.show(`${auth.title} paid`);
     setAuth(null);
@@ -471,7 +471,7 @@ export function LifestylePanel({ focus }: { focus: string }) {
     entertainment: { title: "Entertainment", rows: [{ t: "Netflix subscription", s: "Monthly", amt: 1100 }, { t: "Spotify Premium", s: "Monthly", amt: 199 }, { t: "Chorki", s: "Monthly", amt: 149 }] },
     "education-payments": { title: "Education Payments", rows: [{ t: "Admission fee", s: "Institution payment", amt: 15000 }, { t: "Exam fee", s: "Board registration", amt: 2500 }, { t: "Hostel fee", s: "Quarterly", amt: 18000 }] },
   };
-  const b = blocks[focus] ?? blocks.donation;
+  const b = blocks[focus] ?? blocks["donation"]!;
 
   return (
     <>
