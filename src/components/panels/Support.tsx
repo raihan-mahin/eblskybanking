@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { RecentComplaints } from "./Disputes";
 import { SectionCard, Button, TextInput, FormField, Select, Sheet, StatusBadge, ListRow, useToast, cx } from "@/components/kit";
 import { AuthenticationSheet } from "@/components/AuthenticationSheet";
 import { useApp, money } from "@/lib/store";
@@ -234,6 +235,7 @@ export function HelpPanel() {
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   return (
     <>
+      <RecentComplaints />
       <SectionCard title="Help and Support">
         <ListRow icon="Headphones" tint="purple" title="AI Customer Support" subtitle="Instant answers, 24/7" onClick={() => go("ai-support")} />
         <ListRow icon="LifeBuoy" tint="blue" title="Create a ticket" subtitle="Report an issue" onClick={() => go("ai-support")} />
