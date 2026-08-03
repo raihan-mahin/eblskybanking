@@ -16,6 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyBankingRouteImport } from './routes/my-banking'
 import { Route as QrRouteImport } from './routes/qr'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ServiceServiceIdRouteImport } from './routes/service.$serviceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServiceServiceIdRoute = ServiceServiceIdRouteImport.update({
+  id: '/service/$serviceId',
+  path: '/service/$serviceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/my-banking': typeof MyBankingRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
+  '/service/$serviceId': typeof ServiceServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/my-banking': typeof MyBankingRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
+  '/service/$serviceId': typeof ServiceServiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,14 +88,29 @@ export interface FileRoutesById {
   '/my-banking': typeof MyBankingRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
+  '/service/$serviceId': typeof ServiceServiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/explore' | '/home' | '/login' | '/my-banking' | '/qr' | '/settings'
+    | '/'
+    | '/explore'
+    | '/home'
+    | '/login'
+    | '/my-banking'
+    | '/qr'
+    | '/settings'
+    | '/service/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/explore' | '/home' | '/login' | '/my-banking' | '/qr' | '/settings'
+    | '/'
+    | '/explore'
+    | '/home'
+    | '/login'
+    | '/my-banking'
+    | '/qr'
+    | '/settings'
+    | '/service/$serviceId'
   id:
     | '__root__'
     | '/'
@@ -97,6 +120,7 @@ export interface FileRouteTypes {
     | '/my-banking'
     | '/qr'
     | '/settings'
+    | '/service/$serviceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -107,6 +131,7 @@ export interface RootRouteChildren {
   MyBankingRoute: typeof MyBankingRoute
   QrRoute: typeof QrRoute
   SettingsRoute: typeof SettingsRoute
+  ServiceServiceIdRoute: typeof ServiceServiceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -160,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/service/$serviceId': {
+      id: '/service/$serviceId'
+      path: '/service/$serviceId'
+      fullPath: '/service/$serviceId'
+      preLoaderRoute: typeof ServiceServiceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -171,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyBankingRoute: MyBankingRoute,
   QrRoute: QrRoute,
   SettingsRoute: SettingsRoute,
+  ServiceServiceIdRoute: ServiceServiceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
