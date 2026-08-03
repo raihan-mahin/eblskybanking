@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SectionCard, Button, Sheet, StatusBadge, useToast, cx } from "@/components/kit";
 import { Icon } from "@/components/Icon";
 import { useApp, money, levelFor } from "@/lib/store";
+import { NextRewardCard } from "@/components/NextReward";
 import { PARTNER_OFFERS, REWARD_CATEGORIES, type PartnerOffer } from "@/lib/extras";
 
 export function PartnerOffersPanel() {
@@ -38,6 +39,7 @@ export function PartnerOffersPanel() {
 
   return (
     <>
+      <NextRewardCard />
       <SectionCard title="Your points" subtitle={`${levelFor(pts)} · ${pts.toLocaleString()} points available`}>
         <p className="text-[12.5px] text-muted-foreground">
           Partner campaigns below are prototype demo offers from local merchants.

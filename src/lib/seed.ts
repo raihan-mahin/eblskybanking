@@ -56,14 +56,12 @@ export const seedState = (): AppState => ({
   },
   personalization: { enabled: true, pinned: [], hidden: [] },
   accounts: [
-    { id: "acc-1", name: "EBL Savings Account", masked: "XXXX XXXX XXXX 1234", balance: 82450, type: "savings" },
-    { id: "acc-2", name: "EBL Current Account", masked: "XXXX XXXX XXXX 8890", balance: 15200, type: "current" },
+    { id: "acc-1", name: "EBL Savings Account", masked: "XXXX XXXX XXXX 1234", balance: 19950, type: "savings" },
   ],
   cards: [
-    { id: "card-1", name: "EBL Visa Signature", masked: "4212 XXXX XXXX 7781", kind: "credit", balance: 42000, frozen: false, online: true, intl: false, contactless: true, limit: 100000, pinSet: true, active: true },
-    { id: "card-2", name: "EBL Debit Card", masked: "5312 XXXX XXXX 1234", kind: "debit", balance: 82450, frozen: false, online: true, intl: false, contactless: true, limit: 50000, pinSet: true, active: true },
-    { id: "card-3", name: "EBL Prepaid Card", masked: "6011 XXXX XXXX 4420", kind: "prepaid", balance: 3500, frozen: false, online: false, intl: false, contactless: false, limit: 20000, pinSet: false, active: false },
+    { id: "card-1", name: "My Card", masked: "4212 XXXX XXXX 7781", kind: "credit", balance: 42000, frozen: false, online: true, intl: false, contactless: true, limit: 100000, pinSet: true, active: true },
   ],
+
   transactions: [
     { id: "t1", title: "bKash Add Money", serviceId: "add-money", category: "Add Money", amount: 3000, fee: 0, direction: "debit", status: "success", date: "Today, 6:45 PM", points: 30, ref: "EBL8241001" },
     { id: "t2", title: "Electricity Bill — DESCO", serviceId: "bill-electricity", category: "Bills", amount: 1840, fee: 0, direction: "debit", status: "success", date: "Today, 4:20 PM", points: 18, ref: "EBL8241002" },
@@ -222,6 +220,7 @@ export const seedState = (): AppState => ({
   ],
   usage: { "add-money": 6, "bill-electricity": 5, "split-pay": 4, "tuition-fee": 2, recharge: 3 },
   tickets: [
+    { id: "TKT-2026-0042", category: "Rewards", subject: "Reward points not credited", description: "Points for a partner offer were missing.", contact: "Email", status: "Resolved", date: "12 Jan, 2026" },
     { id: "TCK-100234", category: "Transaction", subject: "MFS transfer failed", description: "Nagad transfer of ৳2,500 failed but I was charged.", contact: "Mobile", status: "In Review", date: "2 May, 2025" },
     { id: "TCK-100235", category: "Rewards", subject: "Missing reward points", description: "Points for gift card purchase not added.", contact: "Email", status: "Resolved", date: "28 Apr, 2025" },
   ],
@@ -252,7 +251,7 @@ export const seedState = (): AppState => ({
       prefill: { mobile: "01677889900", operator: "Airtel", amount: "300" },
     },
     {
-      id: "re2", serviceId: "fund-transfer", label: "Send to Arnav", entity: "Arnav Hasan", masked: "2050 **** **** 1234",
+      id: "re2", serviceId: "fund-transfer", label: "Transfer to Arnav", entity: "Arnav Hasan", masked: "2050 **** **** 1234",
       detail: "Eastern Bank PLC · ৳2,500 last time", date: "Yesterday, 8:02 PM", amount: 2500, icon: "ArrowLeftRight", tint: "yellow",
       prefill: { mobile: "01711223344", beneficiary: "Arnav Hasan", amount: "2500" },
     },
@@ -262,7 +261,7 @@ export const seedState = (): AppState => ({
       prefill: { biller: "DESCO", account: "44531234521", amount: "1840" },
     },
     {
-      id: "re4", serviceId: "bill-internet", label: "Pay Link3 bill", entity: "Link3", masked: "ID link3-88213",
+      id: "re4", serviceId: "bill-internet", label: "Home Internet Bill", entity: "Link3", masked: "ID link3-88213",
       detail: "Internet · ৳1,200 last time", date: "8 May, 2025", amount: 1200, icon: "Globe", tint: "purple",
       prefill: { biller: "Link3", account: "link3-88213", amount: "1200" },
     },
@@ -278,6 +277,15 @@ export const seedState = (): AppState => ({
     },
   ],
   disputes: [
+    {
+      id: "DSP-2026-0001", txnId: "EBL8241014", txnTitle: "MFS Transfer — Nagad", amount: 2500, date: "10 Jan, 2026",
+      issue: "Money deducted but recipient not credited", description: "The transfer failed but the amount was debited.",
+      contact: "Mobile", attachment: false, status: "Under Review", expected: "Expected resolution by 17 Jan, 2026",
+      timeline: [
+        { stage: "Submitted", date: "10 Jan, 2026", note: "Dispute received and reference created." },
+        { stage: "Under Review", date: "11 Jan, 2026", note: "Our team is checking the transaction with the partner." },
+      ],
+    },
     {
       id: "DSP-100011", txnId: "EBL482910334", txnTitle: "MFS Transfer — Nagad", amount: 2500, date: "2 May, 2025",
       issue: "Money deducted but recipient not credited", description: "Nagad transfer failed but the amount was debited.",

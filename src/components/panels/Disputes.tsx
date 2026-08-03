@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { SectionCard, Button, FormField, Select, TextInput, StatusBadge, ListRow, useToast, cx } from "@/components/kit";
 import { useApp, money, timeLabel } from "@/lib/store";
 import { DISPUTE_ISSUES } from "@/lib/extras";
@@ -146,5 +147,45 @@ export function DisputesPanel({ txnId }: { txnId?: string | undefined }) {
       </SectionCard>
       {toast.node}
     </>
+  );
+}
+
+
+/* ---------------- Compact recent complaints ---------------- */
+
+export function RecentComplaints() {
+  const { state } = useApp();
+  const nav = useNavigate();
+  const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
+  const [all, setAll] = useState(false);
+
+  const items = [
+    ...state.disputes.map((d) => ({ id: d.id, status: d.status, title: d.issue })),
+    ...state.tickets.map((t) => ({ id: t.id, status: t.status, title: t.subject })),
+  ];
+  const visible = all ? items : items.slice(0, 2);
+
+  return (
+    <SectionCard
+      title="Recent Complaints"
+      subtitle={`${items.length} in total`}
+      action={items.length > 2 ? (all ? "Show less" : "See All") : undefined}
+      onAction={() => setAll(!all)}
+    >
+      {visible.map((i) => (
+        <div key={i.id} className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
+          <div className="min-w-0">
+            <p className="truncate text-[14px] font-medium">{i.id}</p>
+            <p className="truncate text-[12px] text-muted-foreground">{i.title}</p>
+          </div>
+          <StatusBadge status={i.status} />
+        </div>
+      ))}
+      {items.length === 0 && <p className="py-4 text-center text-[13.5px] text-muted-foreground">No complaints yet.</p>}
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <Button variant="outline" onClick={() => go("disputes")}>Track Complaint</Button>
+        <Button onClick={() => go("disputes")}>Report an Issue</Button>
+      </div>
+    </SectionCard>
   );
 }

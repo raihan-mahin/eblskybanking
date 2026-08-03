@@ -238,9 +238,13 @@ export function GoalsPanel() {
   const toast = useToast();
   const [open, setOpen] = useState(false);
   const [add, setAdd] = useState<Goal | null>(null);
+  const [mode, setMode] = useState<"add" | "withdraw">("add");
   const [amount, setAmount] = useState("");
   const [auth, setAuth] = useState(false);
   const [form, setForm] = useState({ title: "", icon: "Target", target: "", saved: "", date: "", monthly: "", auto: false });
+
+  const savings = state.accounts[0];
+  const goalTotal = state.goals.reduce((a, g) => a + g.saved, 0);
 
   const create = () => {
     if (!form.title || !form.target) return toast.show("Enter a title and target amount");
@@ -256,15 +260,49 @@ export function GoalsPanel() {
   const contribute = () => {
     if (!add) return;
     const amt = Number(amount || 0);
-    commitTxn({ title: `Goal contribution — ${add.title}`, serviceId: "goal-setting", category: "Savings", amount: amt });
-    patch({ goals: state.goals.map((g) => (g.id === add.id ? { ...g, saved: g.saved + amt } : g)) });
-    setAdd(null); setAmount(""); toast.show("Contribution added");
+    if (mode === "add") {
+      if (amt > (savings?.balance ?? 0)) {
+        setAdd(null); setAmount("");
+        return toast.show("Amount exceeds your available savings balance");
+      }
+      commitTxn({ title: `Goal contribution — ${add.title}`, serviceId: "goal-setting", category: "Savings", amount: amt });
+      patch({ goals: state.goals.map((g) => (g.id === add.id ? { ...g, saved: g.saved + amt } : g)) });
+      toast.show("Moved from EBL Savings to your goal");
+    } else {
+      if (amt > add.saved) {
+        setAdd(null); setAmount("");
+        return toast.show("Amount exceeds the balance saved in this goal");
+      }
+      commitTxn({
+        title: `Goal withdrawal — ${add.title}`, serviceId: "goal-setting", category: "Savings",
+        amount: amt, direction: "credit", points: 0,
+      });
+      patch({ goals: state.goals.map((g) => (g.id === add.id ? { ...g, saved: Math.max(0, g.saved - amt) } : g)) });
+      toast.show("Returned to your EBL Savings Account");
+    }
+    setAdd(null); setAmount("");
   };
+
+  const openSheet = (g: Goal, m: "add" | "withdraw") => { setMode(m); setAmount(""); setAdd(g); };
 
   return (
     <>
-      <SectionCard title="Savings Goals" subtitle="Plan and achieve your goals">
-        <Button onClick={() => setOpen(true)}>Create new goal</Button>
+      <SectionCard title="Savings Goals" subtitle="Goal money is moved out of your EBL Savings Account">
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-xl bg-brand-soft p-2.5">
+            <p className="text-[11.5px] text-muted-foreground">Available</p>
+            <p className="text-[14px] font-semibold">{money(savings?.balance ?? 0)}</p>
+          </div>
+          <div className="rounded-xl bg-tint-green p-2.5">
+            <p className="text-[11.5px] text-muted-foreground">In goals</p>
+            <p className="text-[14px] font-semibold">{money(goalTotal)}</p>
+          </div>
+          <div className="rounded-xl bg-tint-blue p-2.5">
+            <p className="text-[11.5px] text-muted-foreground">Combined</p>
+            <p className="text-[14px] font-semibold">{money((savings?.balance ?? 0) + goalTotal)}</p>
+          </div>
+        </div>
+        <Button className="mt-3" onClick={() => setOpen(true)}>Create new goal</Button>
       </SectionCard>
 
       {state.goals.map((g) => {
@@ -277,7 +315,7 @@ export function GoalsPanel() {
                 <p className="text-[15.5px] font-medium">{g.title}</p>
                 <p className="text-[12.5px] text-muted-foreground">{money(g.saved)} of {money(g.target)} · by {g.date}</p>
               </div>
-              <span className="text-[13px] font-semibold text-accent">{Math.round(pct)}%</span>
+              <span className="text-[13px] font-semibold text-accent">{pct.toFixed(1)}%</span>
             </div>
             <ProgressBar className="mt-3" value={pct} />
             <div className="mt-2 grid grid-cols-2 gap-3 text-[12.5px] text-muted-foreground">
@@ -285,7 +323,8 @@ export function GoalsPanel() {
               <span className="text-right">Suggested {money(g.monthly)}/month</span>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button onClick={() => setAdd(g)} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Add Money</button>
+              <button onClick={() => openSheet(g, "add")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Add Money</button>
+              <button onClick={() => openSheet(g, "withdraw")} className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">Withdraw</button>
               <button onClick={() => { patch({ goals: state.goals.map((x) => (x.id === g.id ? { ...x, auto: !x.auto } : x)) }); toast.show(g.auto ? "Auto contribution paused" : "Auto contribution enabled"); }}
                 className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">{g.auto ? "Pause Auto" : "Enable Auto"}</button>
               <button onClick={() => { patch({ goals: state.goals.filter((x) => x.id !== g.id) }); toast.show("Goal deleted"); }}
@@ -294,6 +333,7 @@ export function GoalsPanel() {
           </SectionCard>
         );
       })}
+
 
       <Sheet open={open} onClose={() => setOpen(false)} title="Create goal">
         <div className="space-y-3">
@@ -311,10 +351,22 @@ export function GoalsPanel() {
         </div>
       </Sheet>
 
-      <Sheet open={!!add} onClose={() => setAdd(null)} title={`Add to ${add?.title ?? ""}`}>
+      <Sheet open={!!add} onClose={() => setAdd(null)} title={`${mode === "add" ? "Add to" : "Withdraw from"} ${add?.title ?? ""}`}>
+        <p className="mb-2 text-[12.5px] text-muted-foreground">
+          {mode === "add"
+            ? `Available in EBL Savings: ${money(savings?.balance ?? 0)}`
+            : `Saved in this goal: ${money(add?.saved ?? 0)}`}
+        </p>
         <FormField label="Amount"><TextInput inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} /></FormField>
-        <Button className="mt-3" onClick={() => (Number(amount) > 0 ? setAuth(true) : toast.show("Enter an amount"))}>Continue</Button>
+        <Button className="mt-3" onClick={() => {
+          const amt = Number(amount || 0);
+          if (amt <= 0) return toast.show("Enter an amount");
+          if (mode === "add" && amt > (savings?.balance ?? 0)) return toast.show("Amount exceeds your available balance");
+          if (mode === "withdraw" && amt > (add?.saved ?? 0)) return toast.show("Amount exceeds the goal balance");
+          setAuth(true);
+        }}>Continue</Button>
       </Sheet>
+
 
       <AuthenticationSheet open={auth} amount={Number(amount || 0)} onClose={() => setAuth(false)}
         onSuccess={() => { setAuth(false); contribute(); }} />

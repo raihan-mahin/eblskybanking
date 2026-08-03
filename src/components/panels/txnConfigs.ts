@@ -111,6 +111,14 @@ export const TXN_CONFIGS: Record<string, Omit<TxnFlowProps, "serviceId">> = {
     ],
     amountPresets: [80, 150, 750],
   },
+  "e-challan": {
+    title: "e-Challan", category: "Bills",
+    fields: [
+      { key: "vehicle", label: "Vehicle", type: "select", options: ["Dhaka Metro GA 11-2233", "Dhaka Metro HA 45-6677"] },
+      { key: "challan", label: "Challan Number", type: "text", placeholder: "e.g. CHL-2026-00921" },
+    ],
+    amountPresets: [500, 1000, 2000],
+  },
   "qr-payment": {
     title: "QR Payment", category: "QR",
     fields: [{ key: "merchant", label: "Merchant", type: "select", options: ["Shwapno Dhanmondi", "Chillox Banani", "Aarong Uttara", "Star Kabab"] }],
@@ -118,7 +126,7 @@ export const TXN_CONFIGS: Record<string, Omit<TxnFlowProps, "serviceId">> = {
   },
   "card-payment": {
     title: "Card Payment", category: "Cards",
-    fields: [{ key: "card", label: "Select Card", type: "select", options: ["EBL Visa Signature · 7781", "EBL Debit Card · 1234", "EBL Prepaid Card · 4420"] }],
+    fields: [{ key: "card", label: "Select Card", type: "select", options: ["My Card · 7781"] }],
     amountPresets: [2000, 5000, 8000, 12000],
   },
   "instant-dps": {
