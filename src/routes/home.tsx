@@ -101,18 +101,17 @@ function HomePage() {
       </SectionCard>
     ),
     insights: (
-      <SectionCard key="insights" title="Smart insights" subtitle="Personalised for you">
-        <div className="space-y-2.5">
-          {state.insights.slice(0, 3).map((i) => (
-            <InsightCard
-              key={i.id}
-              text={i.text}
-              tone={i.tone}
-              action={i.action}
-              onAction={() => go(i.target)}
-              onDismiss={() => patch({ insights: state.insights.filter((x) => x.id !== i.id) })}
-            />
-          ))}
+      <SectionCard key="insights" title="Smart insight" subtitle="Personalised for you" action="See All" onAction={() => go("spending-insights")}>
+        <div className="rounded-2xl bg-tint-green p-3.5">
+          <p className="text-[14.5px] font-semibold text-primary">Your Nepal adventure is getting closer</p>
+          <p className="mt-1 text-[13.5px] leading-snug">
+            You have saved {money(nepal?.saved ?? 62500)}. Only {money(Math.max(0, (nepal?.target ?? 100000) - (nepal?.saved ?? 62500)))} remains to reach your Nepal Trip goal.
+          </p>
+          <div className="mt-2.5 flex gap-2">
+            <button onClick={() => go("goal-setting")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">Add Money</button>
+            <button onClick={() => go("savings-goals")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">View Goal</button>
+            <button onClick={() => go("spending-insights")} className="press px-2 text-[12.5px] text-muted-foreground">See All</button>
+          </div>
         </div>
       </SectionCard>
     ),
@@ -122,11 +121,13 @@ function HomePage() {
         <p className="mt-2 text-[12.5px] text-muted-foreground">
           {nl.need > 0 ? `${nl.need.toLocaleString()} points to ${nl.name}` : "Top level reached"}
         </p>
+        <div className="mt-3"><NextRewardCard /></div>
         <div className="mt-3">
           <ListRow icon="BadgePercent" tint="pink" title="Partner offers" subtitle="Cineplex, Yum Cha, Gentle Park and more" onClick={() => go("partner-offers")} />
         </div>
       </SectionCard>
     ),
+
     transactions: (
       <SectionCard key="transactions" title="Recent transactions" action="View all" onAction={() => go("transaction-history")}>
         {state.transactions.slice(0, 5).map((t) => (
