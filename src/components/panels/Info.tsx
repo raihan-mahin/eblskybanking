@@ -1,3 +1,4 @@
+import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SectionCard, ListRow, Button, FormField, TextInput, Select, ProgressBar, StatusBadge, Sheet, SearchField, SegmentedTabs, useToast, cx } from "@/components/kit";
