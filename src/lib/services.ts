@@ -124,6 +124,16 @@ export const SERVICES: Service[] = [
   s("profile", "Profile", "security", "Your personal details", "IdCard", "gray", "information", "none", ["profile", "account"]),
   s("accounts", "Accounts", "security", "Your bank accounts", "Landmark", "yellow", "information", "none", ["account", "balance"]),
   s("personalization", "Personalization", "security", "Recommendations & pins", "Star", "purple", "settings", "none", ["personalize", "recommend"]),
+
+  // Incremental additions
+  s("phone-transfer", "Send by Mobile Number", "payments", "Find the linked account by phone number", "Send", "green", "transaction", "confirm", ["phone", "mobile", "number", "send", "transfer"]),
+  s("customize-dashboard", "Customize Dashboard", "security", "Reorder and hide Home modules", "ListChecks", "purple", "settings", "none", ["dashboard", "customize", "reorder", "home", "layout"]),
+  s("disputes", "Transaction Disputes", "security", "Report and track transaction issues", "ShieldCheck", "pink", "management", "none", ["dispute", "issue", "report", "refund", "complaint"]),
+  s("account-sharing", "Share Account Details", "security", "Copy or share by NFC", "Share2", "blue", "management", "none", ["share", "nfc", "account", "details", "copy"]),
+  s("partner-offers", "Partner Offers", "cards", "Discounts from local partners", "BadgePercent", "yellow", "management", "none", ["offer", "partner", "discount", "cineplex", "yum cha"]),
+  s("islamic-mode", "EBL Islamic Mode", "community", "One-tap Shariah-compliant banking", "Moon", "green", "settings", "none", ["islamic", "halal", "shariah", "mode"]),
+  s("human-support", "Human Agent Support", "security", "Escalate to a human agent", "Headphones", "blue", "assistant", "none", ["human", "agent", "call", "escalate", "support"]),
+
 ];
 
 export const byId = (id: string) => SERVICES.find((x) => x.id === id);
