@@ -242,3 +242,131 @@ export const DEMO_RATES: { pair: string; rate: string }[] = [
 ];
 
 export const DEMO_RATE_TIMESTAMP = "Locally configured · 01 Jan 2026, 10:00 AM";
+
+/* ---------------- 11. Next reward challenge (single active) ---------------- */
+
+export const NEXT_REWARD = {
+  offerId: "po-gentlepark",
+  partner: "Gentle Park",
+  title: "Unlock 10% off at Gentle Park",
+  target: 2500,
+  progress: 2000,
+  expiry: "31 Dec 2026",
+};
+
+/* ---------------- 12. Explore groups (3 primary + See All) ---------------- */
+
+export interface ExploreItem {
+  key: string;
+  label?: string;
+  serviceId?: string;
+  route?: string;
+  icon?: string;
+  tint?: Tint;
+}
+
+export interface ExploreGroup {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  tint: Tint;
+  primary: ExploreItem[];
+  more: string[];
+}
+
+const it = (serviceId: string, label?: string): ExploreItem => ({ key: serviceId, serviceId, ...(label ? { label } : {}) });
+
+export const EXPLORE_GROUPS: ExploreGroup[] = [
+  {
+    id: "skybanking", title: "EBL Skybanking Services", subtitle: "Your everyday banking shortcuts", icon: "Sparkles", tint: "yellow",
+    primary: [
+      { key: "quick-banking", label: "Quick Banking", route: "/home", icon: "LayoutGrid", tint: "yellow" },
+      it("transaction-history", "Recent Transactions"),
+      it("personalization"),
+    ],
+    more: ["customize-dashboard", "notifications", "profile", "tutorials", "upcoming-payments"],
+  },
+  {
+    id: "account", title: "Account Services", subtitle: "Balances, statements & details", icon: "Landmark", tint: "green",
+    primary: [it("accounts"), it("statements"), it("account-sharing", "Account Sharing")],
+    more: ["certificates", "receipts", "limits", "account-opening", "beneficiaries"],
+  },
+  {
+    id: "cards", title: "Card Services", subtitle: "Manage your card", icon: "CreditCard", tint: "purple",
+    primary: [it("my-card"), it("card-payment"), it("card-controls")],
+    more: ["card-services", "add-card", "activate-card", "reset-card-pin"],
+  },
+  {
+    id: "payments", title: "Payments & Transfers", subtitle: "Send, receive & recharge", icon: "ArrowLeftRight", tint: "yellow",
+    primary: [it("fund-transfer"), it("add-money"), it("recharge", "Mobile Recharge")],
+    more: ["other-bank-transfer", "mfs-transfer", "phone-transfer", "split-pay", "qr-payment", "scheduled-transfer", "scheduled-recharge", "auto-pay"],
+  },
+  {
+    id: "bills", title: "Bills, Education & Lifestyle", subtitle: "Bills, fees & daily life", icon: "Zap", tint: "blue",
+    primary: [it("bill-payment", "Utility Bills"), it("tuition-fee"), it("entertainment")],
+    more: ["bill-electricity", "bill-gas", "bill-water", "bill-internet", "bill-tv", "gift-cards", "gift-netflix", "gift-spotify", "gift-google", "gift-apple", "visa-fee", "e-challan", "education-payments", "e-toll", "donation", "vehicle", "saved-billers", "bill-reminder"],
+  },
+  {
+    id: "savings", title: "Savings & Goals", subtitle: "Grow your money", icon: "PiggyBank", tint: "green",
+    primary: [it("instant-dps"), it("group-dps"), it("goal-setting", "Goal Setting")],
+    more: ["dps", "fdr", "savings-goals", "auto-contribution"],
+  },
+  {
+    id: "loans", title: "Loans & Salary", subtitle: "Borrow and plan repayments", icon: "Banknote", tint: "blue",
+    primary: [it("early-salary", "Early Salary Access"), it("loans", "Loan Services"), it("loan-calculator")],
+    more: [],
+  },
+  {
+    id: "ai", title: "AI & Personal Finance", subtitle: "Smart tools to manage & plan", icon: "Sparkles", tint: "purple",
+    primary: [it("ai-money-manager"), it("ai-advisor", "AI Financial Advisor"), it("voice-assistant")],
+    more: ["budget", "spending-insights"],
+  },
+  {
+    id: "rewards", title: "Rewards & Offers", subtitle: "Points, levels & partners", icon: "Award", tint: "yellow",
+    primary: [it("rewards"), it("next-reward"), it("partner-offers")],
+    more: ["reward-offers"],
+  },
+  {
+    id: "islamic", title: "EBL Islamic", subtitle: "Shariah-compliant banking", icon: "Moon", tint: "green",
+    primary: [it("islamic-mode", "Switch to EBL Islamic"), it("islamic-accounts"), it("islamic-savings")],
+    more: ["islamic", "zakat"],
+  },
+  {
+    id: "security", title: "Security & Support", subtitle: "Protect your account & get help", icon: "ShieldCheck", tint: "blue",
+    primary: [it("ai-support", "AI Support"), it("security-settings", "Security"), it("disputes", "Disputes")],
+    more: ["help-support", "human-support", "faqs", "reset-login-pin", "fingerprint-setup", "faceid-setup", "biometric-reset", "trusted-devices", "login-history", "active-sessions", "accessibility", "language"],
+  },
+];
+
+/* ---------------- 13. Pay & Transfer groups ---------------- */
+
+export interface PayGroup { title: string; subtitle: string; primary: { id: string; label?: string }[]; more: string[] }
+
+export const PAY_GROUPS: PayGroup[] = [
+  {
+    title: "Transfers", subtitle: "Fund Transfer to any account",
+    primary: [{ id: "fund-transfer", label: "To EBL" }, { id: "other-bank-transfer", label: "Other Bank" }, { id: "mfs-transfer", label: "MFS" }],
+    more: ["phone-transfer", "beneficiaries", "split-pay", "transaction-history"],
+  },
+  {
+    title: "Payments", subtitle: "Top up, cards and recharge",
+    primary: [{ id: "add-money" }, { id: "card-payment" }, { id: "recharge", label: "Mobile Recharge" }],
+    more: ["qr-payment", "gift-cards", "donation", "e-toll"],
+  },
+  {
+    title: "Utility Bills", subtitle: "Never miss a due date",
+    primary: [{ id: "bill-electricity", label: "Electricity" }, { id: "bill-gas", label: "Gas" }, { id: "bill-internet", label: "Internet" }],
+    more: ["bill-water", "bill-tv", "bill-payment", "saved-billers", "bill-reminder"],
+  },
+  {
+    title: "Education & Government Fees", subtitle: "Fees, tolls and official payments",
+    primary: [{ id: "tuition-fee" }, { id: "visa-fee" }, { id: "e-challan" }],
+    more: ["education-payments", "e-toll", "zakat"],
+  },
+  {
+    title: "Scheduled", subtitle: "Set it once and relax",
+    primary: [{ id: "auto-pay" }, { id: "scheduled-transfer" }, { id: "scheduled-recharge" }],
+    more: ["auto-contribution", "upcoming-payments"],
+  },
+];
