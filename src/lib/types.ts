@@ -164,7 +164,50 @@ export interface Insight {
   tone: "info" | "warn" | "good";
 }
 
+export interface RecentEntity {
+  id: ID;
+  serviceId: string;
+  label: string;
+  entity: string;
+  masked: string;
+  detail: string;
+  date: string;
+  amount: number;
+  icon: string;
+  tint: "yellow" | "green" | "blue" | "purple" | "pink" | "gray";
+  prefill: Record<string, string>;
+}
+
+export interface DisputeUpdate {
+  stage: string;
+  date: string;
+  note: string;
+}
+
+export interface Dispute {
+  id: ID;
+  txnId: string;
+  txnTitle: string;
+  amount: number;
+  date: string;
+  issue: string;
+  description: string;
+  contact: string;
+  attachment: boolean;
+  status: "Submitted" | "Under Review" | "Additional Information Required" | "Resolved" | "Rejected";
+  expected: string;
+  timeline: DisputeUpdate[];
+}
+
+export interface NfcShare {
+  id: ID;
+  accountName: string;
+  method: string;
+  date: string;
+}
+
 export interface AppState {
+
   loggedIn: boolean;
   demoMode: boolean;
   user: { name: string; mobile: string; email: string; greeting: string };
