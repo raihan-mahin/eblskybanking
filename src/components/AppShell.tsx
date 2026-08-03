@@ -1,0 +1,144 @@
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useState, type ReactNode } from "react";
+import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X } from "lucide-react";
+import { useApp } from "@/lib/store";
+import { cx, Sheet, ListRow } from "./kit";
+import { VoiceAssistant } from "./VoiceAssistant";
+
+const TABS = [
+  { to: "/home", label: "Home", icon: Home },
+  { to: "/my-banking", label: "My Banking", icon: Landmark },
+  { to: "/qr", label: "QR", icon: QrCode },
+  { to: "/explore", label: "Explore", icon: Compass },
+];
+
+export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
+  const { state, patch } = useApp();
+  const nav = useNavigate();
+  const [menu, setMenu] = useState(false);
+  const [notif, setNotif] = useState(false);
+  const unread = state.notifications.filter((n) => !n.read).length;
+
+  const go = (id: string) => { setMenu(false); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
+
+  return (
+    <>
+      <header className="bg-brand px-[18px] pt-4 pb-8">
+        <div className="flex items-center gap-3">
+          {back ? (
+            <button onClick={() => nav({ to: "/home" })} className="press grid size-10 place-items-center rounded-full">
+              <ChevronLeft className="size-6" />
+            </button>
+          ) : (
+            <button onClick={() => setMenu(true)} className="press grid size-12 place-items-center rounded-full bg-foreground text-white">
+              <User className="size-7" />
+            </button>
+          )}
+          <div className="min-w-0 flex-1">
+            {title ? (
+              <h1 className="truncate text-[19px] font-semibold">{title}</h1>
+            ) : (
+              <>
+                <p className="text-[13.5px]">{state.user.greeting}</p>
+                <p className="truncate text-[19px] leading-tight font-semibold">{state.user.name}</p>
+              </>
+            )}
+          </div>
+          <button onClick={() => setNotif(true)} className="press relative grid size-10 place-items-center">
+            <Bell className="size-6" />
+            {unread > 0 && <span className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-accent" />}
+          </button>
+        </div>
+      </header>
+
+      <Sheet open={menu} onClose={() => setMenu(false)} title={state.user.name}>
+        <p className="-mt-2 mb-2 text-[13px] text-muted-foreground">{state.user.mobile}</p>
+        {[
+          ["profile", "Profile", "IdCard"], ["accounts", "Accounts", "Landmark"], ["rewards", "Rewards", "Award"],
+          ["personalization", "Personalization", "Star"], ["security-settings", "Security", "ShieldCheck"],
+          ["accessibility", "Accessibility", "Accessibility"], ["notifications", "Notifications", "Bell"],
+          ["help-support", "Help and Support", "LifeBuoy"],
+        ].map(([id, label, icon]) => (
+          <ListRow key={id} icon={icon} title={label!} onClick={() => go(id!)} />
+        ))}
+        <ListRow icon="Settings" title="Settings & Reset Demo Data" onClick={() => { setMenu(false); nav({ to: "/settings" }); }} />
+        <ListRow icon="LogIn" title="Logout" onClick={() => { patch({ loggedIn: false, demoMode: false }); nav({ to: "/login" }); }} />
+      </Sheet>
+
+      <Sheet open={notif} onClose={() => setNotif(false)} title="Notifications">
+        <div className="mb-2 flex justify-end">
+          <button className="press text-[13px] text-primary"
+            onClick={() => patch({ notifications: state.notifications.map((n) => ({ ...n, read: true })) })}>
+            Mark all read
+          </button>
+        </div>
+        {state.notifications.map((n) => (
+          <div key={n.id} className={cx("border-b border-border py-3 last:border-0", !n.read && "bg-tint-yellow/40")}>
+            <p className="text-[14.5px] font-medium">{n.title}</p>
+            <p className="text-[13px] text-muted-foreground">{n.body}</p>
+            <p className="mt-0.5 text-[11.5px] text-muted-foreground">{n.date}</p>
+          </div>
+        ))}
+      </Sheet>
+    </>
+  );
+}
+
+export function BottomNavigation() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  return (
+    <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
+      <div className="grid grid-cols-4">
+        {TABS.map((t) => {
+          const active = path === t.to;
+          return (
+            <Link key={t.to} to={t.to} className="press flex flex-col items-center gap-1 pt-2.5 pb-2">
+              <t.icon className={cx("size-6", active ? "text-foreground" : "text-muted-foreground")} strokeWidth={active ? 2 : 1.6} />
+              <span className={cx("text-[11.5px]", active ? "font-medium text-foreground" : "text-muted-foreground")}>{t.label}</span>
+              <span className={cx("h-[3px] w-7 rounded-full", active ? "bg-brand" : "bg-transparent")} />
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+export function AppShell({
+  children, title, back, hideNav,
+}: { children: ReactNode; title?: string; back?: boolean; hideNav?: boolean }) {
+  const { state } = useApp();
+  const a = state.accessibility;
+  return (
+    <div
+      className={cx(
+        "relative mx-auto min-h-screen w-full max-w-[430px] bg-background",
+        a.textSize === "large" && "a11y-large",
+        a.textSize === "xlarge" && "a11y-xlarge",
+        a.contrast && "a11y-contrast",
+        a.reduceMotion && "a11y-reduce",
+      )}
+    >
+      <AppHeader title={title} back={back} />
+      <main className="-mt-6 space-y-3 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
+      <VoiceAssistant />
+      {!hideNav && <BottomNavigation />}
+    </div>
+  );
+}
+
+export function FullSheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 mx-auto max-w-[430px] overflow-y-auto bg-background">
+      <div className="sticky top-0 z-10 flex items-center gap-3 bg-brand px-[18px] py-4">
+        <button onClick={onClose} className="press grid size-9 place-items-center rounded-full"><ChevronLeft className="size-6" /></button>
+        <h2 className="flex-1 text-center text-[17px] font-semibold">{title}</h2>
+        <button onClick={onClose} className="press grid size-9 place-items-center rounded-full"><X className="size-5" /></button>
+      </div>
+      <div className="space-y-3 p-[18px] pb-24">{children}</div>
+    </div>
+  );
+}
+
+export { Mic };
