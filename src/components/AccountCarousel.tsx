@@ -237,7 +237,7 @@ function CarouselAction({ label, onClick }: { label: string; onClick: () => void
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(); }}
-      className="press rounded-xl bg-card px-1 py-1.5 text-[11.5px] leading-tight font-medium text-primary"
+      className="press rounded-xl bg-card px-1 py-1 text-[11.5px] leading-tight font-medium text-primary"
     >
       {label}
     </button>
