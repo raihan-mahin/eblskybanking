@@ -19,7 +19,7 @@ import { RechargePanel } from "@/components/panels/Recharge";
 import { PartnerOffersPanel } from "@/components/panels/PartnerOffers";
 import { DisputesPanel } from "@/components/panels/Disputes";
 import { AccountSharingPanel } from "@/components/panels/Sharing";
-import { IslamicPanel } from "@/components/panels/Islamic";
+import { TravelOfferPanel } from "@/components/panels/TravelOffer";
 import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { byId } from "@/lib/services";
 import { useApp } from "@/lib/store";
@@ -68,15 +68,21 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "partner-offers": return <PartnerOffersPanel />;
     case "disputes": return <DisputesPanel txnId={txn} />;
     case "account-sharing": return <AccountSharingPanel />;
-    case "islamic-mode": return <IslamicPanel />;
     case "customize-dashboard": return <DashboardCustomizer />;
     case "human-support": return <SupportPanel tickets human />;
+
+    case "air-tickets":
+    case "hotel-booking":
+    case "movie-tickets":
+    case "star-cineplex":
+      return <TravelOfferPanel serviceId={id} />;
 
     case "bill-payment":
     case "bill-reminder":
     case "saved-billers":
     case "gift-cards":
     case "education-payments":
+    case "utility-history":
       return <BillsPanel />;
     case "split-pay": return <SplitPayPanel />;
     case "card-services":
@@ -88,6 +94,11 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "auto-pay": return <SchedulePanel autoPay />;
     case "scheduled-transfer":
     case "scheduled-recharge":
+    case "scheduled-bill":
+    case "scheduled-tuition":
+    case "scheduled-card-payment":
+    case "scheduled-donation":
+    case "schedule-history":
     case "auto-contribution":
     case "payment-intelligence":
       return <SchedulePanel />;
@@ -119,7 +130,9 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "faqs": return <FaqPanel />;
     case "tutorials": return <TutorialsPanel />;
     case "notifications": return <NotificationsPanel />;
-    case "accounts": return <AccountsPanel />;
+    case "accounts":
+    case "account-details":
+      return <AccountsPanel />;
     case "profile": return <ProfilePanel />;
     case "statements": return <DocumentsPanel kind="statements" />;
     case "certificates": return <DocumentsPanel kind="certificates" />;
@@ -129,12 +142,11 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
       return <LoansPanel />;
     case "limits": return <LimitsPanel />;
     case "personalization": return <PersonalizationPanel />;
-    case "islamic":
-    case "islamic-accounts":
-      return <IslamicPanel />;
     case "islamic-savings": return <SavingsPanel focus="dps" />;
     case "donation":
     case "zakat":
+    case "charity-campaigns":
+    case "saved-organizations":
     case "e-toll":
     case "vehicle":
     case "entertainment":
@@ -144,7 +156,9 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "help-support": return <HelpPanel />;
     case "accessibility": return <AccessibilityPanel />;
 
-    case "transaction-history": return <HistoryPanel />;
+    case "transaction-history":
+    case "donation-history":
+      return <HistoryPanel />;
     case "beneficiaries": return <BeneficiariesPanel />;
     default: break;
   }
