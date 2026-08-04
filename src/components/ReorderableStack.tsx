@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { GripVertical } from "lucide-react";
 import { cx } from "./kit";
 
-const HOLD_MS = 2200;
+const HOLD_MS = 800;
 const MOVE_CANCEL_PX = 10;
 const EDGE_PX = 90;
 
@@ -211,8 +211,9 @@ export function ReorderableStack({
             style={{
               transform: dragging
                 ? `translateY(${offset}px) scale(1.015)`
-                : `translateY(${shiftFor(i)}px)`,
-              transition: dragging ? "none" : "transform 180ms ease",
+                : `translateY(${shiftFor(i)}px) scale(${pressing ? 0.99 : 1})`,
+              transition: dragging ? "none" : "transform 180ms ease, opacity 180ms ease",
+              opacity: pressing ? 0.94 : 1,
               zIndex: dragging ? 30 : undefined,
               position: "relative",
               touchAction: dragIndex !== null ? "none" : undefined,
