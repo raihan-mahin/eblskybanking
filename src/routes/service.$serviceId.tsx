@@ -62,7 +62,9 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
   if (SECURITY_IDS.includes(id)) return <SecurityPanel focus={id} />;
 
   switch (id) {
-    case "fund-transfer": return <FundTransferPanel initialPrefill={prefill} />;
+    case "fund-transfer":
+    case "to-my-account":
+      return <FundTransferPanel initialPrefill={prefill} />;
     case "phone-transfer": return <PhoneTransferPanel initialMobile={mobile ?? prefill?.["mobile"]} />;
     case "recharge": return <RechargePanel initial={prefill} />;
     case "partner-offers": return <PartnerOffersPanel />;
@@ -165,7 +167,17 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
 
   if (id === "other-bank-transfer") return <TxnFlow serviceId={id} {...OTHER_BANK_CONFIG} initialValues={prefill} initialAmount={prefill?.["amount"]} />;
 
-  const cfg = TXN_CONFIGS[id];
+  // Fee/bill variants reuse an existing transaction flow — no duplicate service pages.
+  const FLOW_ALIAS: Record<string, string> = {
+    "school-fee": "tuition-fee",
+    "college-fee": "tuition-fee",
+    "university-fee": "tuition-fee",
+    "universal-pension": "tuition-fee",
+    "government-fees": "visa-fee",
+    "bill-telephone": "bill-internet",
+  };
+
+  const cfg = TXN_CONFIGS[id] ?? TXN_CONFIGS[FLOW_ALIAS[id] ?? ""];
   if (cfg) return <TxnFlow serviceId={id} {...cfg} initialValues={prefill} initialAmount={prefill?.["amount"]} />;
 
   return <RelatedPanel serviceId={id} />;
