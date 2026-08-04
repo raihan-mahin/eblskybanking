@@ -7,7 +7,7 @@ import { AccountCarousel } from "@/components/AccountCarousel";
 import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { BirthdayNotice } from "@/components/BirthdayNotice";
 import { NextRewardCard } from "@/components/NextReward";
-import { useApp, money, levelFor, nextLevel } from "@/lib/store";
+import { useApp, money } from "@/lib/store";
 import { byId, SERVICES } from "@/lib/services";
 
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES, QUICK_CATALOGUE } from "@/lib/extras";
@@ -34,8 +34,6 @@ function HomePage() {
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const nepal = state.goals.find((g) => g.title === "Nepal Trip") ?? state.goals[0];
 
-  const pts = state.rewards.points;
-  const nl = nextLevel(pts);
 
   const pinned = state.personalization.pinned.filter((id) => byId(id));
   const byUsage = SERVICES.slice()
