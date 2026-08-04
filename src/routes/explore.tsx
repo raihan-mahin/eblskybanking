@@ -1,83 +1,96 @@
-import { createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { SectionCard, ListRow, SearchField, ServiceTile } from "@/components/kit";
-import { Icon } from "@/components/Icon";
-import { searchServices, byId, TINT_BG, categoryTitle } from "@/lib/services";
-import { EXPLORE_GROUPS, type ExploreItem } from "@/lib/extras";
 import { cx } from "@/components/kit";
+import { Icon } from "@/components/Icon";
+import { TINT_BG } from "@/lib/services";
+import { EXPLORE_OPTIONS, type ExploreOption } from "@/lib/extras";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
-      { title: "Explore Services — EBL Sky Banking" },
-      { name: "description", content: "Browse every banking service by category: payments, bills, savings, cards and support." },
-      { property: "og:title", content: "Explore Services — EBL Sky Banking" },
-      { property: "og:description", content: "Browse every banking service by category: payments, bills, savings, cards and support." },
+      { title: "Explore EBL — EBL Sky Banking" },
+      { name: "description", content: "Explore EBL products, rewards and offers, ZIP partners, biometric login and security & support." },
+      { property: "og:title", content: "Explore EBL — EBL Sky Banking" },
+      { property: "og:description", content: "Explore EBL products, rewards and offers, ZIP partners, biometric login and security & support." },
     ],
   }),
   component: ExplorePage,
 });
 
-const GROUPS = EXPLORE_GROUPS;
+const ARROW_BG: Record<string, string> = {
+  yellow: "bg-[#F59E0B]",
+  blue: "bg-[#2563EB]",
+  green: "bg-[#16A34A]",
+  purple: "bg-[#7C3AED]",
+  pink: "bg-[#DB2777]",
+  gray: "bg-[#475569]",
+};
+
+const RING: Record<string, string> = {
+  yellow: "border-[#F59E0B]/40",
+  blue: "border-[#2563EB]/40",
+  green: "border-[#16A34A]/40",
+  purple: "border-[#7C3AED]/40",
+  pink: "border-[#DB2777]/40",
+  gray: "border-[#475569]/30",
+};
 
 function ExplorePage() {
   const nav = useNavigate();
-  const fromHome = useRouterState({
-    select: (s) => Boolean((s.location.state as { fromHome?: boolean }).fromHome),
-  });
-  const [q, setQ] = useState("");
-  const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
-  const results = searchServices(q);
 
-  const openItem = (i: ExploreItem) => {
-    if (i.route === "/home") { nav({ to: "/home" }); return; }
-    if (i.serviceId) go(i.serviceId);
+  const open = (o: ExploreOption) => {
+    if (o.to === "/products") { nav({ to: "/products", state: { fromExplore: true } as never }); return; }
+    if (o.to === "/category/$categoryId") { nav({ to: "/category/$categoryId", params: { categoryId: o.param! } }); return; }
+    if (o.to === "/service/$serviceId") nav({ to: "/service/$serviceId", params: { serviceId: o.param! } });
   };
 
+  const [products, rewards, ...rest] = EXPLORE_OPTIONS;
 
-  const tileFor = (i: ExploreItem) => {
-    const svc = i.serviceId ? byId(i.serviceId) : undefined;
-    const icon = i.icon ?? svc?.icon ?? "Sparkles";
-    const tint = i.tint ?? svc?.tint ?? "gray";
-    const label = i.label ?? svc?.title ?? i.key;
-    return <ServiceTile key={i.key} icon={icon} tint={tint} label={label} onClick={() => openItem(i)} />;
-  };
+  const Big = ({ o }: { o: ExploreOption }) => (
+    <button
+      onClick={() => open(o)}
+      className={cx("press flex min-h-[188px] flex-1 flex-col rounded-[18px] border bg-card p-4 text-left", RING[o.tint])}
+    >
+      <span className={cx("mx-auto grid size-16 place-items-center rounded-full", TINT_BG[o.tint])}>
+        <Icon name={o.icon} className="size-8" />
+      </span>
+      <span className="mt-3 block text-center text-[16px] font-semibold text-primary">{o.title}</span>
+      <span className="mt-1 block text-center text-[12.5px] leading-snug text-muted-foreground">{o.subtitle}</span>
+      <span className="mt-auto flex justify-end pt-3">
+        <span className={cx("grid size-8 place-items-center rounded-full text-white", ARROW_BG[o.tint])}>
+          <Icon name="ArrowRight" className="size-4" />
+        </span>
+      </span>
+    </button>
+  );
+
+  const Row = ({ o }: { o: ExploreOption }) => (
+    <button
+      onClick={() => open(o)}
+      className={cx("press flex w-full items-center gap-3 rounded-[18px] border bg-card p-4 text-left", RING[o.tint])}
+    >
+      <span className={cx("grid size-12 shrink-0 place-items-center rounded-full", TINT_BG[o.tint])}>
+        <Icon name={o.icon} className="size-6" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[16px] font-semibold text-primary">{o.title}</span>
+        <span className="block text-[12.5px] leading-snug text-muted-foreground">{o.subtitle}</span>
+      </span>
+      <span className={cx("grid size-8 shrink-0 place-items-center rounded-full text-white", ARROW_BG[o.tint])}>
+        <Icon name="ArrowRight" className="size-4" />
+      </span>
+    </button>
+  );
 
   return (
-    <AppShell title={fromHome ? "Explore Services" : "Explore"} back={fromHome}>
-
-      <SearchField value={q} onChange={setQ} placeholder="Search all services" />
-
-      {q ? (
-        <SectionCard title="Results" subtitle={`${results.length} services`}>
-          {results.map((r) => (
-            <ListRow key={r.id} icon={r.icon} tint={r.tint} title={r.title} subtitle={categoryTitle(r.category)} onClick={() => go(r.id)} />
-          ))}
-          {results.length === 0 && <p className="py-6 text-center text-[13.5px] text-muted-foreground">Nothing found for “{q}”.</p>}
-        </SectionCard>
-      ) : (
-        GROUPS.map((g) => (
-          <section key={g.id} className="app-card overflow-hidden">
-            <div className="flex items-center gap-3 p-4 pb-2">
-              <span className={cx("grid size-11 shrink-0 place-items-center rounded-full", TINT_BG[g.tint])}>
-                <Icon name={g.icon} className="size-5" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[16px] font-semibold text-primary">{g.title}</span>
-                <span className="block truncate text-[12.5px] text-muted-foreground">{g.subtitle}</span>
-              </span>
-              {g.more.length > 0 && (
-                <button onClick={() => nav({ to: "/category/$categoryId", params: { categoryId: g.id } })} className="press shrink-0 text-[13px] font-medium text-primary">See All</button>
-              )}
-            </div>
-            <div className="grid grid-cols-3 border-t border-border px-1 pb-2">
-              {g.primary.map(tileFor)}
-            </div>
-          </section>
-        ))
-      )}
-
+    <AppShell title="Explore EBL">
+      <div className="flex gap-3">
+        {products && <Big o={products} />}
+        {rewards && <Big o={rewards} />}
+      </div>
+      {rest.map((o) => (
+        <Row key={o.id} o={o} />
+      ))}
     </AppShell>
   );
 }

@@ -298,7 +298,7 @@ export const CATEGORY_PRIORITY: Record<string, string[]> = {
   ai: ["ai-money-manager", "ai-advisor", "voice-assistant"],
   rewards: ["rewards", "next-reward", "partner-offers"],
   security: ["ai-support", "security-settings", "disputes"],
-  skybanking: ["personalization", "customize-dashboard", "notifications"],
+  skybanking: ["student-file", "payroll-banking", "agent-banking"],
 };
 
 const groupFor = (c: Category): ExploreGroup => {
@@ -408,3 +408,99 @@ export const TRAVEL_OFFERS: TravelOffer[] = [
 
 export const travelOfferFor = (serviceId: string) => TRAVEL_OFFERS.find((t) => t.serviceId === serviceId);
 
+
+/* ---------------- 15. Products category order (approved 13) ---------------- */
+
+export const PRODUCT_CATEGORY_ORDER: string[] = [
+  "account", "savings", "loans", "cards", "transfers", "everyday", "utility",
+  "edugov", "travel", "ai", "donations", "scheduled", "skybanking",
+];
+
+export const PRODUCT_CATEGORIES = PRODUCT_CATEGORY_ORDER
+  .map((id) => CATEGORIES.find((c) => c.id === id))
+  .filter((c): c is Category => Boolean(c));
+
+/* ---------------- 16. Other EBL Services — information only ---------------- */
+
+export interface EblInfoService {
+  serviceId: string;
+  description: string;
+  benefit: string;
+  points: string[];
+  document?: boolean;
+}
+
+export const EBL_INFO_SERVICES: EblInfoService[] = [
+  {
+    serviceId: "student-file",
+    description: "A student file lets you send tuition and living expenses abroad through your bank in an organised way.",
+    benefit: "One place to manage overseas education payments.",
+    points: ["Open a student file with your admission documents", "Send tuition and living costs to your institution", "Keep a record of every outward payment"],
+  },
+  {
+    serviceId: "payroll-banking",
+    description: "Payroll banking gives organisations a simple way to disburse salaries into EBL accounts.",
+    benefit: "Faster salary disbursement for employers and employees.",
+    points: ["Bulk salary disbursement", "Employee account onboarding support", "Salary account benefits for staff"],
+  },
+  {
+    serviceId: "women-payroll",
+    description: "A payroll banking suite shaped around the needs of working women.",
+    benefit: "Payroll banking with women-focused benefits.",
+    points: ["Salary account with tailored benefits", "Savings and goal support", "Dedicated service guidance"],
+  },
+  {
+    serviceId: "agent-banking",
+    description: "Banking services delivered through EBL agent points closer to where you live.",
+    benefit: "Everyday banking beyond branch hours and locations.",
+    points: ["Cash deposit and withdrawal at agent points", "Account opening assistance", "Balance and statement enquiry"],
+  },
+  {
+    serviceId: "entrepreneurial-services",
+    description: "Support built for small businesses, startups and entrepreneurs.",
+    benefit: "Banking and advisory support as your business grows.",
+    points: ["Business account guidance", "Working capital information", "Advisory and referral support"],
+  },
+  {
+    serviceId: "super-saver",
+    description: "A savings proposition that bundles everyday banking with added benefits.",
+    benefit: "Save regularly with extra account benefits.",
+    points: ["Savings account with added privileges", "Linked deposit options", "Digital access through Sky Banking"],
+  },
+  {
+    serviceId: "deposit-rate-sheet",
+    description: "Deposit rates change from time to time and are published by the bank.",
+    benefit: "Always check the latest published rate sheet before deciding.",
+    points: ["Rates are not shown in this prototype", "View the published rate sheet for current figures", "Contact EBL for product-specific guidance"],
+    document: true,
+  },
+  {
+    serviceId: "schedule-of-charges",
+    description: "Fees and charges are published by the bank and updated periodically.",
+    benefit: "Always check the latest published schedule of charges.",
+    points: ["Charges are not shown in this prototype", "View the published schedule for current figures", "Contact EBL for account-specific charges"],
+    document: true,
+  },
+];
+
+export const eblInfoById = (id: string) => EBL_INFO_SERVICES.find((x) => x.serviceId === id);
+
+/* ---------------- 17. Explore landing options ---------------- */
+
+export interface ExploreOption {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  tint: Tint;
+  to: string;
+  param?: string;
+}
+
+export const EXPLORE_OPTIONS: ExploreOption[] = [
+  { id: "products", title: "Products", subtitle: "Explore EBL products", icon: "Package", tint: "yellow", to: "/products" },
+  { id: "rewards", title: "Rewards & Offers", subtitle: "Explore EBL rewards and offers", icon: "Gift", tint: "blue", to: "/category/$categoryId", param: "rewards" },
+  { id: "zip", title: "ZIP Partners", subtitle: "Explore EBL partners", icon: "BadgePercent", tint: "green", to: "/service/$serviceId", param: "partner-offers" },
+  { id: "biometric", title: "Biometric Login", subtitle: "Login securely and instantly with your biometric.", icon: "Fingerprint", tint: "yellow", to: "/service/$serviceId", param: "fingerprint-setup" },
+  { id: "security", title: "Security & Support", subtitle: "Protect your account and get help", icon: "ShieldCheck", tint: "purple", to: "/category/$categoryId", param: "security" },
+];

@@ -20,6 +20,7 @@ import { PartnerOffersPanel } from "@/components/panels/PartnerOffers";
 import { DisputesPanel } from "@/components/panels/Disputes";
 import { AccountSharingPanel } from "@/components/panels/Sharing";
 import { TravelOfferPanel } from "@/components/panels/TravelOffer";
+import { EblInfoPanel } from "@/components/panels/EblInfo";
 import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { byId } from "@/lib/services";
 import { useApp } from "@/lib/store";
@@ -153,6 +154,16 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "vehicle":
     case "entertainment":
       return <LifestylePanel focus={id} />;
+
+    case "student-file":
+    case "payroll-banking":
+    case "women-payroll":
+    case "agent-banking":
+    case "entrepreneurial-services":
+    case "super-saver":
+    case "deposit-rate-sheet":
+    case "schedule-of-charges":
+      return <EblInfoPanel serviceId={id} />;
 
     case "ai-support": return <SupportPanel tickets />;
     case "help-support": return <HelpPanel />;

@@ -6,7 +6,7 @@ import {
   PiggyBank, Repeat, Send, BookmarkCheck, Clock, Receipt, Settings, LifeBuoy, HelpCircle,
   Languages, MonitorSmartphone, LogIn, Banknote, BadgePercent, Plane, Laptop, ShoppingBag,
   UserPlus, Share2, IdCard, Camera, Lock, Snowflake, ListChecks, Moon, Coins, ChartColumn,
-  Lightbulb, CircleDollarSign, Star, ChevronRight, Info,
+  Lightbulb, CircleDollarSign, Star, ChevronRight, Info, Package, LayoutGrid, ArrowRight,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -18,7 +18,7 @@ export const ICONS: Record<string, LucideIcon> = {
   PiggyBank, Repeat, Send, BookmarkCheck, Clock, Receipt, Settings, LifeBuoy, HelpCircle,
   Languages, MonitorSmartphone, LogIn, Banknote, BadgePercent, Plane, Laptop, ShoppingBag,
   UserPlus, Share2, IdCard, Camera, Lock, Snowflake, ListChecks, Moon, Coins, ChartColumn,
-  Lightbulb, CircleDollarSign, Star, ChevronRight, Info,
+  Lightbulb, CircleDollarSign, Star, ChevronRight, Info, Package, LayoutGrid, ArrowRight,
 };
 
 export function Icon({ name, className }: { name: string; className?: string }) {
