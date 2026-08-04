@@ -79,26 +79,30 @@ function HomePage() {
 
   const modules: Record<string, React.ReactNode> = {
     quick: (
-      <SectionCard
-        key="quick"
-        title="Quick Banking"
-        action="See all"
-        onAction={() => setAllQuick(true)}
-        className="!py-3"
-      >
+      <SectionCard key="quick" className="!py-3">
         <SegmentedTabs
           tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Favorites" }]}
           value={tab}
           onChange={setTab}
         />
         {tab === "quick" ? (
-          <div className="grid grid-cols-3">
-            {quickIds.map((id) => {
-              const s = byId(id)!;
-              return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
-            })}
-          </div>
+          <>
+            <div className="grid grid-cols-3">
+              {quickIds.map((id) => {
+                const s = byId(id)!;
+                return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
+              })}
+            </div>
+            <button
+              aria-label="Show all Quick Banking services"
+              onClick={() => setAllQuick(true)}
+              className="press mx-auto -mb-1 flex h-7 w-16 items-center justify-center rounded-full text-muted-foreground"
+            >
+              <ChevronDown className="size-4" />
+            </button>
+          </>
         ) : (
+
           <div className="mt-1">
             {favorites.slice(0, 6).map((r) => (
               <ListRow
