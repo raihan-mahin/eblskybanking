@@ -11,6 +11,7 @@ import type { Goal } from "@/lib/types";
 export function RewardsPanel() {
   const { state, patch, notify } = useApp();
   const toast = useToast();
+  const nav = useNavigate();
   const [auth, setAuth] = useState<null | string>(null);
   const pts = state.rewards.points;
   const lvl = levelFor(pts);
