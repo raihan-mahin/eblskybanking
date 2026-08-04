@@ -205,7 +205,7 @@ function HomePage() {
       </SectionCard>
     ),
     more: (
-      <SectionCard key="more" title="More services">
+      <SectionCard key="more" title="More services" className="!py-3">
         <div className="grid grid-cols-3">
           {moreIds.map((id) => {
             const s = byId(id)!;
