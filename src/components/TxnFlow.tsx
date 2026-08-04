@@ -4,6 +4,8 @@ import { Check, Download, Share2, Repeat, Contact } from "lucide-react";
 import { Button, FormField, TextInput, Select, AmountInput, SectionCard, ErrorState, cx } from "./kit";
 import { AuthenticationSheet } from "./AuthenticationSheet";
 import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "./ContactPicker";
+import { MFS_MARKS } from "./MfsLogos";
+
 import { maskMobile } from "@/lib/extras";
 import { useApp, money, pointsFor } from "@/lib/store";
 
