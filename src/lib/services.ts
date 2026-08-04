@@ -43,13 +43,13 @@ export const CATEGORIES: Category[] = [
   { id: "donations", title: "Donations & Giving", subtitle: "Donations, zakat and campaigns", icon: "HeartHandshake", tint: "pink", payment: true },
   { id: "scheduled", title: "Scheduled Payments", subtitle: "Auto pay and future payments", icon: "CalendarDays", tint: "blue", payment: true },
   { id: "account", title: "Account Services", subtitle: "Balances, statements & details", icon: "Landmark", tint: "green" },
-  { id: "cards", title: "Card Management", subtitle: "Controls, limits and card bills", icon: "CreditCard", tint: "purple" },
+  { id: "cards", title: "Cards", subtitle: "Controls, limits and card bills", icon: "CreditCard", tint: "purple" },
   { id: "savings", title: "DPS, Savings & Goals", subtitle: "Grow your money", icon: "PiggyBank", tint: "green" },
   { id: "loans", title: "Loans & Salary", subtitle: "Borrow and plan repayments", icon: "Banknote", tint: "blue" },
   { id: "ai", title: "AI & Money Tools", subtitle: "Smart tools to manage & plan", icon: "Sparkles", tint: "purple" },
   { id: "rewards", title: "Rewards & Offers", subtitle: "Points, levels & partners", icon: "Award", tint: "yellow" },
   { id: "security", title: "Security & Support", subtitle: "Protect your account & get help", icon: "ShieldCheck", tint: "blue" },
-  { id: "skybanking", title: "EBL Sky Banking Services", subtitle: "Your everyday app shortcuts", icon: "LayoutGrid", tint: "yellow" },
+  { id: "skybanking", title: "Other EBL Services", subtitle: "Programmes, information & app settings", icon: "LayoutGrid", tint: "yellow" },
 ];
 
 export const categoryById = (id: string) => CATEGORIES.find((c) => c.id === id);
