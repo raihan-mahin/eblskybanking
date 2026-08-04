@@ -52,7 +52,7 @@ export function AccountCarousel() {
   const { state } = useApp();
   const nav = useNavigate();
   const [show, setShow] = useState(false);
-  const [showNumber, setShowNumber] = useState(false);
+  
   const [index, setIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
