@@ -298,7 +298,7 @@ export const CATEGORY_PRIORITY: Record<string, string[]> = {
   ai: ["ai-money-manager", "ai-advisor", "voice-assistant"],
   rewards: ["rewards", "next-reward", "partner-offers"],
   security: ["ai-support", "security-settings", "disputes"],
-  skybanking: ["personalization", "customize-dashboard", "notifications"],
+  skybanking: ["student-file", "payroll-banking", "agent-banking"],
 };
 
 const groupFor = (c: Category): ExploreGroup => {
