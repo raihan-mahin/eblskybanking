@@ -133,15 +133,28 @@ export function RechargePanel({ initial }: { initial?: Record<string, string> | 
 
         <div className="mt-3">
           <p className="mb-2 text-[13px] font-medium text-muted-foreground">Operator (tap to change)</p>
-          <div className="grid grid-cols-3 gap-2">
-            {OPERATORS.map((o) => (
-              <button key={o} onClick={() => { setOverride(o); setPack(null); }}
-                className={cx("press rounded-xl border p-2.5 text-[12.5px] font-medium",
-                  operator === o ? "border-brand bg-brand-soft" : "border-border")}>
-                {o}
-              </button>
-            ))}
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+            {OPERATORS.map((o) => {
+              const Mark = OPERATOR_MARKS[o];
+              const active = operator === o;
+              return (
+                <button key={o} onClick={() => { setOverride(o); setPack(null); }}
+                  className={cx("press relative flex flex-col items-center justify-start gap-1 rounded-xl border bg-card px-1.5 py-2",
+                    active ? "border-brand bg-brand-soft" : "border-border")}>
+                  <span className="flex h-8 w-full items-center justify-center">
+                    {Mark ? <Mark className="h-8 w-auto max-w-[70%]" /> : null}
+                  </span>
+                  <span className="text-[12px] font-medium leading-tight">{o}</span>
+                  {active && (
+                    <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-brand">
+                      <Check className="size-2.5 text-brand-foreground" />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
+
         </div>
 
         <div className="mt-3">
