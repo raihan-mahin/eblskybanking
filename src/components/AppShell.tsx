@@ -30,7 +30,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-brand px-[18px] pt-[calc(env(safe-area-inset-top)+0.6rem)] pb-6 shadow-sm">
+      <header className="sticky top-0 z-40 bg-brand px-[18px] pt-[calc(env(safe-area-inset-top)+0.4rem)] pb-3 shadow-sm">
         <div className="flex items-center gap-2">
           {back ? (
             <button onClick={() => nav({ to: "/home" })} className="press grid size-10 place-items-center rounded-full">
