@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Star, ChevronUp, ChevronDown, Pin } from "lucide-react";
+import { useState, useRef } from "react";
+import { Star, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Pin } from "lucide-react";
 import { AppShell, FullSheet } from "@/components/AppShell";
 import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, cx } from "@/components/kit";
 import { Icon } from "@/components/Icon";
