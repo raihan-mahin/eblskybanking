@@ -11,7 +11,8 @@ import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money } from "@/lib/store";
 import { byId, SERVICES } from "@/lib/services";
 
-import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES, QUICK_CATALOGUE } from "@/lib/extras";
+import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
+import { CATEGORIES } from "@/lib/services";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -30,6 +31,7 @@ function HomePage() {
   const nav = useNavigate();
   const [tab, setTab] = useState("quick");
   const [allQuick, setAllQuick] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const nepal = state.goals.find((g) => g.title === "Nepal Trip") ?? state.goals[0];
@@ -43,6 +45,15 @@ function HomePage() {
   const quickIds = [...new Set([...pinned, ...byUsage, ...state.quickBanking, ...DEFAULT_QUICK])]
     .filter((id) => byId(id))
     .slice(0, 3);
+
+  const moreIds = MORE_SERVICES_PRIORITY.filter((id) => byId(id) && !quickIds.includes(id)).slice(0, 3);
+
+  const shownIds = new Set([...quickIds, ...moreIds]);
+  const expandedGroups = CATEGORIES.map((c) => ({
+    id: c.id,
+    label: c.title.split(",")[0]!.split("&")[0]!.trim(),
+    items: SERVICES.filter((s) => s.category === c.id && !shownIds.has(s.id)).slice(0, 6),
+  })).filter((g) => g.items.length > 0);
 
   const togglePin = (id: string) => {
     const p = state.personalization;
@@ -200,14 +211,42 @@ function HomePage() {
     more: (
       <SectionCard key="more" title="More services">
         <div className="grid grid-cols-3">
-          {MORE_SERVICES.map((m) => {
-            if (m.route) {
-              return <ServiceTile key={m.id} icon="Compass" tint="yellow" label={m.label} onClick={() => nav({ to: "/explore" })} />;
-            }
-            const s = byId(m.id);
-            if (!s) return null;
-            return <ServiceTile key={m.id} icon={s.icon} tint={s.tint} label={m.label} onClick={() => go(m.id)} />;
+          {moreIds.map((id) => {
+            const s = byId(id)!;
+            return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
           })}
+        </div>
+        <button
+          aria-label={moreOpen ? "Collapse additional services" : "Show additional services"}
+          onClick={() => setMoreOpen((v) => !v)}
+          className="press mx-auto -mb-1 flex h-7 w-16 items-center justify-center rounded-full text-muted-foreground"
+        >
+          {moreOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+        </button>
+        <div
+          className="grid transition-all duration-300 ease-out"
+          style={{ gridTemplateRows: moreOpen ? "1fr" : "0fr", opacity: moreOpen ? 1 : 0 }}
+        >
+          <div className="overflow-hidden">
+            <div className="border-t border-border pt-2">
+              {expandedGroups.map((g) => (
+                <div key={g.id} className="mb-1">
+                  <p className="px-1 text-[12.5px] font-medium text-muted-foreground">{g.label}</p>
+                  <div className="grid grid-cols-3">
+                    {g.items.map((s) => (
+                      <ServiceTile key={s.id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(s.id)} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => nav({ to: "/explore" })}
+                className="press mt-1 w-full rounded-xl bg-muted py-2 text-[12.5px] font-medium text-primary"
+              >
+                Open Full Explore
+              </button>
+            </div>
+          </div>
         </div>
       </SectionCard>
     ),
