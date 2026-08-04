@@ -220,7 +220,7 @@ export function ReorderableStack({
               WebkitUserSelect: lockSelection ? "none" : undefined,
               WebkitTouchCallout: lockSelection ? "none" : undefined,
             }}
-            onSelectStart={(e) => {
+            onSelect={(e: React.SyntheticEvent) => {
               if (lockSelection) e.preventDefault();
             }}
             className={cx(dragging && "rounded-[18px] shadow-xl ring-2 ring-brand")}
