@@ -22,6 +22,8 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   const nav = useNavigate();
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
+  const [search, setSearch] = useState(false);
+
   const unread = state.notifications.filter((n) => !n.read).length;
 
   const go = (id: string) => { setMenu(false); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
@@ -49,6 +51,9 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
               </>
             )}
           </div>
+          <button aria-label="Search services" onClick={() => setSearch(true)} className="press grid size-10 place-items-center">
+            <Search className="size-6" />
+          </button>
           <button
             aria-label="AI Help"
             onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "ai-support" } })}
@@ -56,6 +61,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
           >
             <Headphones className="size-6" />
           </button>
+
           <button onClick={() => setNotif(true)} className="press relative grid size-10 place-items-center">
             <Bell className="size-6" />
             {unread > 0 && <span className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-accent" />}
