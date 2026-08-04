@@ -51,6 +51,9 @@ export function TxnFlow(p: TxnFlowProps) {
   const [auth, setAuth] = useState(false);
   const [error, setError] = useState("");
   const [receipt, setReceipt] = useState<{ ref: string; amount: number; points: number } | null>(null);
+  const [pickerFor, setPickerFor] = useState<string | null>(null);
+  const [contactNames, setContactNames] = useState<Record<string, string>>({});
+  const [pickError, setPickError] = useState("");
 
   const fields = p.fields ?? [];
   const fee = p.fee ?? 0;
@@ -59,7 +62,32 @@ export function TxnFlow(p: TxnFlowProps) {
   const points = pointsFor(p.category, amt);
   const set = (k: string, v: string) => setValues((s) => ({ ...s, [k]: v }));
   /** Value shown to the user on review/receipt — masked when a display value exists. */
-  const shown = (k: string) => p.displayValues?.[k] ?? values[k] ?? "";
+  const shown = (k: string) => {
+    if (p.displayValues?.[k]) return p.displayValues[k];
+    const v = values[k] ?? "";
+    const f = fields.find((x) => x.key === k);
+    if (f?.contactPicker && v) {
+      const name = contactNames[k];
+      return `${name ? name + " · " : ""}${maskMobile(v)}`;
+    }
+    return v;
+  };
+
+  const applyContact = (key: string, name: string, number: string) => {
+    set(key, number);
+    setContactNames((s) => ({ ...s, [key]: name }));
+    setPickError("");
+  };
+
+  const openContacts = async (key: string) => {
+    setPickError("");
+    const device = await pickDeviceContact();
+    if (!device) { setPickerFor(key); return; }
+    const numbers = device.numbers.map(normalizeBdMobile).filter(isValidBdMobile);
+    if (numbers.length !== 1) { setPickerFor(key); return; }
+    applyContact(key, device.name, numbers[0]!);
+  };
+
 
   const validate = () => {
     for (const f of fields) if (!f.optional && !values[f.key]) return `${f.label} is required.`;
