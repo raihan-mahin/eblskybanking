@@ -172,18 +172,18 @@ export function AccountCarousel() {
         {iphone && <GoalSlide goal={iphone} show={show} onToggle={toggle} tint="bg-tint-purple" hidden={hidden} go={go} />}
       </div>
 
-      <div className="flex items-center justify-center gap-3 pt-1 pb-2">
+      <div className="flex items-center justify-center gap-2 pb-1.5">
         <button aria-label="Previous card" onClick={() => slideTo(index - 1)} disabled={index === 0}
-          className="press grid size-7 place-items-center rounded-full bg-muted disabled:opacity-40">
+          className="press grid size-6 place-items-center rounded-full bg-muted disabled:opacity-40">
           <ChevronLeft className="size-4" />
         </button>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1">
           {slides.map((s, i) => (
             <span key={s} className={cx("h-1.5 rounded-full transition-all", i === index ? "w-5 bg-brand" : "w-1.5 bg-muted")} />
           ))}
         </div>
         <button aria-label="Next card" onClick={() => slideTo(index + 1)} disabled={index === slides.length - 1}
-          className="press grid size-7 place-items-center rounded-full bg-muted disabled:opacity-40">
+          className="press grid size-6 place-items-center rounded-full bg-muted disabled:opacity-40">
           <ChevronRight className="size-4" />
         </button>
       </div>
