@@ -45,6 +45,15 @@ function HomePage() {
     .filter((id) => byId(id))
     .slice(0, 3);
 
+  const moreIds = MORE_SERVICES_PRIORITY.filter((id) => byId(id) && !quickIds.includes(id)).slice(0, 3);
+
+  const shownIds = new Set([...quickIds, ...moreIds]);
+  const expandedGroups = CATEGORIES.map((c) => ({
+    id: c.id,
+    label: c.title.split(",")[0]!.split("&")[0]!.trim(),
+    items: SERVICES.filter((s) => s.category === c.id && !shownIds.has(s.id)).slice(0, 6),
+  })).filter((g) => g.items.length > 0);
+
   const togglePin = (id: string) => {
     const p = state.personalization;
     patch({
