@@ -179,25 +179,7 @@ function HomePage() {
       </SectionCard>
     ),
 
-    transactions: (
-      <SectionCard key="transactions" title="Recent transactions" action="View all" onAction={() => go("transaction-history")}>
-        {state.transactions.slice(0, 2).map((t) => (
-          <ListRow
-            key={t.id}
-            icon={byId(t.serviceId)?.icon ?? "Receipt"}
-            tint={t.direction === "credit" ? "green" : "gray"}
-            title={t.title}
-            subtitle={`${t.date} · ${t.status === "success" ? "Success" : t.status === "failed" ? "Failed" : "Pending"}`}
-            right={
-              <span className={t.direction === "credit" ? "text-[14px] font-semibold text-success" : "text-[14px] font-semibold"}>
-                {t.direction === "credit" ? "+" : "-"}{money(t.amount)}
-              </span>
-            }
-            onClick={() => go("transaction-history")}
-          />
-        ))}
-      </SectionCard>
-    ),
+
     goals: (
       <SectionCard key="goals" title="DPS, Savings & Goals" action="All goals" onAction={() => go("savings-goals")}>
         {(nepal ? [nepal] : state.goals.slice(0, 1)).map((g) => (

@@ -18,7 +18,7 @@ export const DASHBOARD_MODULES: DashboardModule[] = [
 
   { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
   { id: "rewards", label: "Rewards", description: "Next reward and progress" },
-  { id: "transactions", label: "Recent Transactions", description: "Latest account activity" },
+  
   { id: "goals", label: "DPS, Savings & Goals", description: "Featured goal progress" },
 ];
 
