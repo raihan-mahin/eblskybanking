@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { BirthdayNotice } from "@/components/BirthdayNotice";
 import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money } from "@/lib/store";
-import { byId } from "@/lib/services";
+import { byId, TINT_BG } from "@/lib/services";
 
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
 
