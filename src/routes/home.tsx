@@ -11,7 +11,8 @@ import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money } from "@/lib/store";
 import { byId, SERVICES } from "@/lib/services";
 
-import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES, QUICK_CATALOGUE } from "@/lib/extras";
+import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
+import { CATEGORIES } from "@/lib/services";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
