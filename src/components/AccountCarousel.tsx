@@ -5,9 +5,9 @@ import { useApp, money } from "@/lib/store";
 import { cx, ProgressBar } from "./kit";
 import { Icon } from "./Icon";
 
-/** Every carousel card uses exactly this frame — same width, height, radius, padding. */
-const CARD_FRAME = "flex h-[168px] flex-col justify-between rounded-2xl p-4";
-const SLIDE = "w-full shrink-0 snap-center px-4 pb-2";
+/** Compact shared frame: every carousel card uses identical width, height, radius, padding. */
+const CARD_FRAME = "flex h-[148px] flex-col justify-between rounded-2xl p-3";
+const SLIDE = "w-full shrink-0 snap-center px-4 pb-0";
 
 type Tap = { x: number; y: number; t: number; moved: boolean };
 
