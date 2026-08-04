@@ -8,7 +8,7 @@ export const TXN_CONFIGS: Record<string, Omit<TxnFlowProps, "serviceId">> = {
     title: "MFS Transfer", category: "Transfer",
     fields: [
       { key: "provider", label: "Select Provider", type: "tiles", options: MFS },
-      { key: "wallet", label: "Wallet Number", type: "text", placeholder: "01XXX-XXXXXX" },
+      { key: "wallet", label: "Wallet Number", type: "text", placeholder: "01XXXXXXXXX", contactPicker: true },
     ],
     fee: 15,
   },
