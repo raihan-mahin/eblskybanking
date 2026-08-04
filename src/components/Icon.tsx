@@ -7,6 +7,7 @@ import {
   Languages, MonitorSmartphone, LogIn, Banknote, BadgePercent, Plane, Laptop, ShoppingBag,
   UserPlus, Share2, IdCard, Camera, Lock, Snowflake, ListChecks, Moon, Coins, ChartColumn,
   Lightbulb, CircleDollarSign, Star, ChevronRight, Info, Package, LayoutGrid, ArrowRight,
+  Crown, Check,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
