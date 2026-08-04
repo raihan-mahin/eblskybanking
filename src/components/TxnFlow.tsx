@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Check, Download, Share2, Repeat } from "lucide-react";
+import { Check, Download, Share2, Repeat, Contact } from "lucide-react";
 import { Button, FormField, TextInput, Select, AmountInput, SectionCard, ErrorState, cx } from "./kit";
 import { AuthenticationSheet } from "./AuthenticationSheet";
+import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "./ContactPicker";
+import { maskMobile } from "@/lib/extras";
 import { useApp, money, pointsFor } from "@/lib/store";
 
 export interface FieldDef {
@@ -13,7 +15,10 @@ export interface FieldDef {
   placeholder?: string;
   optional?: boolean;
   hint?: string;
+  /** Shows a contact-book icon beside the input; the complete number is kept internally. */
+  contactPicker?: boolean;
 }
+
 
 export interface TxnFlowProps {
   serviceId: string;
@@ -46,6 +51,9 @@ export function TxnFlow(p: TxnFlowProps) {
   const [auth, setAuth] = useState(false);
   const [error, setError] = useState("");
   const [receipt, setReceipt] = useState<{ ref: string; amount: number; points: number } | null>(null);
+  const [pickerFor, setPickerFor] = useState<string | null>(null);
+  const [contactNames, setContactNames] = useState<Record<string, string>>({});
+  const [pickError, setPickError] = useState("");
 
   const fields = p.fields ?? [];
   const fee = p.fee ?? 0;
@@ -54,7 +62,32 @@ export function TxnFlow(p: TxnFlowProps) {
   const points = pointsFor(p.category, amt);
   const set = (k: string, v: string) => setValues((s) => ({ ...s, [k]: v }));
   /** Value shown to the user on review/receipt — masked when a display value exists. */
-  const shown = (k: string) => p.displayValues?.[k] ?? values[k] ?? "";
+  const shown = (k: string) => {
+    if (p.displayValues?.[k]) return p.displayValues[k];
+    const v = values[k] ?? "";
+    const f = fields.find((x) => x.key === k);
+    if (f?.contactPicker && v) {
+      const name = contactNames[k];
+      return `${name ? name + " · " : ""}${maskMobile(v)}`;
+    }
+    return v;
+  };
+
+  const applyContact = (key: string, name: string, number: string) => {
+    set(key, number);
+    setContactNames((s) => ({ ...s, [key]: name }));
+    setPickError("");
+  };
+
+  const openContacts = async (key: string) => {
+    setPickError("");
+    const device = await pickDeviceContact();
+    if (!device) { setPickerFor(key); return; }
+    const numbers = device.numbers.map(normalizeBdMobile).filter(isValidBdMobile);
+    if (numbers.length !== 1) { setPickerFor(key); return; }
+    applyContact(key, device.name, numbers[0]!);
+  };
+
 
   const validate = () => {
     for (const f of fields) if (!f.optional && !values[f.key]) return `${f.label} is required.`;
@@ -198,6 +231,22 @@ export function TxnFlow(p: TxnFlowProps) {
             <FormField key={f.key} label={f.label} hint={f.hint}>
               {f.type === "select" ? (
                 <Select value={values[f.key] ?? ""} onChange={(v) => set(f.key, v)} options={f.options ?? []} placeholder={f.placeholder} />
+              ) : f.contactPicker ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <TextInput inputMode="numeric" className="flex-1" value={values[f.key] ?? ""} placeholder={f.placeholder}
+                      onChange={(e) => { set(f.key, e.target.value); setContactNames((s) => ({ ...s, [f.key]: "" })); }} />
+                    <button
+                      onClick={() => { void openContacts(f.key); }}
+                      aria-label="Select from Contacts"
+                      className="press grid size-12 shrink-0 place-items-center rounded-xl border border-border bg-tint-yellow"
+                    >
+                      <Contact className="size-5 text-accent" />
+                    </button>
+                  </div>
+                  {contactNames[f.key] && <p className="mt-1 text-[12.5px] text-muted-foreground">Selected contact: {contactNames[f.key]}</p>}
+                  {pickError && <p className="mt-1 text-[12.5px] text-error">{pickError}</p>}
+                </>
               ) : (
                 <TextInput type={f.type === "date" ? "date" : "text"} value={values[f.key] ?? ""}
                   placeholder={f.placeholder} onChange={(e) => set(f.key, e.target.value)} />
@@ -205,6 +254,13 @@ export function TxnFlow(p: TxnFlowProps) {
             </FormField>
           ),
         )}
+
+        <ContactPicker
+          open={!!pickerFor}
+          onClose={() => setPickerFor(null)}
+          onPick={(c) => { if (pickerFor) applyContact(pickerFor, c.name, c.number); setPickerFor(null); }}
+        />
+
 
         <FormField label="Amount">
           {p.fixedAmount ? (

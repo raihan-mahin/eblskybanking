@@ -1,10 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { cx, Sheet, ListRow } from "./kit";
+import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
+import { searchServices, SERVICES } from "@/lib/services";
+
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
@@ -20,6 +22,8 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   const nav = useNavigate();
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
+  const [search, setSearch] = useState(false);
+
   const unread = state.notifications.filter((n) => !n.read).length;
 
   const go = (id: string) => { setMenu(false); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
@@ -47,6 +51,9 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
               </>
             )}
           </div>
+          <button aria-label="Search services" onClick={() => setSearch(true)} className="press grid size-10 place-items-center">
+            <Search className="size-6" />
+          </button>
           <button
             aria-label="AI Help"
             onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "ai-support" } })}
@@ -54,6 +61,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
           >
             <Headphones className="size-6" />
           </button>
+
           <button onClick={() => setNotif(true)} className="press relative grid size-10 place-items-center">
             <Bell className="size-6" />
             {unread > 0 && <span className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-accent" />}
@@ -93,9 +101,104 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
           </div>
         ))}
       </Sheet>
+
+      <SearchOverlay open={search} onClose={() => setSearch(false)} />
     </>
   );
 }
+
+const SEARCH_KEY = "ebl-recent-searches";
+
+const EXTRA_TARGETS = [
+  { id: "settings", title: "Settings", description: "App preferences and demo data reset", icon: "Settings", route: "/settings" as const },
+  { id: "explore", title: "Explore Services", description: "Full service catalogue", icon: "Compass", route: "/explore" as const },
+  { id: "pay", title: "Pay & Transfer", description: "Transfers, bills and recharge", icon: "ArrowLeftRight", route: "/pay-transfer" as const },
+  { id: "my-banking", title: "My Banking", description: "Accounts, cards and goals", icon: "Landmark", route: "/my-banking" as const },
+];
+
+function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const nav = useNavigate();
+  const [q, setQ] = useState("");
+  const [recent, setRecent] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!open) return;
+    setQ("");
+    try {
+      setRecent(JSON.parse(localStorage.getItem(SEARCH_KEY) ?? "[]"));
+    } catch { setRecent([]); }
+  }, [open]);
+
+  const remember = (term: string) => {
+    const t = term.trim();
+    if (!t) return;
+    const next = [t, ...recent.filter((r) => r.toLowerCase() !== t.toLowerCase())].slice(0, 6);
+    setRecent(next);
+    try { localStorage.setItem(SEARCH_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+  };
+
+  const services = q ? searchServices(q) : [];
+  const extras = q
+    ? EXTRA_TARGETS.filter((e) => (e.title + " " + e.description).toLowerCase().includes(q.toLowerCase()))
+    : [];
+  const suggestions = SERVICES.filter((s) =>
+    ["fund-transfer", "recharge", "bill-payment", "savings-goals", "rewards", "transaction-history"].includes(s.id),
+  );
+
+  const openService = (id: string) => { remember(q); onClose(); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
+
+  return (
+    <FullSheet open={open} onClose={onClose} title="Search">
+      <SearchField value={q} onChange={setQ} placeholder="Search services, goals, settings" />
+
+      {!q && recent.length > 0 && (
+        <div className="app-card">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-[14.5px] font-semibold text-primary">Recent searches</p>
+            <button className="press text-[12.5px] text-muted-foreground"
+              onClick={() => { setRecent([]); try { localStorage.removeItem(SEARCH_KEY); } catch { /* ignore */ } }}>
+              Clear
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {recent.map((r) => (
+              <button key={r} onClick={() => setQ(r)} className="press rounded-full bg-muted px-3 py-1.5 text-[12.5px]">{r}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!q && (
+        <div className="app-card">
+          <p className="mb-1 text-[14.5px] font-semibold text-primary">Suggested</p>
+          {suggestions.map((s) => (
+            <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={s.description} onClick={() => openService(s.id)} />
+          ))}
+        </div>
+      )}
+
+      {q && (
+        <div className="app-card">
+          <p className="mb-1 text-[14.5px] font-semibold text-primary">{services.length + extras.length} results</p>
+          {extras.map((e) => (
+            <ListRow key={e.id} icon={e.icon} tint="yellow" title={e.title} subtitle={e.description}
+              onClick={() => { remember(q); onClose(); nav({ to: e.route }); }} />
+          ))}
+          {services.slice(0, 20).map((s) => (
+            <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={s.description} onClick={() => openService(s.id)} />
+          ))}
+          {services.length === 0 && extras.length === 0 && (
+            <div className="py-6 text-center">
+              <p className="text-[13.5px] text-muted-foreground">No matches for “{q}”.</p>
+              <div className="mt-3"><Button variant="outline" onClick={() => setQ("")}>Clear search</Button></div>
+            </div>
+          )}
+        </div>
+      )}
+    </FullSheet>
+  );
+}
+
 
 export function BottomNavigation() {
   const path = useRouterState({ select: (s) => s.location.pathname });

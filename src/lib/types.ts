@@ -178,7 +178,10 @@ export interface RecentEntity {
   prefill: Record<string, string>;
   /** How many times this recipient/action has been repeated (frequency ranking). */
   count?: number;
+  /** Saved as a Favorite shortcut (defaults to true for existing saved data). */
+  favorite?: boolean;
 }
+
 
 export interface DisputeUpdate {
   stage: string;

@@ -13,8 +13,9 @@ export interface DashboardModule {
 }
 
 export const DASHBOARD_MODULES: DashboardModule[] = [
-  { id: "quick", label: "Quick Banking / Frequent Transactions", description: "Your top services and repeated actions" },
-  { id: "more", label: "More Services", description: "Four everyday shortcuts" },
+  { id: "quick", label: "Quick Banking / Favorites", description: "Your top services and saved shortcuts" },
+  { id: "more", label: "More Services", description: "Six everyday shortcuts" },
+
   { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
   { id: "rewards", label: "Rewards", description: "Points, level and progress" },
   { id: "transactions", label: "Recent Transactions", description: "Latest account activity" },
@@ -29,13 +30,16 @@ export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
 
 export const DEFAULT_QUICK = ["fund-transfer", "bill-payment", "recharge"];
 
-/** More Services — four mandatory shortcuts shown in a compact 2x2 grid. */
-export const MORE_SERVICES: { id: string; label: string }[] = [
+/** More Services — six shortcuts shown in a compact 3-column grid (two balanced rows). */
+export const MORE_SERVICES: { id: string; label: string; route?: string }[] = [
   { id: "fund-transfer", label: "Fund Transfer" },
   { id: "recharge", label: "Mobile Recharge" },
   { id: "bill-payment", label: "Utility Bills" },
   { id: "tuition-fee", label: "Tuition Fee" },
+  { id: "card-payment", label: "Card Payment" },
+  { id: "explore-services", label: "Explore Services", route: "/explore" },
 ];
+
 
 export const QUICK_CATALOGUE = [
   "fund-transfer", "bill-payment", "recharge", "split-pay", "qr-payment",

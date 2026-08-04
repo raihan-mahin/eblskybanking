@@ -1,14 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { AppShell, FullSheet } from "@/components/AppShell";
-import { SectionCard, ServiceTile, ListRow, SegmentedTabs, InsightCard, SearchField, ProgressBar, StatusBadge, cx } from "@/components/kit";
+import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, StatusBadge, cx } from "@/components/kit";
 import { AccountCarousel } from "@/components/AccountCarousel";
 import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { BirthdayNotice } from "@/components/BirthdayNotice";
 import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money, levelFor, nextLevel } from "@/lib/store";
-import { byId, searchServices, SERVICES } from "@/lib/services";
+import { byId, SERVICES } from "@/lib/services";
+
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES, QUICK_CATALOGUE } from "@/lib/extras";
 
 export const Route = createFileRoute("/home")({
@@ -27,13 +28,12 @@ function HomePage() {
   const { state, patch } = useApp();
   const nav = useNavigate();
   const [tab, setTab] = useState("quick");
-  const [q, setQ] = useState("");
   const [customize, setCustomize] = useState(false);
   const [allQuick, setAllQuick] = useState(false);
 
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
-  const results = searchServices(q);
   const nepal = state.goals.find((g) => g.title === "Nepal Trip") ?? state.goals[0];
+
   const pts = state.rewards.points;
   const nl = nextLevel(pts);
 
@@ -61,21 +61,35 @@ function HomePage() {
     ...DEFAULT_DASHBOARD_ORDER.filter((id) => !state.dashboard.order.includes(id)),
   ].filter((id) => !state.dashboard.hidden.includes(id));
 
-  const frequents = state.recentEntities
-    .slice()
-    .sort((a, b) => (b.count ?? 1) - (a.count ?? 1));
+  const favorites = state.recentEntities.filter((r) => r.favorite !== false);
+
+  const toggleFavorite = (id: string) =>
+    patch({
+      recentEntities: state.recentEntities.map((r) =>
+        r.id === id ? { ...r, favorite: r.favorite === false } : r,
+      ),
+    });
+
+  const moveFavorite = (id: string, dir: -1 | 1) => {
+    const list = state.recentEntities.slice();
+    const i = list.findIndex((r) => r.id === id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= list.length) return;
+    [list[i], list[j]] = [list[j]!, list[i]!];
+    patch({ recentEntities: list });
+  };
 
   const modules: Record<string, React.ReactNode> = {
     quick: (
       <SectionCard
         key="quick"
-        title={tab === "quick" ? "Quick Banking" : "Frequent Transactions"}
+        title={tab === "quick" ? "Quick Banking" : "Favorites"}
         subtitle={tab === "quick" ? "Your top 3 services" : "Tap to repeat with details filled in"}
         action="See all"
         onAction={() => (tab === "quick" ? setAllQuick(true) : nav({ to: "/pay-transfer" }))}
       >
         <SegmentedTabs
-          tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Frequent Transactions" }]}
+          tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Favorites" }]}
           value={tab}
           onChange={setTab}
         />
@@ -88,24 +102,60 @@ function HomePage() {
           </div>
         ) : (
           <div className="mt-1">
-            {frequents.slice(0, 5).map((r) => (
+            {favorites.slice(0, 6).map((r) => (
               <ListRow
                 key={r.id}
                 icon={r.icon}
                 tint={r.tint}
                 title={r.label}
                 subtitle={`${r.masked} · ${r.detail}`}
-                right={<span className="text-[13.5px] font-semibold">{money(r.amount)}</span>}
+                right={
+                  <span className="flex items-center gap-1">
+                    <button aria-label="Move up" onClick={(e) => { e.stopPropagation(); moveFavorite(r.id, -1); }}
+                      className="press grid size-7 place-items-center rounded-full text-muted-foreground">
+                      <ChevronUp className="size-4" />
+                    </button>
+                    <button aria-label="Move down" onClick={(e) => { e.stopPropagation(); moveFavorite(r.id, 1); }}
+                      className="press grid size-7 place-items-center rounded-full text-muted-foreground">
+                      <ChevronDown className="size-4" />
+                    </button>
+                    <button aria-label="Remove from Favorites" onClick={(e) => { e.stopPropagation(); toggleFavorite(r.id); }}
+                      className="press grid size-7 place-items-center rounded-full text-accent">
+                      <Star className="size-4 fill-current" />
+                    </button>
+                  </span>
+                }
                 onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: r.serviceId }, search: { ref: r.id } })}
               />
             ))}
-            {frequents.length === 0 && (
-              <p className="py-5 text-center text-[13.5px] text-muted-foreground">No frequent transactions yet.</p>
+            {favorites.length === 0 && (
+              <p className="py-5 text-center text-[13.5px] text-muted-foreground">No favorites yet.</p>
+            )}
+            {state.recentEntities.some((r) => r.favorite === false) && (
+              <div className="mt-2 border-t border-border pt-2">
+                <p className="mb-1 text-[12.5px] text-muted-foreground">Not in Favorites</p>
+                {state.recentEntities.filter((r) => r.favorite === false).map((r) => (
+                  <ListRow
+                    key={r.id}
+                    icon={r.icon}
+                    tint={r.tint}
+                    title={r.label}
+                    subtitle={r.masked}
+                    right={
+                      <button aria-label="Add to Favorites" onClick={(e) => { e.stopPropagation(); toggleFavorite(r.id); }}
+                        className="press grid size-7 place-items-center rounded-full text-muted-foreground">
+                        <Star className="size-4" />
+                      </button>
+                    }
+                  />
+                ))}
+              </div>
             )}
           </div>
         )}
       </SectionCard>
     ),
+
     insights: (
       <SectionCard key="insights" title="Smart insight" subtitle="Personalised for you" action="See All" onAction={() => go("spending-insights")}>
         <div className="rounded-2xl bg-tint-green p-3.5">
@@ -186,9 +236,12 @@ function HomePage() {
       </SectionCard>
     ),
     more: (
-      <SectionCard key="more" title="More services" action="Explore Services" onAction={() => nav({ to: "/explore" })}>
-        <div className="grid grid-cols-2">
+      <SectionCard key="more" title="More services">
+        <div className="grid grid-cols-3">
           {MORE_SERVICES.map((m) => {
+            if (m.route) {
+              return <ServiceTile key={m.id} icon="Compass" tint="yellow" label={m.label} onClick={() => nav({ to: "/explore" })} />;
+            }
             const s = byId(m.id);
             if (!s) return null;
             return <ServiceTile key={m.id} icon={s.icon} tint={s.tint} label={m.label} onClick={() => go(m.id)} />;
@@ -196,6 +249,7 @@ function HomePage() {
         </div>
       </SectionCard>
     ),
+
     recommended: (
       <SectionCard key="recommended" title="Recommended for you" subtitle="Based on how you bank">
         <ListRow icon="Send" tint="green" title="Send by mobile number" subtitle="Find the linked account instantly" onClick={() => go("phone-transfer")} />
@@ -207,17 +261,8 @@ function HomePage() {
 
   return (
     <AppShell>
-      <SearchField value={q} onChange={setQ} placeholder="Search services, bills, transfers" />
-      {q && (
-        <SectionCard title="Search results" subtitle={`${results.length} matches`}>
-          {results.slice(0, 12).map((r) => (
-            <ListRow key={r.id} icon={r.icon} tint={r.tint} title={r.title} subtitle={r.description} onClick={() => go(r.id)} />
-          ))}
-          {results.length === 0 && <p className="py-6 text-center text-[13.5px] text-muted-foreground">No services matched “{q}”.</p>}
-        </SectionCard>
-      )}
-
       <BirthdayNotice />
+
 
       <AccountCarousel />
 

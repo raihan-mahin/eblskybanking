@@ -5,6 +5,10 @@ import { useApp, money } from "@/lib/store";
 import { cx, StatusBadge, ProgressBar } from "./kit";
 import { Icon } from "./Icon";
 
+/** Every carousel card uses exactly this frame — same width, height, radius, padding. */
+const CARD_FRAME = "flex h-[168px] flex-col justify-between rounded-2xl p-4";
+const SLIDE = "w-full shrink-0 snap-center px-4 pb-4";
+
 export function AccountCarousel() {
   const { state } = useApp();
   const nav = useNavigate();
@@ -56,8 +60,8 @@ export function AccountCarousel() {
         className="mt-2 flex snap-x snap-mandatory overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {account && (
-          <div className="w-full shrink-0 snap-center px-4 pb-4">
-            <div className="rounded-2xl bg-brand-soft p-4">
+          <div className={SLIDE}>
+            <div className={cx(CARD_FRAME, "bg-brand-soft")}>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
@@ -90,7 +94,7 @@ export function AccountCarousel() {
               <button
                 onClick={() => go("transaction-history")}
                 aria-label="Open recent transaction history"
-                className="press mt-3 block w-full text-left"
+                className="press block w-full text-left"
               >
                 <p className="text-[27px] leading-tight font-semibold">{show ? money(account.balance) : hidden}</p>
                 <div className="flex items-center justify-between">
@@ -103,27 +107,20 @@ export function AccountCarousel() {
         )}
 
         {card && (
-          <div className="w-full shrink-0 snap-center px-4 pb-4">
-            <div className="rounded-2xl bg-tint-blue p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[13px] text-muted-foreground">{card.name}</p>
-                  <p className="text-[12.5px] text-muted-foreground">{card.masked} · {card.kind}</p>
+          <div className={SLIDE}>
+            <div className={cx(CARD_FRAME, "bg-tint-blue")}>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-[13px] text-muted-foreground">{card.name}</p>
+                  <p className="text-[12.5px] tracking-wide text-muted-foreground">{card.masked}</p>
                 </div>
                 <StatusBadge status={card.frozen ? "Frozen" : card.active ? "Active" : "Inactive"} />
               </div>
-              <p className="mt-3 text-[24px] leading-tight font-semibold">
-                {show ? money(Math.max(0, card.limit - outstanding)) : hidden}
-              </p>
-              <p className="text-[12.5px] text-muted-foreground">
-                Available limit · Outstanding {show ? money(outstanding) : "••••"} of {money(card.limit)}
-              </p>
-              <ProgressBar className="mt-2" value={(outstanding / Math.max(1, card.limit)) * 100} />
-              <p className="mt-1 text-[12px] text-muted-foreground">Payment due 25 Aug 2026</p>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <CarouselAction label="Pay Card" onClick={() => go("card-payment")} />
-                <CarouselAction label="Card Controls" onClick={() => go("card-controls")} />
-                <CarouselAction label="Details" onClick={() => go("my-card")} />
+              <div>
+                <p className="text-[27px] leading-tight font-semibold">
+                  {show ? money(Math.max(0, card.limit - outstanding)) : hidden}
+                </p>
+                <p className="text-[12.5px] text-muted-foreground">Available limit</p>
               </div>
             </div>
           </div>
@@ -160,27 +157,24 @@ function GoalSlide({
 }) {
   const pct = (goal.saved / Math.max(1, goal.target)) * 100;
   return (
-    <div className="w-full shrink-0 snap-center px-4 pb-4">
-      <div className={cx("rounded-2xl p-4", tint)}>
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-[13px] text-muted-foreground">{goal.title} Savings Goal</p>
-            <p className="text-[12.5px] text-muted-foreground">Moved from your EBL Savings Account</p>
+    <div className={SLIDE}>
+      <div className={cx(CARD_FRAME, tint)}>
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate text-[13px] text-muted-foreground">{goal.title} Savings Goal</p>
+            <p className="truncate text-[12.5px] text-muted-foreground">Target {money(goal.target)}</p>
           </div>
-          <span className="grid size-9 place-items-center rounded-full bg-card">
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-card">
             <Icon name={goal.icon} className="size-5" />
           </span>
         </div>
-        <p className="mt-3 text-[27px] leading-tight font-semibold">{show ? money(goal.saved) : hidden}</p>
-        <p className="text-[12.5px] text-muted-foreground">
-          Saved of {money(goal.target)} · Remaining {money(Math.max(0, goal.target - goal.saved))}
-        </p>
-        <ProgressBar className="mt-2" value={pct} />
-        <p className="mt-1 text-[12px] text-muted-foreground">Progress {pct.toFixed(1)}%</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div>
+          <p className="text-[27px] leading-tight font-semibold">{show ? money(goal.saved) : hidden}</p>
+          <ProgressBar className="mt-1.5" value={pct} />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
           <CarouselAction label="Contribute" onClick={() => go("goal-setting")} />
           <CarouselAction label="View Goal" onClick={() => go("savings-goals")} />
-          <CarouselAction label="All Goals" onClick={() => go("savings-goals")} />
         </div>
       </div>
     </div>
@@ -189,7 +183,7 @@ function GoalSlide({
 
 function CarouselAction({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="press rounded-xl bg-card px-1 py-2 text-[11.5px] leading-tight font-medium text-primary">
+    <button onClick={onClick} className="press rounded-xl bg-card px-1 py-1.5 text-[11.5px] leading-tight font-medium text-primary">
       {label}
     </button>
   );

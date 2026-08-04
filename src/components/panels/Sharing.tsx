@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Copy, Nfc, Share2, ShieldCheck } from "lucide-react";
+import { Copy, Nfc, Share2 } from "lucide-react";
 import { SectionCard, Button, StatusBadge, useToast, cx } from "@/components/kit";
-import { AuthenticationSheet } from "@/components/AuthenticationSheet";
 import { useApp, timeLabel } from "@/lib/store";
 
 export function AccountSharingPanel() {
@@ -9,29 +8,11 @@ export function AccountSharingPanel() {
   const toast = useToast();
   const [sel, setSel] = useState(state.accounts[0]?.id ?? "");
   const [nfcState, setNfcState] = useState<"idle" | "waiting" | "shared" | "unsupported">("idle");
-  const [verified, setVerified] = useState(false);
-  const [auth, setAuth] = useState(false);
 
   const account = state.accounts.find((a) => a.id === sel) ?? state.accounts[0];
   if (!account) return null;
 
-  if (!verified) {
-    return (
-      <>
-        <SectionCard title="Verify it's you" subtitle="Confirm with PIN, fingerprint or Face ID to view and share your account information">
-          <div className="rounded-2xl bg-brand-soft p-4 text-center">
-            <ShieldCheck className="mx-auto size-8 text-primary" />
-            <p className="mt-2 text-[14px] font-medium">{account.name}</p>
-            <p className="text-[12.5px] text-muted-foreground">Full details stay hidden until you verify.</p>
-          </div>
-          <Button className="mt-3" onClick={() => setAuth(true)}>Verify to continue</Button>
-        </SectionCard>
-        <AuthenticationSheet open={auth} purpose="Share account information" onClose={() => setAuth(false)}
-          onSuccess={() => { setAuth(false); setVerified(true); }} />
-        {toast.node}
-      </>
-    );
-  }
+
 
 
   const text = `${state.user.name}\nEastern Bank PLC\nAccount: ${account.masked}\nType: ${account.type}\nBranch: Gulshan\nRouting: 095260726`;
