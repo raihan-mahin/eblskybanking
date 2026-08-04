@@ -30,7 +30,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
 
   return (
     <>
-      <header className="bg-brand px-[18px] pt-4 pb-8">
+      <header className="sticky top-0 z-40 bg-brand px-[18px] pt-[calc(env(safe-area-inset-top)+1rem)] pb-8 shadow-sm">
         <div className="flex items-center gap-2">
           {back ? (
             <button onClick={() => nav({ to: "/home" })} className="press grid size-10 place-items-center rounded-full">
@@ -237,7 +237,7 @@ export function AppShell({
       )}
     >
       <AppHeader title={title} back={back} />
-      <main className="-mt-6 space-y-3 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
+      <main className="relative z-10 -mt-6 space-y-2.5 rounded-t-3xl bg-background px-[18px] pt-3 pb-28">{children}</main>
       <VoiceAssistant />
 
       {!hideNav && <BottomNavigation />}
