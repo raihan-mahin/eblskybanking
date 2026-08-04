@@ -201,14 +201,42 @@ function HomePage() {
     more: (
       <SectionCard key="more" title="More services">
         <div className="grid grid-cols-3">
-          {MORE_SERVICES.map((m) => {
-            if (m.route) {
-              return <ServiceTile key={m.id} icon="Compass" tint="yellow" label={m.label} onClick={() => nav({ to: "/explore" })} />;
-            }
-            const s = byId(m.id);
-            if (!s) return null;
-            return <ServiceTile key={m.id} icon={s.icon} tint={s.tint} label={m.label} onClick={() => go(m.id)} />;
+          {moreIds.map((id) => {
+            const s = byId(id)!;
+            return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
           })}
+        </div>
+        <button
+          aria-label={moreOpen ? "Collapse additional services" : "Show additional services"}
+          onClick={() => setMoreOpen((v) => !v)}
+          className="press mx-auto -mb-1 flex h-7 w-16 items-center justify-center rounded-full text-muted-foreground"
+        >
+          {moreOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+        </button>
+        <div
+          className="grid transition-all duration-300 ease-out"
+          style={{ gridTemplateRows: moreOpen ? "1fr" : "0fr", opacity: moreOpen ? 1 : 0 }}
+        >
+          <div className="overflow-hidden">
+            <div className="border-t border-border pt-2">
+              {expandedGroups.map((g) => (
+                <div key={g.id} className="mb-1">
+                  <p className="px-1 text-[12.5px] font-medium text-muted-foreground">{g.label}</p>
+                  <div className="grid grid-cols-3">
+                    {g.items.map((s) => (
+                      <ServiceTile key={s.id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(s.id)} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => nav({ to: "/explore" })}
+                className="press mt-1 w-full rounded-xl bg-muted py-2 text-[12.5px] font-medium text-primary"
+              >
+                Open Full Explore
+              </button>
+            </div>
+          </div>
         </div>
       </SectionCard>
     ),
