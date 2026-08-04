@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, ChevronRight as Chevron, Eye, EyeOff, Share2 } from "lucide-react";
 import { useApp, money } from "@/lib/store";
-import { cx, StatusBadge, ProgressBar } from "./kit";
+import { cx, ProgressBar } from "./kit";
 import { Icon } from "./Icon";
 
 /** Every carousel card uses exactly this frame — same width, height, radius, padding. */
@@ -86,7 +86,7 @@ export function AccountCarousel() {
                     </button>
                   </div>
                 </div>
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-tint-yellow">
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
                   <Icon name="Landmark" className="size-5" />
                 </span>
               </div>
@@ -114,7 +114,9 @@ export function AccountCarousel() {
                   <p className="truncate text-[13px] text-muted-foreground">{card.name}</p>
                   <p className="text-[12.5px] tracking-wide text-muted-foreground">{card.masked}</p>
                 </div>
-                <StatusBadge status={card.frozen ? "Frozen" : card.active ? "Active" : "Inactive"} />
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card">
+                  <Icon name="CreditCard" className="size-5" />
+                </span>
               </div>
               <div>
                 <p className="text-[27px] leading-tight font-semibold">
@@ -164,7 +166,7 @@ function GoalSlide({
             <p className="truncate text-[13px] text-muted-foreground">{goal.title} Savings Goal</p>
             <p className="truncate text-[12.5px] text-muted-foreground">Target {money(goal.target)}</p>
           </div>
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-card">
+          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card">
             <Icon name={goal.icon} className="size-5" />
           </span>
         </div>
