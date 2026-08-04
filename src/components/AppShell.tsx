@@ -6,7 +6,7 @@ import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
-import { searchServices, SERVICES } from "@/lib/services";
+import { searchServices, SERVICES, categoryTitle } from "@/lib/services";
 
 
 const TABS = [
