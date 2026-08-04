@@ -15,7 +15,29 @@ export function RewardsPanel() {
   const pts = state.rewards.points;
   const lvl = levelFor(pts);
   const nx = nextLevel(pts);
-  const pct = nx.ceil === nx.floor ? 100 : ((pts - nx.floor) / (nx.ceil - nx.floor)) * 100;
+
+  const LEVELS = [
+    { name: "Bronze", min: 0, color: "#B87333" },
+    { name: "Silver", min: 1000, color: "#9CA3AF" },
+    { name: "Gold", min: 3000, color: "#FFC400" },
+    { name: "Platinum", min: 6000, color: "#E5E7EB" },
+  ];
+  const SEGMENTS = [
+    { from: 0, to: 1000, color: "#B87333" },
+    { from: 1000, to: 3000, color: "#9CA3AF" },
+    { from: 3000, to: 6000, color: "#FFC400" },
+  ];
+
+  let filledSegments = 0;
+  let segmentPct = 0;
+  for (const seg of SEGMENTS) {
+    if (pts >= seg.to) {
+      filledSegments++;
+    } else {
+      segmentPct = ((pts - seg.from) / (seg.to - seg.from)) * 100;
+      break;
+    }
+  }
 
   const redeem = (id: string) => {
     const offer = state.rewards.offers.find((o) => o.id === id)!;
