@@ -242,7 +242,7 @@ function HomePage() {
       </SectionCard>
     ),
     rewards: (
-      <SectionCard key="rewards" title="Rewards" action="View Rewards" onAction={() => go("rewards")} className="!py-2.5">
+      <SectionCard key="rewards" title="Rewards" action="View Rewards" onAction={() => nav({ to: "/category/$categoryId", params: { categoryId: "rewards" } })} className="!py-2.5">
         <NextRewardCard compact />
       </SectionCard>
     ),
