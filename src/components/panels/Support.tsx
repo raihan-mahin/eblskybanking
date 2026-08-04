@@ -10,7 +10,7 @@ interface Intent { q: string; a: string; action?: string; target?: string; }
 const INTENTS: Intent[] = [
   { q: "How do I transfer money?", a: "Open Fund Transfer, choose My Account, EBL, Other Bank or MFS, pick the recipient, enter the amount, review and confirm with fingerprint, Face ID or PIN.", action: "Open Fund Transfer", target: "fund-transfer" },
   { q: "Why is OTP required?", a: "Payments up to ৳5,000 only need biometric or PIN confirmation. Above ৳5,000 an OTP is also required for extra safety.", action: "Open Security", target: "security-settings" },
-  { q: "How does one-tap payment work?", a: "For ৳5,000 or less you confirm once with fingerprint, Face ID or PIN — no OTP screen appears.", action: "Open Add Money", target: "add-money" },
+  { q: "How does one-tap payment work?", a: "For ৳5,000 or less you confirm once with fingerprint, Face ID or PIN — no OTP screen appears.", action: "Open Fund Transfer", target: "fund-transfer" },
   { q: "How do Rewards work?", a: "You earn 1 point per ৳100 of eligible spending such as bills, recharge, tuition, gift cards, QR payments and DPS contributions.", action: "Open Rewards", target: "rewards" },
   { q: "How can I redeem Reward Points?", a: "Open Rewards, pick an offer such as ৳50 cashback for 500 points, confirm and the points are deducted instantly.", action: "Open Reward Offers", target: "reward-offers" },
   { q: "How does Split Pay work?", a: "Create a split, choose participants, split equally or custom, and each person receives a request they can pay in one tap.", action: "Open Split Pay", target: "split-pay" },
@@ -202,7 +202,7 @@ export function SupportPanel({ tickets, human }: { tickets?: boolean; human?: bo
         <div className="space-y-3">
           <FormField label="Issue category">
             <Select value={form.category} onChange={(v) => setForm({ ...form, category: v })}
-              options={["Transaction", "Card", "PIN and Security", "Rewards", "Bill Payment", "Add Money", "Account", "Other"]} />
+              options={["Transaction", "Card", "PIN and Security", "Rewards", "Bill Payment", "Account", "Other"]} />
           </FormField>
           <FormField label="Transaction ID (optional)"><TextInput value={form.txnId} onChange={(e) => setForm({ ...form, txnId: e.target.value })} /></FormField>
           <FormField label="Subject"><TextInput value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} /></FormField>

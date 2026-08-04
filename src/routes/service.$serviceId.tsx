@@ -165,6 +165,11 @@ function ServicePage() {
   const svc = byId(serviceId);
   const prefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
 
+  // Retired service: MFS Add Money is no longer available.
+  useEffect(() => {
+    if (serviceId === "add-money") nav({ to: "/pay-transfer", replace: true });
+  }, [serviceId, nav]);
+
   useEffect(() => {
     if (svc) useService(svc.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -13,13 +13,13 @@ export interface DashboardModule {
 }
 
 export const DASHBOARD_MODULES: DashboardModule[] = [
-  { id: "quick", label: "Quick Banking / Recent", description: "Your top services and recent actions" },
-  { id: "insights", label: "Smart Insights", description: "Personalised money insights" },
+  { id: "quick", label: "Quick Banking / Frequent Transactions", description: "Your top services and repeated actions" },
+  { id: "more", label: "More Services", description: "Four everyday shortcuts" },
+  { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
   { id: "rewards", label: "Rewards", description: "Points, level and progress" },
   { id: "transactions", label: "Recent Transactions", description: "Latest account activity" },
-  { id: "goals", label: "Savings & Goals", description: "Goal progress and deposits" },
+  { id: "goals", label: "DPS, Savings & Goals", description: "Featured goal progress" },
   { id: "cards", label: "Cards", description: "Card status and controls" },
-  { id: "more", label: "More Services", description: "Extra shortcuts" },
   { id: "recommended", label: "Recommended for You", description: "Suggested next steps" },
 ];
 
@@ -27,13 +27,22 @@ export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
 
 /* ---------------- 2. Quick Banking defaults ---------------- */
 
-export const DEFAULT_QUICK = ["fund-transfer", "bill-payment", "add-money"];
+export const DEFAULT_QUICK = ["fund-transfer", "bill-payment", "recharge"];
+
+/** More Services — four mandatory shortcuts shown in a compact 2x2 grid. */
+export const MORE_SERVICES: { id: string; label: string }[] = [
+  { id: "fund-transfer", label: "Fund Transfer" },
+  { id: "recharge", label: "Mobile Recharge" },
+  { id: "bill-payment", label: "Utility Bills" },
+  { id: "tuition-fee", label: "Tuition Fee" },
+];
 
 export const QUICK_CATALOGUE = [
-  "fund-transfer", "bill-payment", "add-money", "recharge", "split-pay", "qr-payment",
+  "fund-transfer", "bill-payment", "recharge", "split-pay", "qr-payment",
   "instant-dps", "rewards", "mfs-transfer", "tuition-fee", "card-payment", "e-toll",
   "beneficiaries", "auto-pay", "savings-goals", "transaction-history",
 ];
+
 
 /* ---------------- 3. Recipient phone directory (mock) ---------------- */
 
@@ -299,7 +308,7 @@ export const EXPLORE_GROUPS: ExploreGroup[] = [
   },
   {
     id: "payments", title: "Payments & Transfers", subtitle: "Send, receive & recharge", icon: "ArrowLeftRight", tint: "yellow",
-    primary: [it("fund-transfer"), it("add-money"), it("recharge", "Mobile Recharge")],
+    primary: [it("fund-transfer"), it("phone-transfer", "By Mobile Number"), it("recharge", "Mobile Recharge")],
     more: ["other-bank-transfer", "mfs-transfer", "phone-transfer", "split-pay", "qr-payment", "scheduled-transfer", "scheduled-recharge", "auto-pay"],
   },
   {
@@ -351,7 +360,7 @@ export const PAY_GROUPS: PayGroup[] = [
   },
   {
     title: "Payments", subtitle: "Top up, cards and recharge",
-    primary: [{ id: "add-money" }, { id: "card-payment" }, { id: "recharge", label: "Mobile Recharge" }],
+    primary: [{ id: "qr-payment" }, { id: "card-payment" }, { id: "recharge", label: "Mobile Recharge" }],
     more: ["qr-payment", "gift-cards", "donation", "e-toll"],
   },
   {
