@@ -323,7 +323,7 @@ export function GoalsPanel() {
               <span className="text-right">Suggested {money(g.monthly)}/month</span>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button onClick={() => openSheet(g, "add")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Add Money</button>
+              <button onClick={() => openSheet(g, "add")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Contribute</button>
               <button onClick={() => openSheet(g, "withdraw")} className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">Withdraw</button>
               <button onClick={() => { patch({ goals: state.goals.map((x) => (x.id === g.id ? { ...x, auto: !x.auto } : x)) }); toast.show(g.auto ? "Auto contribution paused" : "Auto contribution enabled"); }}
                 className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">{g.auto ? "Pause Auto" : "Enable Auto"}</button>

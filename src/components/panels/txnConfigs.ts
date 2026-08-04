@@ -4,14 +4,6 @@ import { BANKS, MFS } from "@/lib/seed";
 const OPERATORS = ["Grameenphone", "Banglalink", "Robi", "Airtel", "Teletalk"];
 
 export const TXN_CONFIGS: Record<string, Omit<TxnFlowProps, "serviceId">> = {
-  "add-money": {
-    title: "Add Money", category: "Add Money", intro: "Enter your details below",
-    fields: [
-      { key: "provider", label: "Add Money From", type: "tiles", options: ["bKash", "Nagad", "Rocket"] },
-      { key: "wallet", label: "Wallet Number", type: "text", placeholder: "01XXX-XXXXXX" },
-    ],
-    amountPresets: [500, 1000, 3000, 5000],
-  },
   "mfs-transfer": {
     title: "MFS Transfer", category: "Transfer",
     fields: [

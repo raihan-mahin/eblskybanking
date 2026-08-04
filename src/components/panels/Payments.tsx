@@ -14,7 +14,9 @@ import type { SplitPay } from "@/lib/types";
 export function FundTransferPanel({ initialPrefill }: { initialPrefill?: Record<string, string> | undefined }) {
   const nav = useNavigate();
   const { state } = useApp();
-  const [mode, setMode] = useState<string | null>(initialPrefill?.["mobile"] ? "phone" : null);
+  const [mode, setMode] = useState<string | null>(
+    initialPrefill?.["mobile"] ? "phone" : initialPrefill?.["beneficiary"] || initialPrefill?.["account"] ? "ebl" : null,
+  );
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
 
   if (mode === "phone") return <PhoneTransferPanel initialMobile={initialPrefill?.["mobile"]} />;
@@ -23,6 +25,7 @@ export function FundTransferPanel({ initialPrefill }: { initialPrefill?: Record<
     return (
       <TxnFlow serviceId="fund-transfer" title="EBL Transfer" category="Transfer"
         initialAmount={initialPrefill?.["amount"]}
+        initialValues={initialPrefill}
         fields={[
           { key: "beneficiary", label: "Beneficiary", type: "select", options: state.beneficiaries.filter((b) => b.kind === "ebl").map((b) => `${b.name} · ${b.account}`) },
           { key: "account", label: "Or Enter Account Number", type: "text", placeholder: "EBL account number", optional: true },

@@ -45,7 +45,7 @@ export const SERVICES: Service[] = [
   // Payments & Transfers
   s("fund-transfer", "Fund Transfer", "payments", "Send money to any account", "ArrowLeftRight", "yellow", "management", "confirm", ["send", "transfer", "money", "bank"]),
   s("split-pay", "Split Pay", "payments", "Split bills & pay together", "Users", "pink", "management", "confirm", ["split", "share", "request"]),
-  s("add-money", "Add Money", "payments", "Add from bKash, Nagad, Rocket", "PlusCircle", "pink", "transaction", "confirm", ["add", "wallet", "bkash", "nagad", "rocket", "top up"]),
+  
   s("mfs-transfer", "MFS Transfer", "payments", "Send to mobile wallets", "Smartphone", "blue", "transaction", "confirm", ["mfs", "bkash", "nagad", "rocket", "upay"]),
   s("recharge", "Mobile Recharge", "payments", "Recharge any operator", "Smartphone", "purple", "transaction", "confirm", ["recharge", "topup", "mobile"]),
   s("auto-pay", "Auto Pay", "payments", "Automate recurring payments", "Repeat", "blue", "scheduling", "confirm", ["auto", "recurring", "pay"]),

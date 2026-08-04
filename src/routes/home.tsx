@@ -9,7 +9,7 @@ import { BirthdayNotice } from "@/components/BirthdayNotice";
 import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money, levelFor, nextLevel } from "@/lib/store";
 import { byId, searchServices, SERVICES } from "@/lib/services";
-import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, QUICK_CATALOGUE } from "@/lib/extras";
+import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES, QUICK_CATALOGUE } from "@/lib/extras";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -61,17 +61,21 @@ function HomePage() {
     ...DEFAULT_DASHBOARD_ORDER.filter((id) => !state.dashboard.order.includes(id)),
   ].filter((id) => !state.dashboard.hidden.includes(id));
 
+  const frequents = state.recentEntities
+    .slice()
+    .sort((a, b) => (b.count ?? 1) - (a.count ?? 1));
+
   const modules: Record<string, React.ReactNode> = {
     quick: (
       <SectionCard
         key="quick"
-        title={tab === "quick" ? "Quick Banking" : "Recent"}
+        title={tab === "quick" ? "Quick Banking" : "Frequent Transactions"}
         subtitle={tab === "quick" ? "Your top 3 services" : "Tap to repeat with details filled in"}
         action="See all"
         onAction={() => (tab === "quick" ? setAllQuick(true) : nav({ to: "/pay-transfer" }))}
       >
         <SegmentedTabs
-          tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Recent" }]}
+          tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Frequent Transactions" }]}
           value={tab}
           onChange={setTab}
         />
@@ -84,7 +88,7 @@ function HomePage() {
           </div>
         ) : (
           <div className="mt-1">
-            {state.recentEntities.slice(0, 5).map((r) => (
+            {frequents.slice(0, 5).map((r) => (
               <ListRow
                 key={r.id}
                 icon={r.icon}
@@ -95,8 +99,8 @@ function HomePage() {
                 onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: r.serviceId }, search: { ref: r.id } })}
               />
             ))}
-            {state.recentEntities.length === 0 && (
-              <p className="py-5 text-center text-[13.5px] text-muted-foreground">No recent activity yet.</p>
+            {frequents.length === 0 && (
+              <p className="py-5 text-center text-[13.5px] text-muted-foreground">No frequent transactions yet.</p>
             )}
           </div>
         )}
@@ -110,7 +114,7 @@ function HomePage() {
             You have saved {money(nepal?.saved ?? 62500)}. Only {money(Math.max(0, (nepal?.target ?? 100000) - (nepal?.saved ?? 62500)))} remains to reach your Nepal Trip goal.
           </p>
           <div className="mt-2.5 flex gap-2">
-            <button onClick={() => go("goal-setting")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">Add Money</button>
+            <button onClick={() => go("goal-setting")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">Contribute</button>
             <button onClick={() => go("savings-goals")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">View Goal</button>
             <button onClick={() => go("spending-insights")} className="press px-2 text-[12.5px] text-muted-foreground">See All</button>
           </div>
@@ -132,13 +136,13 @@ function HomePage() {
 
     transactions: (
       <SectionCard key="transactions" title="Recent transactions" action="View all" onAction={() => go("transaction-history")}>
-        {state.transactions.slice(0, 5).map((t) => (
+        {state.transactions.slice(0, 2).map((t) => (
           <ListRow
             key={t.id}
             icon={byId(t.serviceId)?.icon ?? "Receipt"}
             tint={t.direction === "credit" ? "green" : "gray"}
             title={t.title}
-            subtitle={t.date}
+            subtitle={`${t.date} · ${t.status === "success" ? "Success" : t.status === "failed" ? "Failed" : "Pending"}`}
             right={
               <span className={t.direction === "credit" ? "text-[14px] font-semibold text-success" : "text-[14px] font-semibold"}>
                 {t.direction === "credit" ? "+" : "-"}{money(t.amount)}
@@ -150,14 +154,18 @@ function HomePage() {
       </SectionCard>
     ),
     goals: (
-      <SectionCard key="goals" title="Savings & goals" action="All goals" onAction={() => go("savings-goals")}>
-        {state.goals.slice(0, 2).map((g) => (
-          <div key={g.id} className="border-b border-border py-3 last:border-0">
+      <SectionCard key="goals" title="DPS, Savings & Goals" action="All goals" onAction={() => go("savings-goals")}>
+        {(nepal ? [nepal] : state.goals.slice(0, 1)).map((g) => (
+          <div key={g.id} className="py-2">
             <div className="flex items-center justify-between text-[14.5px] font-medium">
               <span>{g.title}</span>
               <span>{money(g.saved)} / {money(g.target)}</span>
             </div>
             <ProgressBar className="mt-2" value={(g.saved / g.target) * 100} />
+            <div className="mt-2.5 flex gap-2">
+              <button onClick={() => go("goal-setting")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Contribute</button>
+              <button onClick={() => go("savings-goals")} className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">All Goals</button>
+            </div>
           </div>
         ))}
       </SectionCard>
@@ -178,12 +186,12 @@ function HomePage() {
       </SectionCard>
     ),
     more: (
-      <SectionCard key="more" title="More services" action="Explore" onAction={() => nav({ to: "/explore" })}>
-        <div className="grid grid-cols-3">
-          {["split-pay", "qr-payment", "instant-dps", "group-dps", "e-toll", "disputes"].map((id) => {
-            const s = byId(id);
+      <SectionCard key="more" title="More services" action="Explore Services" onAction={() => nav({ to: "/explore" })}>
+        <div className="grid grid-cols-2">
+          {MORE_SERVICES.map((m) => {
+            const s = byId(m.id);
             if (!s) return null;
-            return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
+            return <ServiceTile key={m.id} icon={s.icon} tint={s.tint} label={m.label} onClick={() => go(m.id)} />;
           })}
         </div>
       </SectionCard>

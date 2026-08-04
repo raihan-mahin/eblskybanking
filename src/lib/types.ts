@@ -176,6 +176,8 @@ export interface RecentEntity {
   icon: string;
   tint: "yellow" | "green" | "blue" | "purple" | "pink" | "gray";
   prefill: Record<string, string>;
+  /** How many times this recipient/action has been repeated (frequency ranking). */
+  count?: number;
 }
 
 export interface DisputeUpdate {
@@ -279,5 +281,8 @@ export interface AppState {
   nfcShares: NfcShare[];
   birthday: { name: string; date: string; offerId: string; read: boolean; saved: boolean; dismissed: boolean };
   supportHandoff: { escalated: boolean; ticketId: string | null };
+  /** One-time local data migration marker. */
+  migration?: number;
 }
+
 

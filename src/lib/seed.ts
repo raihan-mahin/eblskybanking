@@ -18,6 +18,53 @@ export const BANKS = [
 
 export const MFS = ["bKash", "Nagad", "Rocket", "Upay"];
 
+/** Frequent Transactions — repeated recipients, billers and actions (prototype data). */
+export const FREQUENT_SEED: AppState["recentEntities"] = [
+  {
+    id: "fr-self-recharge", serviceId: "recharge", label: "Self Recharge", entity: "My Number", masked: "017XX XXX 678",
+    detail: "Grameenphone · ৳300 last time", date: "Today, 5:10 PM", amount: 300, icon: "Smartphone", tint: "green",
+    count: 12,
+    prefill: { mobile: "01712345678", operator: "Grameenphone", contact: "My Number", amount: "300" },
+  },
+  {
+    id: "fr-bariwala", serviceId: "fund-transfer", label: "Bariwala", entity: "Kamrul Islam (Bariwala)", masked: "1102 **** **** 7788",
+    detail: "Eastern Bank PLC · ৳12,000 last time", date: "Yesterday, 8:02 PM", amount: 12000, icon: "ArrowLeftRight", tint: "yellow",
+    count: 9,
+    prefill: { beneficiary: "Kamrul Islam (Bariwala)", bank: "Eastern Bank PLC", account: "1102938477887788", amount: "12000" },
+  },
+  {
+    id: "fr-home-internet", serviceId: "bill-internet", label: "Home Internet Bill", entity: "Link3", masked: "ID link3-88213",
+    detail: "Internet · ৳1,200 last time", date: "8 May, 2025", amount: 1200, icon: "Globe", tint: "purple",
+    count: 7,
+    prefill: { biller: "Link3", account: "link3-88213", customer: "link3-88213", amount: "1200" },
+  },
+  {
+    id: "fr-desco", serviceId: "bill-electricity", label: "Electricity Bill", entity: "DESCO", masked: "Acc 4453 **** 21",
+    detail: "Electricity · ৳1,840 last time", date: "Today, 4:20 PM", amount: 1840, icon: "Zap", tint: "blue",
+    count: 6,
+    prefill: { biller: "DESCO", account: "44531234521", customer: "44531234521", amount: "1840" },
+  },
+  {
+    id: "fr-rahim", serviceId: "recharge", label: "Recharge Rahim", entity: "Rahim Uddin", masked: "016XX XXX 900",
+    detail: "Airtel · ৳300 last time", date: "11 May, 2025", amount: 300, icon: "Smartphone", tint: "green",
+    count: 4,
+    prefill: { mobile: "01677889900", operator: "Airtel", contact: "Rahim Uddin", amount: "300" },
+  },
+  {
+    id: "fr-arnav", serviceId: "fund-transfer", label: "Transfer to Arnav", entity: "Arnav Hasan", masked: "2050 **** **** 1234",
+    detail: "Eastern Bank PLC · ৳2,500 last time", date: "7 May, 2025", amount: 2500, icon: "ArrowLeftRight", tint: "yellow",
+    count: 3,
+    prefill: { beneficiary: "Arnav Hasan", bank: "Eastern Bank PLC", account: "2050000012341234", amount: "2500" },
+  },
+  {
+    id: "fr-tuition", serviceId: "tuition-fee", label: "Tuition Fee", entity: "BRAC University", masked: "Student 21301****",
+    detail: "Education · ৳12,500 last time", date: "12 May, 2025", amount: 12500, icon: "GraduationCap", tint: "green",
+    count: 2,
+    prefill: { institution: "BRAC University", student: "21301234", amount: "12500" },
+  },
+];
+
+
 export const seedState = (): AppState => ({
   loggedIn: false,
   demoMode: false,
@@ -56,14 +103,15 @@ export const seedState = (): AppState => ({
   },
   personalization: { enabled: true, pinned: [], hidden: [] },
   accounts: [
-    { id: "acc-1", name: "EBL Savings Account", masked: "XXXX XXXX XXXX 1234", balance: 19950, type: "savings" },
+    { id: "acc-1", name: "EBL Savings Account", masked: "XXXX XXXX XXXX 1234", balance: 9950, type: "savings" },
   ],
   cards: [
     { id: "card-1", name: "My Card", masked: "4212 XXXX XXXX 7781", kind: "credit", balance: 42000, frozen: false, online: true, intl: false, contactless: true, limit: 100000, pinSet: true, active: true },
   ],
 
   transactions: [
-    { id: "t1", title: "bKash Add Money", serviceId: "add-money", category: "Add Money", amount: 3000, fee: 0, direction: "debit", status: "success", date: "Today, 6:45 PM", points: 30, ref: "EBL8241001" },
+    { id: "t1", title: "MFS Transfer — bKash", serviceId: "mfs-transfer", category: "Transfer", amount: 3000, fee: 0, direction: "debit", status: "success", date: "Today, 6:45 PM", points: 0, ref: "EBL8241001" },
+
     { id: "t2", title: "Electricity Bill — DESCO", serviceId: "bill-electricity", category: "Bills", amount: 1840, fee: 0, direction: "debit", status: "success", date: "Today, 4:20 PM", points: 18, ref: "EBL8241002" },
     { id: "t3", title: "Split Pay — Dinner at Banani", serviceId: "split-pay", category: "Split Pay", amount: 1000, fee: 0, direction: "debit", status: "success", date: "Yesterday, 9:15 PM", points: 10, ref: "EBL8241003" },
     { id: "t4", title: "Tuition Fee — BRAC University", serviceId: "tuition-fee", category: "Education", amount: 12500, fee: 20, direction: "debit", status: "success", date: "12 May, 2025", points: 125, ref: "EBL8241004" },
@@ -80,7 +128,7 @@ export const seedState = (): AppState => ({
     { id: "t15", title: "Group DPS — Nepal Trip", serviceId: "group-dps", category: "Savings", amount: 500, fee: 0, direction: "debit", status: "success", date: "15 Apr, 2025", points: 5, ref: "EBL8241015" },
   ],
   notifications: [
-    { id: "n1", title: "Add Money successful", body: "৳3,000 added from bKash.", date: "Today, 6:45 PM", read: false, kind: "txn" },
+    { id: "n1", title: "Transfer successful", body: "৳3,000 sent to bKash wallet.", date: "Today, 6:45 PM", read: false, kind: "txn" },
     { id: "n2", title: "Bill paid", body: "DESCO electricity bill of ৳1,840 paid.", date: "Today, 4:20 PM", read: false, kind: "txn" },
     { id: "n3", title: "Split request", body: "Arnav requested ৳750 for Lunch.", date: "Yesterday", read: false, kind: "info" },
     { id: "n4", title: "Reward points earned", body: "You earned 125 points from tuition payment.", date: "12 May, 2025", read: true, kind: "reward" },
@@ -115,9 +163,7 @@ export const seedState = (): AppState => ({
   ],
   goals: [
     { id: "g1", title: "Nepal Trip", icon: "Plane", target: 100000, saved: 62500, monthly: 5000, date: "Dec 2025", auto: true },
-    { id: "g2", title: "New Phone", icon: "Smartphone", target: 90000, saved: 24000, monthly: 6000, date: "Oct 2025", auto: false },
-    { id: "g3", title: "Laptop", icon: "Laptop", target: 150000, saved: 38000, monthly: 8000, date: "Mar 2026", auto: false },
-    { id: "g4", title: "Emergency Fund", icon: "ShieldCheck", target: 200000, saved: 84000, monthly: 4000, date: "Jun 2026", auto: true },
+    { id: "g2", title: "New iPhone", icon: "Smartphone", target: 150000, saved: 10000, monthly: 6000, date: "Oct 2026", auto: false },
   ],
   dps: [
     { id: "dp1", title: "EBL DPS 5 Year", monthly: 2000, saved: 48000, target: 120000, matures: "Jan 2029" },
@@ -169,7 +215,7 @@ export const seedState = (): AppState => ({
     id: uid("r", i + 1),
     txnId: uid("t", i + 1),
     title: [
-      "bKash Add Money", "Electricity Bill — DESCO", "Split Pay — Dinner at Banani", "Tuition Fee — BRAC University",
+      "MFS Transfer — bKash", "Electricity Bill — DESCO", "Split Pay — Dinner at Banani", "Tuition Fee — BRAC University",
       "Recharge — Grameenphone", "Salary Credit", "Internet Bill — Link3", "Fund Transfer — Arnav",
       "Card Payment — EBL Visa", "Netflix Gift Card",
     ][i]!,
@@ -185,7 +231,7 @@ export const seedState = (): AppState => ({
     history: [
       { id: "rh1", title: "Tuition payment", points: 125, date: "12 May, 2025" },
       { id: "rh2", title: "Card payment", points: 80, date: "6 May, 2025" },
-      { id: "rh3", title: "Add Money", points: 30, date: "Today" },
+      { id: "rh3", title: "QR payment at Unimart", points: 30, date: "Today" },
       { id: "rh4", title: "QR payment at Shwapno", points: 23, date: "4 May, 2025" },
       { id: "rh5", title: "DPS contribution", points: 20, date: "3 May, 2025" },
       { id: "rh6", title: "Electricity bill", points: 18, date: "Today" },
@@ -212,13 +258,13 @@ export const seedState = (): AppState => ({
     ],
   },
   recent: [
-    { serviceId: "add-money", date: "Today, 6:45 PM" },
+    { serviceId: "mfs-transfer", date: "Today, 6:45 PM" },
     { serviceId: "bill-electricity", date: "Today, 4:20 PM" },
     { serviceId: "split-pay", date: "Yesterday, 9:15 PM" },
     { serviceId: "tuition-fee", date: "12 May, 2025" },
     { serviceId: "recharge", date: "11 May, 2025" },
   ],
-  usage: { "add-money": 6, "bill-electricity": 5, "split-pay": 4, "tuition-fee": 2, recharge: 3 },
+  usage: { "fund-transfer": 6, "bill-electricity": 5, "split-pay": 4, "tuition-fee": 2, recharge: 3 },
   tickets: [
     { id: "TKT-2026-0042", category: "Rewards", subject: "Reward points not credited", description: "Points for a partner offer were missing.", contact: "Email", status: "Resolved", date: "12 Jan, 2026" },
     { id: "TCK-100234", category: "Transaction", subject: "MFS transfer failed", description: "Nagad transfer of ৳2,500 failed but I was charged.", contact: "Mobile", status: "In Review", date: "2 May, 2025" },
@@ -244,38 +290,8 @@ export const seedState = (): AppState => ({
   giftCards: [],
   dashboard: { order: DEFAULT_DASHBOARD_ORDER, hidden: [] },
   quickBanking: DEFAULT_QUICK,
-  recentEntities: [
-    {
-      id: "re1", serviceId: "recharge", label: "Recharge Rahim", entity: "Rahim Uddin", masked: "016XX XXX 900",
-      detail: "Airtel · ৳300 last time", date: "Today, 5:10 PM", amount: 300, icon: "Smartphone", tint: "green",
-      prefill: { mobile: "01677889900", operator: "Airtel", amount: "300" },
-    },
-    {
-      id: "re2", serviceId: "fund-transfer", label: "Transfer to Arnav", entity: "Arnav Hasan", masked: "2050 **** **** 1234",
-      detail: "Eastern Bank PLC · ৳2,500 last time", date: "Yesterday, 8:02 PM", amount: 2500, icon: "ArrowLeftRight", tint: "yellow",
-      prefill: { mobile: "01711223344", beneficiary: "Arnav Hasan", amount: "2500" },
-    },
-    {
-      id: "re3", serviceId: "bill-electricity", label: "Pay DESCO bill", entity: "DESCO", masked: "Acc 4453 **** 21",
-      detail: "Electricity · ৳1,840 last time", date: "Today, 4:20 PM", amount: 1840, icon: "Zap", tint: "blue",
-      prefill: { biller: "DESCO", account: "44531234521", amount: "1840" },
-    },
-    {
-      id: "re4", serviceId: "bill-internet", label: "Home Internet Bill", entity: "Link3", masked: "ID link3-88213",
-      detail: "Internet · ৳1,200 last time", date: "8 May, 2025", amount: 1200, icon: "Globe", tint: "purple",
-      prefill: { biller: "Link3", account: "link3-88213", amount: "1200" },
-    },
-    {
-      id: "re5", serviceId: "mfs-transfer", label: "bKash to Ammu", entity: "Ammu", masked: "014XX XXX 911",
-      detail: "bKash · ৳5,000 last time", date: "3 May, 2025", amount: 5000, icon: "Smartphone", tint: "pink",
-      prefill: { wallet: "01412009911", provider: "bKash", amount: "5000" },
-    },
-    {
-      id: "re6", serviceId: "tuition-fee", label: "Tuition — BRAC University", entity: "BRAC University", masked: "Student 21301****",
-      detail: "Education · ৳12,500 last time", date: "12 May, 2025", amount: 12500, icon: "GraduationCap", tint: "green",
-      prefill: { institution: "BRAC University", student: "21301234", amount: "12500" },
-    },
-  ],
+  recentEntities: FREQUENT_SEED,
+
   disputes: [
     {
       id: "DSP-2026-0001", txnId: "EBL8241014", txnTitle: "MFS Transfer — Nagad", amount: 2500, date: "10 Jan, 2026",
@@ -301,5 +317,59 @@ export const seedState = (): AppState => ({
   nfcShares: [],
   birthday: { name: "Mahin", date: "Today", offerId: "po-birthday", read: false, saved: false, dismissed: false },
   supportHandoff: { escalated: false, ticketId: null },
+  migration: MIGRATION_VERSION,
 
 });
+
+/* ---------------- One-time local data migration ---------------- */
+
+export const MIGRATION_VERSION = 2;
+
+/** Applies the incremental prototype update to an already-saved local state, once. */
+export function migrateState(state: AppState): AppState {
+  if (state.migration === MIGRATION_VERSION) return state;
+
+  const fresh = seedState();
+
+  // Goals: keep Nepal Trip and one iPhone goal only; funds live outside available savings.
+  const nepal = state.goals.find((g) => /nepal/i.test(g.title)) ?? fresh.goals[0]!;
+  const iphone =
+    state.goals.find((g) => /iphone/i.test(g.title)) ??
+    { ...fresh.goals[1]!, id: "g2" };
+  const goals = [nepal, iphone];
+
+  const goalTotal = goals.reduce((a, g) => a + g.saved, 0);
+  const TOTAL_OWNED = 82450;
+
+  const accounts = state.accounts.length
+    ? [{ ...state.accounts[0]!, balance: Math.max(0, TOTAL_OWNED - goalTotal) }]
+    : fresh.accounts;
+
+  const stripAddMoney = <T,>(list: T[], get: (x: T) => string) => list.filter((x) => get(x) !== "add-money");
+  const usage: Record<string, number> = { ...state.usage };
+  delete usage["add-money"];
+
+  const customFrequents = state.recentEntities.filter(
+    (r) => !FREQUENT_SEED.some((f) => f.id === r.id) && r.serviceId !== "add-money",
+  );
+
+  return {
+    ...state,
+    accounts,
+    cards: state.cards.slice(0, 1),
+    goals,
+    usage,
+    recent: stripAddMoney(state.recent, (r) => r.serviceId),
+    quickBanking: stripAddMoney(state.quickBanking, (id) => id),
+    personalization: {
+      ...state.personalization,
+      pinned: stripAddMoney(state.personalization.pinned, (id) => id),
+    },
+    dashboard: { order: DEFAULT_DASHBOARD_ORDER, hidden: state.dashboard.hidden.filter((id) => DEFAULT_DASHBOARD_ORDER.includes(id)) },
+    recentEntities: [...FREQUENT_SEED, ...customFrequents],
+    transactions: state.transactions.map((t) =>
+      t.serviceId === "add-money" ? { ...t, serviceId: "mfs-transfer", category: "Transfer" } : t,
+    ),
+    migration: MIGRATION_VERSION,
+  };
+}
