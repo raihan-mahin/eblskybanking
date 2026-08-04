@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
+import { Bell, ChevronLeft, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
+import profilePhoto from "@/assets/profile.png.asset.json";
 import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
@@ -42,8 +43,8 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
               <ChevronLeft className="size-6" />
             </button>
           ) : title ? null : (
-            <button onClick={() => setMenu(true)} className="press my-0.5 grid size-12 place-items-center rounded-full bg-foreground text-white">
-              <User className="size-7" />
+            <button onClick={() => setMenu(true)} aria-label="Open profile menu" className="press my-0.5 size-12 overflow-hidden rounded-full bg-foreground ring-2 ring-white/70">
+              <img src={profilePhoto.url} alt={state.user.name} className="size-full object-cover object-top" />
             </button>
           )}
           <div className="min-w-0 flex-1">
