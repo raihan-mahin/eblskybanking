@@ -191,7 +191,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
               onClick={() => { remember(q); onClose(); nav({ to: e.route }); }} />
           ))}
           {services.slice(0, 20).map((s) => (
-            <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={s.description} onClick={() => openService(s.id)} />
+            <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={categoryTitle(s.category)} onClick={() => openService(s.id)} />
           ))}
           {services.length === 0 && extras.length === 0 && (
             <div className="py-6 text-center">
