@@ -16,7 +16,7 @@ export function NextRewardCard({ compact }: { compact?: boolean }) {
           <Icon name="Award" className="size-4.5" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[11.5px] text-muted-foreground">Next Reward</p>
+          
           <p className="text-[14px] font-semibold text-primary">{NEXT_REWARD.title}</p>
           <p className="text-[12.5px] text-muted-foreground">Spend {money(remaining)} more to unlock.</p>
           <ProgressBar className="mt-1.5 h-1.5" value={pct} />
