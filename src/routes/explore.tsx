@@ -53,7 +53,8 @@ function ExplorePage() {
   };
 
   return (
-    <AppShell title="Explore">
+    <AppShell title={fromHome ? "Explore Services" : "Explore"} back={fromHome}>
+
       <SearchField value={q} onChange={setQ} placeholder="Search all services" />
 
       {q ? (

@@ -212,7 +212,7 @@ function HomePage() {
             return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
           })}
         </div>
-        <ArrowPill label="Open Explore Services" onClick={() => nav({ to: "/explore" })} />
+        <ArrowPill label="Open Explore Services" onClick={() => nav({ to: "/explore", state: { fromHome: true } as never })} />
 
       </SectionCard>
     ),
