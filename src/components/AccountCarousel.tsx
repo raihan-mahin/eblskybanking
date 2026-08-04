@@ -16,6 +16,7 @@ export function AccountCarousel() {
   const [showNumber, setShowNumber] = useState(false);
   const [index, setIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+  const cardTapRef = useRef<{ x: number; y: number; t: number; moved: boolean } | null>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
 
   const account = state.accounts[0];
@@ -108,7 +109,31 @@ export function AccountCarousel() {
 
         {card && (
           <div className={SLIDE}>
-            <div className={cx(CARD_FRAME, "bg-tint-blue")}>
+          <div
+            className={cx(CARD_FRAME, "bg-tint-blue", "relative cursor-pointer transition-transform active:scale-[0.98]")}
+            onPointerDown={(e) => {
+              cardTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now(), moved: false };
+            }}
+            onPointerMove={(e) => {
+              const r = cardTapRef.current;
+              if (!r || r.moved) return;
+              const dx = e.clientX - r.x;
+              const dy = e.clientY - r.y;
+              if (Math.hypot(dx, dy) > 12) r.moved = true;
+            }}
+            onPointerUp={() => {
+              const r = cardTapRef.current;
+              if (!r || r.moved) return;
+              if (Date.now() - r.t < 300) go("card-services");
+              cardTapRef.current = null;
+            }}
+            onPointerLeave={() => {
+              cardTapRef.current = null;
+            }}
+            onPointerCancel={() => {
+              cardTapRef.current = null;
+            }}
+          >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-[13px] text-muted-foreground">{card.name}</p>
