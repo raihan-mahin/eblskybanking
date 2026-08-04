@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
-import { Star, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Pin } from "lucide-react";
+import { Star, ChevronUp, ChevronDown, Pin } from "lucide-react";
 import { AppShell, FullSheet } from "@/components/AppShell";
 import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, cx } from "@/components/kit";
 import { Icon } from "@/components/Icon";
@@ -41,70 +41,56 @@ function ArrowPill({ label, onClick }: { label: string; onClick: () => void }) {
 
 function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved: number; target: number }; go: (id: string) => void }) {
   const [idx, setIdx] = useState(0);
-  const startX = useRef<number | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
 
-  const onEnd = (x: number) => {
-    if (startX.current === null) return;
-    const dx = x - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) < 40) return;
-    setIdx((i) => Math.min(1, Math.max(0, i + (dx < 0 ? 1 : -1))));
+  const onScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const i = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
+    setIdx(i > 0 ? 1 : 0);
   };
 
   return (
-    <div
-      onTouchStart={(e) => { startX.current = e.touches[0]!.clientX; }}
-      onTouchEnd={(e) => onEnd(e.changedTouches[0]!.clientX)}
-      onPointerDown={(e) => { if (e.pointerType === "mouse") startX.current = e.clientX; }}
-      onPointerUp={(e) => { if (e.pointerType === "mouse") onEnd(e.clientX); }}
-    >
+    <div>
       <div className="flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-primary">DPS, Savings & Goals</h2>
-        <div className="flex items-center gap-1.5">
-          <button onClick={() => go("savings-goals")} className="press text-[12.5px] font-medium text-muted-foreground">All goals</button>
-          <button
-            aria-label={idx === 0 ? "Next slide" : "Previous slide"}
-            onClick={() => setIdx(idx === 0 ? 1 : 0)}
-            className="press grid size-6 place-items-center rounded-full border border-border text-muted-foreground"
-          >
-            {idx === 0 ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
-          </button>
-        </div>
+        <button onClick={() => go("savings-goals")} className="press text-[12.5px] font-medium text-muted-foreground">All goals</button>
       </div>
 
-      <div className="overflow-hidden">
-        <div className="flex transition-transform duration-300" style={{ transform: `translateX(-${idx * 100}%)` }}>
-          <div className="w-full shrink-0 py-2">
-            {goal && (
-              <>
-                <div className="flex items-center justify-between text-[14.5px] font-medium">
-                  <span>{goal.title}</span>
-                  <span>{money(goal.saved)} / {money(goal.target)}</span>
-                </div>
-                <ProgressBar className="mt-2" value={(goal.saved / goal.target) * 100} />
-                <div className="mt-2.5 flex gap-2">
-                  <button onClick={() => go("goal-setting")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Contribute</button>
-                  <button onClick={() => go("savings-goals")} className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">All Goals</button>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="w-full shrink-0 py-2">
-            <button onClick={() => go("instant-dps")} className="press w-full rounded-2xl bg-tint-blue p-3 text-left">
-              <p className="text-[14.5px] font-semibold text-primary">Instant DPS</p>
-              <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">Start your DPS in seconds</p>
-              <span className="mt-2 inline-block rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium text-foreground">Start Now</span>
-            </button>
-          </div>
+      <div
+        ref={trackRef}
+        onScroll={onScroll}
+        className="-mx-1 flex snap-x snap-mandatory items-stretch overflow-x-auto overflow-y-hidden scroll-smooth px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ touchAction: "pan-y pinch-zoom", overscrollBehaviorX: "contain" }}
+      >
+        <div className="w-full shrink-0 snap-center py-2">
+          {goal && (
+            <>
+              <div className="flex items-center justify-between text-[14.5px] font-medium">
+                <span>{goal.title}</span>
+                <span>{money(goal.saved)} / {money(goal.target)}</span>
+              </div>
+              <ProgressBar className="mt-2" value={(goal.saved / goal.target) * 100} />
+              <div className="mt-2.5 flex gap-2">
+                <button onClick={() => go("goal-setting")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Contribute</button>
+                <button onClick={() => go("savings-goals")} className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">All Goals</button>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="flex w-full shrink-0 snap-center py-2">
+          <button onClick={() => go("instant-dps")} className="press w-full rounded-2xl bg-tint-blue p-3 text-left">
+            <p className="text-[14.5px] font-semibold text-primary">Instant DPS</p>
+            <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">Start your DPS in seconds</p>
+            <span className="mt-2 inline-block rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium text-foreground">Start Now</span>
+          </button>
         </div>
       </div>
 
       <div className="mt-1 flex justify-center gap-1.5">
         {[0, 1].map((i) => (
-          <button
+          <span
             key={i}
-            aria-label={`Go to slide ${i + 1}`}
-            onClick={() => setIdx(i)}
             className={cx("h-1.5 rounded-full transition-all", i === idx ? "w-4 bg-primary" : "w-1.5 bg-border")}
           />
         ))}
@@ -112,6 +98,7 @@ function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved
     </div>
   );
 }
+
 
 
 function HomePage() {
