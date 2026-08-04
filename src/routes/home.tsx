@@ -81,10 +81,10 @@ function HomePage() {
     quick: (
       <SectionCard
         key="quick"
-        title={tab === "quick" ? "Quick Banking" : "Favorites"}
-        subtitle={tab === "quick" ? "Your top 3 services" : "Tap to repeat with details filled in"}
+        title="Quick Banking"
         action="See all"
-        onAction={() => (tab === "quick" ? setAllQuick(true) : nav({ to: "/pay-transfer" }))}
+        onAction={() => setAllQuick(true)}
+        className="!py-3"
       >
         <SegmentedTabs
           tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Favorites" }]}
