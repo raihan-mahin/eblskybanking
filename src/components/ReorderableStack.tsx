@@ -8,6 +8,16 @@ const EDGE_PX = 90;
 
 type Item = { id: string; node: ReactNode };
 
+const haptic = (pattern: number | number[]) => {
+  if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
+    try {
+      navigator.vibrate(pattern);
+    } catch {
+      /* haptics unsupported */
+    }
+  }
+};
+
 const isInteractive = (target: EventTarget | null) => {
   const el = target as HTMLElement | null;
   if (!el || !el.closest) return false;
@@ -54,6 +64,7 @@ export function ReorderableStack({
         const ids = items.map((i) => i.id);
         const [moved] = ids.splice(dragIndex, 1);
         ids.splice(targetIndex, 0, moved!);
+        haptic([10, 40, 10]);
         onReorder(ids);
       }
       setDragIndex(null);
@@ -74,6 +85,7 @@ export function ReorderableStack({
     const heights = rects.map((r) => r.height);
     const gap = rects.length > 1 ? Math.max(0, rects[1]!.top - rects[0]!.bottom) : 12;
     geometry.current = { tops, heights, gap };
+    haptic(15);
     setDragIndex(index);
     setTargetIndex(index);
     setOffset(0);
