@@ -499,7 +499,7 @@ export interface ExploreOption {
 
 export const EXPLORE_OPTIONS: ExploreOption[] = [
   { id: "products", title: "Products", subtitle: "Explore EBL products", icon: "Package", tint: "yellow", to: "/products" },
-  { id: "rewards", title: "Rewards & Offers", subtitle: "Explore EBL rewards and offers", icon: "Gift", tint: "blue", to: "/category/$categoryId", param: "rewards" },
+  { id: "rewards", title: "Rewards & Offers", subtitle: "Points, level and redemption", icon: "Gift", tint: "blue", to: "/service/$serviceId", param: "rewards" },
   { id: "zip", title: "ZIP Partners", subtitle: "Explore EBL partners", icon: "BadgePercent", tint: "green", to: "/service/$serviceId", param: "partner-offers" },
   { id: "biometric", title: "Biometric Login", subtitle: "Login securely and instantly with your biometric.", icon: "Fingerprint", tint: "yellow", to: "/service/$serviceId", param: "fingerprint-setup" },
   { id: "security", title: "Security & Support", subtitle: "Protect your account and get help", icon: "ShieldCheck", tint: "purple", to: "/category/$categoryId", param: "security" },
