@@ -129,8 +129,8 @@
     transform: translateY(0);
   }
   50% {
-    opacity: 0.55;
-    transform: translateY(3px);
+    opacity: 0.6;
+    transform: translateY(1.5px);
   }
 }
 .double-chevron-top {
@@ -138,7 +138,7 @@
 }
 .double-chevron-bottom {
   animation: double-chevron-pulse 1.5s ease-in-out infinite;
-  animation-delay: 0.22s;
+  animation-delay: 0.08s;
 }
 @media (prefers-reduced-motion: reduce) {
   .double-chevron-top,
