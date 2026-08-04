@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from "react";
-import { migrateState, seedState } from "./seed";
+import { migrateState, remapServiceCategories, seedState } from "./seed";
 import type { AppState, Txn } from "./types";
 
 const KEY = "ebl-sky-banking-v2";
@@ -164,7 +164,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw);
         const merged = { ...seedState(), ...parsed, migration: parsed.migration } as AppState;
-        dispatch({ type: "hydrate", payload: migrateState(merged) });
+        dispatch({ type: "hydrate", payload: remapServiceCategories(migrateState(merged)) });
       }
     } catch {
       /* ignore */
