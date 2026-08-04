@@ -1,4 +1,4 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
 import { useApp } from "@/lib/store";
@@ -20,6 +20,11 @@ const TABS = [
 export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   const { state, patch } = useApp();
   const nav = useNavigate();
+  const router = useRouter();
+  const goBack = () => {
+    if (router.history.canGoBack()) router.history.back();
+    else nav({ to: "/home" });
+  };
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
   const [search, setSearch] = useState(false);
