@@ -215,18 +215,33 @@ export function TxnFlow(p: TxnFlowProps) {
           f.type === "tiles" ? (
             <div key={f.key}>
               <p className="mb-2 text-[13px] font-medium text-muted-foreground">{f.label}</p>
-              <div className="grid grid-cols-3 gap-2">
-                {(f.options ?? []).map((o) => (
-                  <button key={o} onClick={() => set(f.key, o)}
-                    className={cx(
-                      "press rounded-xl border p-3 text-[13px] font-medium",
-                      values[f.key] === o ? "border-brand bg-brand-soft" : "border-border",
-                    )}>
-                    {o}
-                  </button>
-                ))}
+              <div className="grid grid-cols-3 gap-2 max-[340px]:gap-1.5">
+                {(f.options ?? []).map((o) => {
+                  const Mark = MFS_MARKS[o];
+                  const selected = values[f.key] === o;
+                  return (
+                    <button key={o} onClick={() => set(f.key, o)}
+                      className={cx(
+                        "press relative flex flex-col items-center justify-between rounded-2xl border bg-card p-2.5 max-[340px]:p-2",
+                        selected ? "border-brand bg-brand-soft" : "border-border",
+                      )}>
+                      {selected && (
+                        <span className="absolute right-1.5 top-1.5 grid size-4 place-items-center rounded-full bg-brand">
+                          <Check className="size-3 text-primary-foreground" />
+                        </span>
+                      )}
+                      {Mark && (
+                        <span className="grid h-9 w-full place-items-center">
+                          <Mark className="max-h-9 max-w-full" />
+                        </span>
+                      )}
+                      <span className="mt-1.5 text-[13px] font-medium leading-tight">{o}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
+
           ) : (
             <FormField key={f.key} label={f.label} hint={f.hint}>
               {f.type === "select" ? (
