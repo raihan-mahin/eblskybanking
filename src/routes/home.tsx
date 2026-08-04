@@ -236,9 +236,12 @@ function HomePage() {
       </SectionCard>
     ),
     more: (
-      <SectionCard key="more" title="More services" action="Explore Services" onAction={() => nav({ to: "/explore" })}>
-        <div className="grid grid-cols-2">
+      <SectionCard key="more" title="More services">
+        <div className="grid grid-cols-3">
           {MORE_SERVICES.map((m) => {
+            if (m.route) {
+              return <ServiceTile key={m.id} icon="Compass" tint="yellow" label={m.label} onClick={() => nav({ to: "/explore" })} />;
+            }
             const s = byId(m.id);
             if (!s) return null;
             return <ServiceTile key={m.id} icon={s.icon} tint={s.tint} label={m.label} onClick={() => go(m.id)} />;
@@ -246,6 +249,7 @@ function HomePage() {
         </div>
       </SectionCard>
     ),
+
     recommended: (
       <SectionCard key="recommended" title="Recommended for you" subtitle="Based on how you bank">
         <ListRow icon="Send" tint="green" title="Send by mobile number" subtitle="Find the linked account instantly" onClick={() => go("phone-transfer")} />
@@ -257,17 +261,8 @@ function HomePage() {
 
   return (
     <AppShell>
-      <SearchField value={q} onChange={setQ} placeholder="Search services, bills, transfers" />
-      {q && (
-        <SectionCard title="Search results" subtitle={`${results.length} matches`}>
-          {results.slice(0, 12).map((r) => (
-            <ListRow key={r.id} icon={r.icon} tint={r.tint} title={r.title} subtitle={r.description} onClick={() => go(r.id)} />
-          ))}
-          {results.length === 0 && <p className="py-6 text-center text-[13.5px] text-muted-foreground">No services matched “{q}”.</p>}
-        </SectionCard>
-      )}
-
       <BirthdayNotice />
+
 
       <AccountCarousel />
 
