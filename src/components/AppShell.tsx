@@ -38,10 +38,10 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
       <header className="sticky top-0 z-40 bg-brand px-[18px] pt-[calc(env(safe-area-inset-top)+0.4rem)] pb-3 shadow-sm">
         <div className="flex items-center gap-2">
           {back ? (
-            <button onClick={() => nav({ to: "/home" })} className="press grid size-10 place-items-center rounded-full">
+            <button aria-label="Go back" onClick={goBack} className="press grid size-10 place-items-center rounded-full">
               <ChevronLeft className="size-6" />
             </button>
-          ) : (
+          ) : title ? null : (
             <button onClick={() => setMenu(true)} className="press my-0.5 grid size-12 place-items-center rounded-full bg-foreground text-white">
               <User className="size-7" />
             </button>
@@ -52,7 +52,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
             ) : (
               <>
                 <p className="text-[13px] leading-tight">{state.user.greeting}</p>
-                <p className="text-[17px] leading-tight font-semibold">{state.user.name}</p>
+                <p className="text-[17px] leading-tight font-semibold whitespace-nowrap">{state.user.name}</p>
               </>
             )}
           </div>
