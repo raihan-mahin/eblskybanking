@@ -80,7 +80,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
         {[
           ["profile", "Profile", "IdCard"], ["accounts", "Accounts", "Landmark"], ["rewards", "Rewards", "Award"],
           ["personalization", "Personalization", "Star"], ["customize-dashboard", "Customize Dashboard", "ListChecks"],
-          ["islamic-mode", "EBL Islamic Mode", "Moon"], ["disputes", "Transaction Disputes", "ShieldCheck"],
+          ["disputes", "Transaction Disputes", "ShieldCheck"],
           ["security-settings", "Security", "ShieldCheck"],
           ["accessibility", "Accessibility", "Accessibility"], ["notifications", "Notifications", "Bell"],
           ["help-support", "Help and Support", "LifeBuoy"],
