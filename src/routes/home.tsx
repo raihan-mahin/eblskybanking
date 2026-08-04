@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { SlidersHorizontal, Star, ChevronUp, ChevronDown } from "lucide-react";
+import { Star, ChevronUp, ChevronDown } from "lucide-react";
 import { AppShell, FullSheet } from "@/components/AppShell";
 import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, cx } from "@/components/kit";
 import { AccountCarousel } from "@/components/AccountCarousel";
-import { DashboardCustomizer } from "@/components/DashboardCustomizer";
+import { ReorderableStack } from "@/components/ReorderableStack";
+import { toast } from "sonner";
 import { BirthdayNotice } from "@/components/BirthdayNotice";
 import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money } from "@/lib/store";
@@ -28,7 +29,6 @@ function HomePage() {
   const { state, patch } = useApp();
   const nav = useNavigate();
   const [tab, setTab] = useState("quick");
-  const [customize, setCustomize] = useState(false);
   const [allQuick, setAllQuick] = useState(false);
 
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
@@ -220,17 +220,13 @@ function HomePage() {
 
       <AccountCarousel />
 
-      <div className="flex justify-end">
-        <button onClick={() => setCustomize(true)} className="press flex items-center gap-1.5 text-[12.5px] font-medium text-primary">
-          <SlidersHorizontal className="size-4" /> Customize dashboard
-        </button>
-      </div>
-
-      {order.map((id) => modules[id] ?? null)}
-
-      <FullSheet open={customize} onClose={() => setCustomize(false)} title="Customize Dashboard">
-        <DashboardCustomizer />
-      </FullSheet>
+      <ReorderableStack
+        items={order.filter((id) => modules[id]).map((id) => ({ id, node: modules[id] }))}
+        onReorder={(ids) => {
+          patch({ dashboard: { ...state.dashboard, order: ids } });
+          toast("Dashboard updated");
+        }}
+      />
 
       <FullSheet open={allQuick} onClose={() => setAllQuick(false)} title="Quick Banking">
         <SectionCard title="All shortcuts" subtitle="Pin a service to keep it on Home">
