@@ -15,11 +15,9 @@ export interface DashboardModule {
 export const DASHBOARD_MODULES: DashboardModule[] = [
   { id: "quick", label: "Quick Banking / Favorites", description: "Your top services and saved shortcuts" },
   { id: "more", label: "More Services", description: "Six everyday shortcuts" },
-
+  { id: "goals", label: "DPS, Savings & Goals", description: "Featured goal progress" },
   { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
   { id: "rewards", label: "Rewards", description: "Next reward and progress" },
-  
-  { id: "goals", label: "DPS, Savings & Goals", description: "Featured goal progress" },
 ];
 
 export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
