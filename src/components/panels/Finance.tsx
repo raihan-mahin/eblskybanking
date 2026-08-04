@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { SectionCard, ListRow, Button, ProgressBar, CircularProgress, MiniBarChart, MiniLineChart, DonutChart, StatusBadge, FormField, TextInput, Select, Sheet, Toggle, InsightCard, useToast, cx } from "@/components/kit";
 import { AuthenticationSheet } from "@/components/AuthenticationSheet";
+import { Icon } from "@/components/Icon";
 import { useApp, money, levelFor, nextLevel } from "@/lib/store";
 import type { Goal } from "@/lib/types";
 
