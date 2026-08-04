@@ -13,8 +13,9 @@ export interface DashboardModule {
 }
 
 export const DASHBOARD_MODULES: DashboardModule[] = [
-  { id: "quick", label: "Quick Banking / Frequent Transactions", description: "Your top services and repeated actions" },
-  { id: "more", label: "More Services", description: "Four everyday shortcuts" },
+  { id: "quick", label: "Quick Banking / Favorites", description: "Your top services and saved shortcuts" },
+  { id: "more", label: "More Services", description: "Six everyday shortcuts" },
+
   { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
   { id: "rewards", label: "Rewards", description: "Points, level and progress" },
   { id: "transactions", label: "Recent Transactions", description: "Latest account activity" },

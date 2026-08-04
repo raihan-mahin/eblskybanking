@@ -1,10 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { cx, Sheet, ListRow } from "./kit";
+import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
+import { searchServices, SERVICES } from "@/lib/services";
+
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
