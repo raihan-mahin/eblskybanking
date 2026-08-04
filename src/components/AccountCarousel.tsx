@@ -112,7 +112,6 @@ export function AccountCarousel() {
           <div
             className={cx(CARD_FRAME, "bg-tint-blue", "relative cursor-pointer transition-transform active:scale-[0.98]")}
             onPointerDown={(e) => {
-              console.log("PD", e.clientX, e.clientY);
               cardTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now(), moved: false };
             }}
             onPointerMove={(e) => {
@@ -123,7 +122,6 @@ export function AccountCarousel() {
               if (Math.hypot(dx, dy) > 12) r.moved = true;
             }}
             onPointerUp={() => {
-              console.log("PU");
               const r = cardTapRef.current;
               if (!r || r.moved) return;
               if (Date.now() - r.t < 300) go("card-services");
