@@ -17,6 +17,7 @@ import { Route as MyBankingRouteImport } from './routes/my-banking'
 import { Route as PayTransferRouteImport } from './routes/pay-transfer'
 import { Route as QrRouteImport } from './routes/qr'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as CategoryCategoryIdRouteImport } from './routes/category.$categoryId'
 import { Route as ServiceServiceIdRouteImport } from './routes/service.$serviceId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +60,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoryCategoryIdRoute = CategoryCategoryIdRouteImport.update({
+  id: '/category/$categoryId',
+  path: '/category/$categoryId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServiceServiceIdRoute = ServiceServiceIdRouteImport.update({
   id: '/service/$serviceId',
   path: '/service/$serviceId',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/pay-transfer': typeof PayTransferRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
+  '/category/$categoryId': typeof CategoryCategoryIdRoute
   '/service/$serviceId': typeof ServiceServiceIdRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/pay-transfer': typeof PayTransferRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
+  '/category/$categoryId': typeof CategoryCategoryIdRoute
   '/service/$serviceId': typeof ServiceServiceIdRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/pay-transfer': typeof PayTransferRoute
   '/qr': typeof QrRoute
   '/settings': typeof SettingsRoute
+  '/category/$categoryId': typeof CategoryCategoryIdRoute
   '/service/$serviceId': typeof ServiceServiceIdRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/pay-transfer'
     | '/qr'
     | '/settings'
+    | '/category/$categoryId'
     | '/service/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/pay-transfer'
     | '/qr'
     | '/settings'
+    | '/category/$categoryId'
     | '/service/$serviceId'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/pay-transfer'
     | '/qr'
     | '/settings'
+    | '/category/$categoryId'
     | '/service/$serviceId'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   PayTransferRoute: typeof PayTransferRoute
   QrRoute: typeof QrRoute
   SettingsRoute: typeof SettingsRoute
+  CategoryCategoryIdRoute: typeof CategoryCategoryIdRoute
   ServiceServiceIdRoute: typeof ServiceServiceIdRoute
 }
 
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/category/$categoryId': {
+      id: '/category/$categoryId'
+      path: '/category/$categoryId'
+      fullPath: '/category/$categoryId'
+      preLoaderRoute: typeof CategoryCategoryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/service/$serviceId': {
       id: '/service/$serviceId'
       path: '/service/$serviceId'
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   PayTransferRoute: PayTransferRoute,
   QrRoute: QrRoute,
   SettingsRoute: SettingsRoute,
+  CategoryCategoryIdRoute: CategoryCategoryIdRoute,
   ServiceServiceIdRoute: ServiceServiceIdRoute,
 }
 export const routeTree = rootRouteImport
