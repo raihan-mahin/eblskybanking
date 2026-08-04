@@ -91,7 +91,7 @@ function HomePage() {
 
   const modules: Record<string, React.ReactNode> = {
     quick: (
-      <SectionCard key="quick" className="!py-3">
+      <SectionCard key="quick" className="!py-2.5">
         <SegmentedTabs
           tabs={[{ id: "quick", label: "Quick Banking" }, { id: "recent", label: "Favorites" }]}
           value={tab}
@@ -166,7 +166,7 @@ function HomePage() {
     ),
 
     insights: (
-      <SectionCard key="insights" title="Smart Insights" action="See All" onAction={() => go("spending-insights")} className="!py-3">
+      <SectionCard key="insights" title="Smart Insights" action="See All" onAction={() => go("spending-insights")} className="!py-2.5">
         <div className="rounded-2xl bg-tint-green p-3">
           <p className="text-[14.5px] font-semibold text-primary">Your Nepal adventure is getting closer</p>
           <p className="mt-1 text-[13.5px] leading-snug">
@@ -181,14 +181,14 @@ function HomePage() {
       </SectionCard>
     ),
     rewards: (
-      <SectionCard key="rewards" title="Rewards" action="View Rewards" onAction={() => go("rewards")} className="!py-3">
+      <SectionCard key="rewards" title="Rewards" action="View Rewards" onAction={() => go("rewards")} className="!py-2.5">
         <NextRewardCard compact />
       </SectionCard>
     ),
 
 
     goals: (
-      <SectionCard key="goals" title="DPS, Savings & Goals" action="All goals" onAction={() => go("savings-goals")}>
+      <SectionCard key="goals" title="DPS, Savings & Goals" action="All goals" onAction={() => go("savings-goals")} className="!py-3">
         {(nepal ? [nepal] : state.goals.slice(0, 1)).map((g) => (
           <div key={g.id} className="py-2">
             <div className="flex items-center justify-between text-[14.5px] font-medium">
@@ -205,7 +205,7 @@ function HomePage() {
       </SectionCard>
     ),
     more: (
-      <SectionCard key="more" title="More services" className="!py-3">
+      <SectionCard key="more" title="More services" className="!py-2.5">
         <div className="grid grid-cols-3">
           {moreIds.map((id) => {
             const s = byId(id)!;
