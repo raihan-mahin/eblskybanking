@@ -41,9 +41,9 @@ function EyeToggle({ show, onToggle }: { show: boolean; onToggle: () => void }) 
     <button
       aria-label={show ? "Hide sensitive information" : "Show sensitive information"}
       onClick={(e) => { e.stopPropagation(); onToggle(); }}
-      className="press grid size-8 shrink-0 place-items-center rounded-full bg-card/70 text-muted-foreground"
+      className="press grid size-8 shrink-0 place-items-center self-end rounded-full bg-card/70 text-muted-foreground"
     >
-      {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+      {show ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
     </button>
   );
 }
