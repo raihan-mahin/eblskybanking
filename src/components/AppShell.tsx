@@ -237,7 +237,7 @@ export function AppShell({
       )}
     >
       <AppHeader title={title} back={back} />
-      <main className="relative z-10 -mt-4 space-y-2.5 rounded-t-3xl bg-background px-[18px] pt-3 pb-28">{children}</main>
+      <main className="relative z-10 -mt-4 space-y-2.5 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
       <VoiceAssistant />
 
       {!hideNav && <BottomNavigation />}
