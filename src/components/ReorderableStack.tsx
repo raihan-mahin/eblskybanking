@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { GripVertical } from "lucide-react";
 import { cx } from "./kit";
 
-const HOLD_MS = 2200;
+const HOLD_MS = 800;
 const MOVE_CANCEL_PX = 10;
 const EDGE_PX = 90;
 
