@@ -56,16 +56,64 @@ export function RewardsPanel() {
   return (
     <>
       <SectionCard>
-        <div className="flex items-center gap-4">
-          <CircularProgress value={pct} label={pts.toLocaleString()} sub="points" />
-          <div className="flex-1 space-y-1">
-            <p className="text-[18px] font-semibold text-primary">{lvl} Level</p>
-            <p className="text-[13px] text-muted-foreground">{nx.need > 0 ? `${nx.need} points to ${nx.name}` : "Top level reached"}</p>
-            <p className="text-[13px] text-success">+{state.rewards.monthPoints} points this month</p>
-            <p className="text-[12.5px] text-muted-foreground">{state.rewards.expiring} points expiring soon</p>
-            <p className="text-[12.5px] text-muted-foreground">≈ {money(Math.floor(pts / 10))} redeemable value</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[12px] text-muted-foreground">Available points</p>
+            <p className="text-[28px] font-bold leading-tight text-primary">{pts.toLocaleString()}</p>
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="grid size-5 place-items-center rounded-full bg-brand">
+                <Icon name="Crown" className="size-3 text-[#123B82]" />
+              </span>
+              <span className="text-[13px] font-semibold text-[#B8860B]">{lvl} Level</span>
+            </div>
           </div>
+          <button
+            onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "partner-offers" } })}
+            className="press rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-primary"
+          >
+            My Vouchers
+          </button>
         </div>
+
+        <div className="mt-4 flex items-center">
+          {LEVELS.flatMap((level, i) => {
+            const completed = pts >= level.min;
+            const current = level.name === lvl;
+            const last = i === LEVELS.length - 1;
+            const dot = (
+              <div key={`dot-${level.name}`} className="flex flex-col items-center gap-1.5">
+                <span
+                  className={cx(
+                    "grid size-5 place-items-center rounded-full",
+                    current && "bg-brand ring-2 ring-brand/30 text-[#123B82]",
+                    completed && !current && "text-white",
+                    !completed && !current && "bg-muted text-muted-foreground",
+                  )}
+                  style={completed && !current ? { backgroundColor: level.color } : undefined}
+                >
+                  {current ? <Icon name="Crown" className="size-3" /> : completed ? <Icon name="Check" className="size-3" /> : <Icon name="Lock" className="size-3" />}
+                </span>
+                <span className={cx("text-[10.5px] font-medium", current ? "font-semibold text-[#B8860B]" : "text-muted-foreground")}>
+                  {level.name}
+                </span>
+              </div>
+            );
+            if (last) return [dot];
+            const line = (
+              <div key={`line-${level.name}`} className="relative mx-1 h-0.5 flex-1 bg-border">
+                {i < filledSegments && <div className="absolute inset-y-0 left-0 bg-current" style={{ backgroundColor: SEGMENTS[i]!.color }} />}
+                {i === filledSegments && filledSegments < SEGMENTS.length && (
+                  <div className="absolute inset-y-0 left-0 bg-current" style={{ width: `${segmentPct}%`, backgroundColor: SEGMENTS[i]!.color }} />
+                )}
+              </div>
+            );
+            return [dot, line];
+          })}
+        </div>
+
+        <p className="mt-2.5 text-[12.5px] text-muted-foreground">
+          {nx.need > 0 ? `${nx.need.toLocaleString()} points needed to reach ${nx.name}.` : "Top level reached"}
+        </p>
       </SectionCard>
 
       <SectionCard title="Monthly points">
