@@ -161,6 +161,11 @@ export function ReorderableStack({
     [dragIndex],
   );
 
+  const offsetRef = useRef(0);
+  useEffect(() => {
+    offsetRef.current = offset;
+  }, [offset]);
+
   useEffect(() => {
     if (dragIndex === null) return;
     document.body.style.userSelect = "none";
@@ -216,11 +221,6 @@ export function ReorderableStack({
       stopAutoScroll();
     };
   }, [dragIndex, computeTarget, endDrag]);
-
-  const offsetRef = useRef(0);
-  useEffect(() => {
-    offsetRef.current = offset;
-  }, [offset]);
 
   const handlePointerDown = (e: React.PointerEvent, index: number) => {
     if (dragIndex !== null) return;
