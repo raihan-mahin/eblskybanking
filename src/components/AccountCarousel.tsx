@@ -5,9 +5,9 @@ import { useApp, money } from "@/lib/store";
 import { cx, ProgressBar } from "./kit";
 import { Icon } from "./Icon";
 
-/** Every carousel card uses exactly this frame — same width, height, radius, padding. */
-const CARD_FRAME = "flex h-[168px] flex-col justify-between rounded-2xl p-4";
-const SLIDE = "w-full shrink-0 snap-center px-4 pb-2";
+/** Compact shared frame: every carousel card uses identical width, height, radius, padding. */
+const CARD_FRAME = "flex h-[148px] flex-col justify-between rounded-2xl p-3";
+const SLIDE = "w-full shrink-0 snap-center px-4 pb-0";
 
 type Tap = { x: number; y: number; t: number; moved: boolean };
 
@@ -92,7 +92,7 @@ export function AccountCarousel() {
       <div
         ref={trackRef}
         onScroll={onScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth pt-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {account && (
           <div className={SLIDE}>
@@ -172,18 +172,18 @@ export function AccountCarousel() {
         {iphone && <GoalSlide goal={iphone} show={show} onToggle={toggle} tint="bg-tint-purple" hidden={hidden} go={go} />}
       </div>
 
-      <div className="flex items-center justify-center gap-3 pt-1 pb-2">
+      <div className="flex items-center justify-center gap-2 pb-1.5">
         <button aria-label="Previous card" onClick={() => slideTo(index - 1)} disabled={index === 0}
-          className="press grid size-7 place-items-center rounded-full bg-muted disabled:opacity-40">
+          className="press grid size-6 place-items-center rounded-full bg-muted disabled:opacity-40">
           <ChevronLeft className="size-4" />
         </button>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1">
           {slides.map((s, i) => (
             <span key={s} className={cx("h-1.5 rounded-full transition-all", i === index ? "w-5 bg-brand" : "w-1.5 bg-muted")} />
           ))}
         </div>
         <button aria-label="Next card" onClick={() => slideTo(index + 1)} disabled={index === slides.length - 1}
-          className="press grid size-7 place-items-center rounded-full bg-muted disabled:opacity-40">
+          className="press grid size-6 place-items-center rounded-full bg-muted disabled:opacity-40">
           <ChevronRight className="size-4" />
         </button>
       </div>
@@ -219,9 +219,9 @@ function GoalSlide({
         <div>
           <p className="text-[27px] leading-tight font-semibold">{show ? money(goal.saved) : hidden}</p>
           {show ? (
-            <ProgressBar className="mt-1.5" value={pct} />
+            <ProgressBar className="mt-1" value={pct} />
           ) : (
-            <div className="mt-1.5 h-2 w-full rounded-full bg-muted" />
+            <div className="mt-1 h-2 w-full rounded-full bg-muted" />
           )}
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -237,7 +237,7 @@ function CarouselAction({ label, onClick }: { label: string; onClick: () => void
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(); }}
-      className="press rounded-xl bg-card px-1 py-1.5 text-[11.5px] leading-tight font-medium text-primary"
+      className="press rounded-xl bg-card px-1 py-1 text-[11.5px] leading-tight font-medium text-primary"
     >
       {label}
     </button>
