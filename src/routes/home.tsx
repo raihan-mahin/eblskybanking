@@ -31,6 +31,7 @@ function HomePage() {
   const nav = useNavigate();
   const [tab, setTab] = useState("quick");
   const [allQuick, setAllQuick] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const nepal = state.goals.find((g) => g.title === "Nepal Trip") ?? state.goals[0];
