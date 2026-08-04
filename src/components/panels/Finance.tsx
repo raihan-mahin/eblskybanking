@@ -70,10 +70,10 @@ export function RewardsPanel() {
         <p className="text-[12px] text-muted-foreground">{o.cost} points · expires {o.expiry}</p>
         {o.demo && <span className="mt-1 inline-block rounded-full bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground">Demo Offer</span>}
       </div>
-      <span className="w-[84px] shrink-0">
+      <div className="w-[84px] shrink-0">
         <Button className="!py-1.5 !text-[13px]" variant={o.cost > pts ? "outline" : "primary"} disabled={o.cost > pts}
           onClick={() => setConfirm(o)}>Redeem</Button>
-      </span>
+      </div>
     </div>
   );
 
