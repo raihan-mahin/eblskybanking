@@ -120,3 +120,16 @@
   animation: none !important;
   transition: none !important;
 }
+
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2.5px); }
+}
+.arrow-pill {
+  animation: arrow-bounce 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrow-pill {
+    animation: none;
+  }
+}
