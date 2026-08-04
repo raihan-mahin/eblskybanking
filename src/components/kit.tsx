@@ -150,7 +150,7 @@ export function MiniBarChart({ data, labels }: { data: number[]; labels: string[
   return (
     <div className="flex h-32 items-end gap-2">
       {data.map((d, i) => (
-        <div key={i} className="flex flex-1 flex-col items-center gap-1">
+        <div key={i} className="flex h-full flex-1 flex-col items-center gap-1">
           <div className="flex w-full flex-1 items-end">
             <div className="w-full rounded-t-md bg-brand transition-all" style={{ height: `${(d / max) * 100}%` }} />
           </div>
