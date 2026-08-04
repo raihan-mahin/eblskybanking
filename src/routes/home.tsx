@@ -155,13 +155,13 @@ function HomePage() {
     ),
 
     insights: (
-      <SectionCard key="insights" title="Smart insight" subtitle="Personalised for you" action="See All" onAction={() => go("spending-insights")}>
-        <div className="rounded-2xl bg-tint-green p-3.5">
+      <SectionCard key="insights" title="Smart Insights" action="See All" onAction={() => go("spending-insights")} className="!py-3">
+        <div className="rounded-2xl bg-tint-green p-3">
           <p className="text-[14.5px] font-semibold text-primary">Your Nepal adventure is getting closer</p>
           <p className="mt-1 text-[13.5px] leading-snug">
             You have saved {money(nepal?.saved ?? 62500)}. Only {money(Math.max(0, (nepal?.target ?? 100000) - (nepal?.saved ?? 62500)))} remains to reach your Nepal Trip goal.
           </p>
-          <div className="mt-2.5 flex gap-2">
+          <div className="mt-2 flex gap-2">
             <button onClick={() => go("goal-setting")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">Contribute</button>
             <button onClick={() => go("savings-goals")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">View Goal</button>
             <button onClick={() => go("spending-insights")} className="press px-2 text-[12.5px] text-muted-foreground">See All</button>
@@ -170,15 +170,8 @@ function HomePage() {
       </SectionCard>
     ),
     rewards: (
-      <SectionCard key="rewards" title="Rewards" subtitle={`${levelFor(pts)} · ${pts.toLocaleString()} points`} action="Open" onAction={() => go("rewards")}>
-        <ProgressBar value={((pts - nl.floor) / Math.max(1, nl.ceil - nl.floor)) * 100} />
-        <p className="mt-2 text-[12.5px] text-muted-foreground">
-          {nl.need > 0 ? `${nl.need.toLocaleString()} points to ${nl.name}` : "Top level reached"}
-        </p>
-        <div className="mt-3"><NextRewardCard /></div>
-        <div className="mt-3">
-          <ListRow icon="BadgePercent" tint="pink" title="Partner offers" subtitle="Cineplex, Yum Cha, Gentle Park and more" onClick={() => go("partner-offers")} />
-        </div>
+      <SectionCard key="rewards" title="Rewards" action="View Rewards" onAction={() => go("rewards")} className="!py-3">
+        <NextRewardCard compact />
       </SectionCard>
     ),
 
@@ -218,21 +211,6 @@ function HomePage() {
         ))}
       </SectionCard>
     ),
-    cards: (
-      <SectionCard key="cards" title="Cards" action="Manage" onAction={() => go("card-services")}>
-        {state.cards.map((c) => (
-          <ListRow
-            key={c.id}
-            icon="CreditCard"
-            tint="blue"
-            title={c.name}
-            subtitle={`${c.masked} · ${c.kind}`}
-            right={<StatusBadge status={c.frozen ? "Frozen" : c.active ? "Active" : "Inactive"} />}
-            onClick={() => go("card-services")}
-          />
-        ))}
-      </SectionCard>
-    ),
     more: (
       <SectionCard key="more" title="More services">
         <div className="grid grid-cols-3">
@@ -245,14 +223,6 @@ function HomePage() {
             return <ServiceTile key={m.id} icon={s.icon} tint={s.tint} label={m.label} onClick={() => go(m.id)} />;
           })}
         </div>
-      </SectionCard>
-    ),
-
-    recommended: (
-      <SectionCard key="recommended" title="Recommended for you" subtitle="Based on how you bank">
-        <ListRow icon="Send" tint="green" title="Send by mobile number" subtitle="Find the linked account instantly" onClick={() => go("phone-transfer")} />
-        <ListRow icon="Moon" tint="green" title="Try EBL Islamic mode" subtitle="Shariah-compliant products in one tap" onClick={() => go("islamic-mode")} />
-        <ListRow icon="ListChecks" tint="purple" title="Customize your dashboard" subtitle="Reorder or hide Home modules" onClick={() => setCustomize(true)} />
       </SectionCard>
     ),
   };
