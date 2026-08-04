@@ -92,7 +92,7 @@ export function AccountCarousel() {
       <div
         ref={trackRef}
         onScroll={onScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth pt-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {account && (
           <div className={SLIDE}>
