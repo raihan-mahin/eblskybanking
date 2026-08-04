@@ -16,6 +16,7 @@ export function AccountCarousel() {
   const [showNumber, setShowNumber] = useState(false);
   const [index, setIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+  const cardTapRef = useRef<{ x: number; y: number; t: number; moved: boolean } | null>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
 
   const account = state.accounts[0];
