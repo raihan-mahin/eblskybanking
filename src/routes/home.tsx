@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { SlidersHorizontal, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { AppShell, FullSheet } from "@/components/AppShell";
-import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, StatusBadge, cx } from "@/components/kit";
+import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, cx } from "@/components/kit";
 import { AccountCarousel } from "@/components/AccountCarousel";
 import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { BirthdayNotice } from "@/components/BirthdayNotice";
