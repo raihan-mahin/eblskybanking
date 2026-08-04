@@ -189,22 +189,11 @@ function HomePage() {
 
 
     goals: (
-      <SectionCard key="goals" title="DPS, Savings & Goals" action="All goals" onAction={() => go("savings-goals")} className="!py-3">
-        {(nepal ? [nepal] : state.goals.slice(0, 1)).map((g) => (
-          <div key={g.id} className="py-2">
-            <div className="flex items-center justify-between text-[14.5px] font-medium">
-              <span>{g.title}</span>
-              <span>{money(g.saved)} / {money(g.target)}</span>
-            </div>
-            <ProgressBar className="mt-2" value={(g.saved / g.target) * 100} />
-            <div className="mt-2.5 flex gap-2">
-              <button onClick={() => go("goal-setting")} className="press rounded-lg bg-brand px-3 py-1.5 text-[12.5px] font-medium">Contribute</button>
-              <button onClick={() => go("savings-goals")} className="press rounded-lg border border-border px-3 py-1.5 text-[12.5px]">All Goals</button>
-            </div>
-          </div>
-        ))}
+      <SectionCard key="goals" className="!py-3">
+        <GoalsCarousel goal={nepal} go={go} />
       </SectionCard>
     ),
+
     more: (
       <SectionCard key="more" title="More services" className="!py-2.5">
         <div className="grid grid-cols-3">
