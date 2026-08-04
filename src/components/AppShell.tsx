@@ -1,4 +1,4 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
 import { useApp } from "@/lib/store";
@@ -20,6 +20,11 @@ const TABS = [
 export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   const { state, patch } = useApp();
   const nav = useNavigate();
+  const router = useRouter();
+  const goBack = () => {
+    if (router.history.canGoBack()) router.history.back();
+    else nav({ to: "/home" });
+  };
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
   const [search, setSearch] = useState(false);
@@ -33,10 +38,10 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
       <header className="sticky top-0 z-40 bg-brand px-[18px] pt-[calc(env(safe-area-inset-top)+0.4rem)] pb-3 shadow-sm">
         <div className="flex items-center gap-2">
           {back ? (
-            <button onClick={() => nav({ to: "/home" })} className="press grid size-10 place-items-center rounded-full">
+            <button aria-label="Go back" onClick={goBack} className="press grid size-10 place-items-center rounded-full">
               <ChevronLeft className="size-6" />
             </button>
-          ) : (
+          ) : title ? null : (
             <button onClick={() => setMenu(true)} className="press my-0.5 grid size-12 place-items-center rounded-full bg-foreground text-white">
               <User className="size-7" />
             </button>
@@ -47,7 +52,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
             ) : (
               <>
                 <p className="text-[13px] leading-tight">{state.user.greeting}</p>
-                <p className="text-[17px] leading-tight font-semibold">{state.user.name}</p>
+                <p className="text-[17px] leading-tight font-semibold whitespace-nowrap">{state.user.name}</p>
               </>
             )}
           </div>
@@ -237,7 +242,7 @@ export function AppShell({
       )}
     >
       <AppHeader title={title} back={back} />
-      <main className="relative z-10 -mt-1 space-y-2.5 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
+      <main className="relative -mt-1 space-y-2.5 rounded-t-3xl bg-background px-[18px] pt-4 pb-28">{children}</main>
       <VoiceAssistant />
 
       {!hideNav && <BottomNavigation />}

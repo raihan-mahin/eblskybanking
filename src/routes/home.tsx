@@ -1,15 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Star, ChevronUp, ChevronDown } from "lucide-react";
+import { Star, ChevronUp, ChevronDown, Pin } from "lucide-react";
 import { AppShell, FullSheet } from "@/components/AppShell";
 import { SectionCard, ServiceTile, ListRow, SegmentedTabs, ProgressBar, cx } from "@/components/kit";
+import { Icon } from "@/components/Icon";
 import { AccountCarousel } from "@/components/AccountCarousel";
 import { ReorderableStack } from "@/components/ReorderableStack";
 import { toast } from "sonner";
 import { BirthdayNotice } from "@/components/BirthdayNotice";
 import { NextRewardCard } from "@/components/NextReward";
 import { useApp, money } from "@/lib/store";
-import { byId } from "@/lib/services";
+import { byId, TINT_BG } from "@/lib/services";
 
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
 
@@ -212,7 +213,7 @@ function HomePage() {
             return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
           })}
         </div>
-        <ArrowPill label="Open Explore Services" onClick={() => nav({ to: "/explore" })} />
+        <ArrowPill label="Open Explore Services" onClick={() => nav({ to: "/explore", state: { fromHome: true } as never })} />
 
       </SectionCard>
     ),
@@ -233,18 +234,38 @@ function HomePage() {
         }}
       />
 
-      <FullSheet open={allQuick} onClose={() => setAllQuick(false)} title="Quick Banking">
+      <FullSheet open={allQuick} onClose={() => setAllQuick(false)} title="All Shortcuts">
         <SectionCard title="All shortcuts" subtitle="Pin a service to keep it on Home">
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-3 gap-x-2 gap-y-2">
             {QUICK_CATALOGUE.map((id) => {
               const s = byId(id);
               if (!s) return null;
               const isPinned = state.personalization.pinned.includes(id);
               return (
-                <div key={id} className={cx("rounded-2xl border p-1", isPinned ? "border-brand bg-brand-soft" : "border-transparent")}>
-                  <ServiceTile icon={s.icon} tint={s.tint} label={s.title} onClick={() => { setAllQuick(false); go(id); }} />
-                  <button onClick={() => togglePin(id)} className="press mb-1 w-full text-center text-[11px] font-medium text-primary">
-                    {isPinned ? "Unpin" : "Pin"}
+                <div
+                  key={id}
+                  className={cx(
+                    "relative flex h-[112px] w-full flex-col items-center rounded-2xl border px-1.5 pt-3 pb-2",
+                    isPinned ? "border-brand bg-brand-soft" : "border-transparent",
+                  )}
+                >
+                  <button
+                    onClick={() => { setAllQuick(false); go(id); }}
+                    className="press flex w-full flex-1 flex-col items-center gap-1.5"
+                  >
+                    <span className={cx("grid size-12 shrink-0 place-items-center rounded-full", TINT_BG[s.tint])}>
+                      <Icon name={s.icon} className="size-6 text-foreground" />
+                    </span>
+                    <span className="line-clamp-2 h-[30px] w-full text-center text-[12px] leading-[15px] font-medium">
+                      {s.title}
+                    </span>
+                  </button>
+                  <button
+                    aria-label={isPinned ? `Unpin ${s.title}` : `Pin ${s.title}`}
+                    onClick={() => togglePin(id)}
+                    className="press absolute top-1 right-1 grid size-7 place-items-center rounded-full"
+                  >
+                    <Pin className={cx("size-3.5", isPinned ? "fill-current text-primary" : "text-muted-foreground")} strokeWidth={1.8} />
                   </button>
                 </div>
               );

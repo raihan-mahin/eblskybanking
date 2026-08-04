@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppShell, FullSheet } from "@/components/AppShell";
 import { SectionCard, ListRow, SearchField, ServiceTile } from "@/components/kit";
@@ -33,6 +33,9 @@ const GROUPS: ExploreGroup[] = LEFTOVERS.length
 
 function ExplorePage() {
   const nav = useNavigate();
+  const fromHome = useRouterState({
+    select: (s) => Boolean((s.location.state as { fromHome?: boolean }).fromHome),
+  });
   const [q, setQ] = useState("");
   const [seeAll, setSeeAll] = useState<ExploreGroup | null>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
@@ -53,7 +56,8 @@ function ExplorePage() {
   };
 
   return (
-    <AppShell title="Explore">
+    <AppShell title={fromHome ? "Explore Services" : "Explore"} back={fromHome}>
+
       <SearchField value={q} onChange={setQ} placeholder="Search all services" />
 
       {q ? (
