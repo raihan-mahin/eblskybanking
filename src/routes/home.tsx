@@ -105,13 +105,8 @@ function HomePage() {
                 return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => go(id)} />;
               })}
             </div>
-            <button
-              aria-label="Show all Quick Banking services"
-              onClick={() => setAllQuick(true)}
-              className="press mx-auto -mb-1 flex h-7 w-16 items-center justify-center rounded-full text-muted-foreground"
-            >
-              <ChevronDown className="size-4" />
-            </button>
+            <ArrowPill label="Show all Quick Banking services" onClick={() => setAllQuick(true)} />
+
           </>
         ) : (
 
