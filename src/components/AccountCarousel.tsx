@@ -111,30 +111,23 @@ export function AccountCarousel() {
                       <Share2 className="size-3" /> Share Info
                     </button>
                   </div>
-                  <div className="mt-0.5 flex items-center gap-1.5">
+                  <div className="mt-0.5">
                     <p className="text-[12.5px] tracking-wide text-muted-foreground">
-                      {showNumber ? fullNumber : account.masked}
+                      {show ? fullNumber : account.masked}
                     </p>
-                    <button
-                      aria-label={showNumber ? "Hide account number" : "Reveal account number"}
-                      onClick={(e) => { e.stopPropagation(); setShowNumber(!showNumber); }}
-                      className="press grid size-6 place-items-center rounded-full text-muted-foreground"
-                    >
-                      {showNumber ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                    </button>
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <EyeToggle show={show} onToggle={toggle} />
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
-                    <Icon name="Landmark" className="size-5" />
-                  </span>
-                </div>
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
+                  <Icon name="Landmark" className="size-5" />
+                </span>
               </div>
 
-              <div>
-                <p className="text-[27px] leading-tight font-semibold">{show ? money(account.balance) : hidden}</p>
-                <p className="text-[12.5px] text-muted-foreground">Available Balance</p>
+              <div className="flex items-end justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[27px] leading-tight font-semibold">{show ? money(account.balance) : hidden}</p>
+                  <p className="text-[12.5px] text-muted-foreground">Available Balance</p>
+                </div>
+                <EyeToggle show={show} onToggle={toggle} />
               </div>
             </div>
           </div>
