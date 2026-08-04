@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Check, Download, Share2, Repeat } from "lucide-react";
+import { Check, Download, Share2, Repeat, Contact } from "lucide-react";
 import { Button, FormField, TextInput, Select, AmountInput, SectionCard, ErrorState, cx } from "./kit";
 import { AuthenticationSheet } from "./AuthenticationSheet";
+import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "./ContactPicker";
+import { maskMobile } from "@/lib/extras";
 import { useApp, money, pointsFor } from "@/lib/store";
 
 export interface FieldDef {
@@ -13,7 +15,10 @@ export interface FieldDef {
   placeholder?: string;
   optional?: boolean;
   hint?: string;
+  /** Shows a contact-book icon beside the input; the complete number is kept internally. */
+  contactPicker?: boolean;
 }
+
 
 export interface TxnFlowProps {
   serviceId: string;
