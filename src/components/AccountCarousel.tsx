@@ -94,10 +94,9 @@ export function AccountCarousel() {
               >
                 <p className="text-[27px] leading-tight font-semibold">{show ? money(account.balance) : hidden}</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-[12.5px] text-muted-foreground">Available Balance</p>
+                  <p className="text-[12.5px] text-muted-foreground">Available Balance · tap for history</p>
                   <Chevron className="size-4 text-muted-foreground" />
                 </div>
-                <div className="mt-3 h-6 rounded-xl bg-card/60" />
               </button>
             </div>
           </div>
