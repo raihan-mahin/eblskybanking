@@ -219,9 +219,9 @@ function GoalSlide({
         <div>
           <p className="text-[27px] leading-tight font-semibold">{show ? money(goal.saved) : hidden}</p>
           {show ? (
-            <ProgressBar className="mt-1.5" value={pct} />
+            <ProgressBar className="mt-1" value={pct} />
           ) : (
-            <div className="mt-1.5 h-2 w-full rounded-full bg-muted" />
+            <div className="mt-1 h-2 w-full rounded-full bg-muted" />
           )}
         </div>
         <div className="grid grid-cols-2 gap-2">
