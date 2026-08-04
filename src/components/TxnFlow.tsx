@@ -231,6 +231,22 @@ export function TxnFlow(p: TxnFlowProps) {
             <FormField key={f.key} label={f.label} hint={f.hint}>
               {f.type === "select" ? (
                 <Select value={values[f.key] ?? ""} onChange={(v) => set(f.key, v)} options={f.options ?? []} placeholder={f.placeholder} />
+              ) : f.contactPicker ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <TextInput inputMode="numeric" className="flex-1" value={values[f.key] ?? ""} placeholder={f.placeholder}
+                      onChange={(e) => { set(f.key, e.target.value); setContactNames((s) => ({ ...s, [f.key]: "" })); }} />
+                    <button
+                      onClick={() => { void openContacts(f.key); }}
+                      aria-label="Select from Contacts"
+                      className="press grid size-12 shrink-0 place-items-center rounded-xl border border-border bg-tint-yellow"
+                    >
+                      <Contact className="size-5 text-accent" />
+                    </button>
+                  </div>
+                  {contactNames[f.key] && <p className="mt-1 text-[12.5px] text-muted-foreground">Selected contact: {contactNames[f.key]}</p>}
+                  {pickError && <p className="mt-1 text-[12.5px] text-error">{pickError}</p>}
+                </>
               ) : (
                 <TextInput type={f.type === "date" ? "date" : "text"} value={values[f.key] ?? ""}
                   placeholder={f.placeholder} onChange={(e) => set(f.key, e.target.value)} />
@@ -238,6 +254,13 @@ export function TxnFlow(p: TxnFlowProps) {
             </FormField>
           ),
         )}
+
+        <ContactPicker
+          open={!!pickerFor}
+          onClose={() => setPickerFor(null)}
+          onPick={(c) => { if (pickerFor) applyContact(pickerFor, c.name, c.number); setPickerFor(null); }}
+        />
+
 
         <FormField label="Amount">
           {p.fixedAmount ? (
