@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, User, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
+import { Bell, ChevronLeft, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
+import profilePhoto from "@/assets/profile.png.asset.json";
 import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
