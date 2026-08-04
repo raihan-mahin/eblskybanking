@@ -20,6 +20,7 @@ export const ICONS: Record<string, LucideIcon> = {
   Languages, MonitorSmartphone, LogIn, Banknote, BadgePercent, Plane, Laptop, ShoppingBag,
   UserPlus, Share2, IdCard, Camera, Lock, Snowflake, ListChecks, Moon, Coins, ChartColumn,
   Lightbulb, CircleDollarSign, Star, ChevronRight, Info, Package, LayoutGrid, ArrowRight,
+  Crown, Check,
 };
 
 export function Icon({ name, className }: { name: string; className?: string }) {
