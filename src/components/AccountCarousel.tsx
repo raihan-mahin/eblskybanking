@@ -109,31 +109,33 @@ export function AccountCarousel() {
 
         {card && (
           <div className={SLIDE}>
-            <div
-              className={cx(CARD_FRAME, "bg-tint-blue", "relative cursor-pointer transition-transform active:scale-[0.98]")}
-              onPointerDown={(e) => {
-                cardTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now(), moved: false };
-              }}
-              onPointerMove={(e) => {
-                const r = cardTapRef.current;
-                if (!r || r.moved) return;
-                const dx = e.clientX - r.x;
-                const dy = e.clientY - r.y;
-                if (Math.hypot(dx, dy) > 12) r.moved = true;
-              }}
-              onPointerUp={() => {
-                const r = cardTapRef.current;
-                if (!r || r.moved) return;
-                if (Date.now() - r.t < 300) go("card-services");
-                cardTapRef.current = null;
-              }}
-              onPointerLeave={() => {
-                cardTapRef.current = null;
-              }}
-              onPointerCancel={() => {
-                cardTapRef.current = null;
-              }}
-            >
+          <div
+            className={cx(CARD_FRAME, "bg-tint-blue", "relative cursor-pointer transition-transform active:scale-[0.98]")}
+            onPointerDown={(e) => {
+              console.log("PD", e.clientX, e.clientY);
+              cardTapRef.current = { x: e.clientX, y: e.clientY, t: Date.now(), moved: false };
+            }}
+            onPointerMove={(e) => {
+              const r = cardTapRef.current;
+              if (!r || r.moved) return;
+              const dx = e.clientX - r.x;
+              const dy = e.clientY - r.y;
+              if (Math.hypot(dx, dy) > 12) r.moved = true;
+            }}
+            onPointerUp={() => {
+              console.log("PU");
+              const r = cardTapRef.current;
+              if (!r || r.moved) return;
+              if (Date.now() - r.t < 300) go("card-services");
+              cardTapRef.current = null;
+            }}
+            onPointerLeave={() => {
+              cardTapRef.current = null;
+            }}
+            onPointerCancel={() => {
+              cardTapRef.current = null;
+            }}
+          >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-[13px] text-muted-foreground">{card.name}</p>
