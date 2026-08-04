@@ -190,7 +190,15 @@ export const SERVICES: Service[] = [
   s("tutorials", "Tutorials", "security", "Learn the app", "Lightbulb", "yellow", "information", "none", ["tutorial", "guide"]),
   s("accessibility", "Accessibility", "security", "Text, contrast & voice", "Accessibility", "blue", "settings", "none", ["accessibility", "contrast", "text"]),
 
-  /* ---------------- EBL Sky Banking Services ---------------- */
+  /* ---------------- Other EBL Services ---------------- */
+  s("student-file", "EBL Student File Service", "skybanking", "Support for students studying abroad", "GraduationCap", "blue", "information", "none", ["student", "file", "abroad", "study"]),
+  s("payroll-banking", "Payroll Banking", "skybanking", "Salary account solutions for organisations", "Banknote", "green", "information", "none", ["payroll", "salary", "corporate"]),
+  s("women-payroll", "EBL Women Payroll Suite", "skybanking", "Payroll banking designed for women", "HeartHandshake", "pink", "information", "none", ["women", "payroll", "suite"]),
+  s("agent-banking", "Agent Banking", "skybanking", "Banking services through EBL agent points", "Landmark", "yellow", "information", "none", ["agent", "banking", "outlet"]),
+  s("entrepreneurial-services", "Entrepreneurial Services", "skybanking", "Support for small businesses and entrepreneurs", "Coins", "purple", "information", "none", ["entrepreneur", "sme", "business"]),
+  s("super-saver", "EBL Super Saver", "skybanking", "A savings proposition with added benefits", "PiggyBank", "green", "information", "none", ["super saver", "savings"]),
+  s("deposit-rate-sheet", "Deposit Rate Sheet", "skybanking", "Where to find current deposit rates", "FileText", "blue", "information", "none", ["deposit", "rate", "interest"]),
+  s("schedule-of-charges", "Schedule of Charges", "skybanking", "Where to find current fees and charges", "FileText", "gray", "information", "none", ["charges", "fees", "schedule"]),
   s("personalization", "Personalization", "skybanking", "Recommendations & pins", "Star", "purple", "settings", "none", ["personalize", "recommend", "favorites", "saved services"]),
   s("customize-dashboard", "Dashboard Settings", "skybanking", "Reorder and hide Home modules", "ListChecks", "purple", "settings", "none", ["dashboard", "customize", "reorder", "home", "layout"]),
   s("notifications", "Notifications", "skybanking", "All alerts", "Bell", "yellow", "information", "none", ["notification", "alert"]),
