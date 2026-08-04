@@ -14,7 +14,9 @@ import type { SplitPay } from "@/lib/types";
 export function FundTransferPanel({ initialPrefill }: { initialPrefill?: Record<string, string> | undefined }) {
   const nav = useNavigate();
   const { state } = useApp();
-  const [mode, setMode] = useState<string | null>(initialPrefill?.["mobile"] ? "phone" : null);
+  const [mode, setMode] = useState<string | null>(
+    initialPrefill?.["mobile"] ? "phone" : initialPrefill?.["beneficiary"] || initialPrefill?.["account"] ? "ebl" : null,
+  );
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
 
   if (mode === "phone") return <PhoneTransferPanel initialMobile={initialPrefill?.["mobile"]} />;
