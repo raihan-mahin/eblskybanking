@@ -41,9 +41,9 @@ function EyeToggle({ show, onToggle }: { show: boolean; onToggle: () => void }) 
     <button
       aria-label={show ? "Hide sensitive information" : "Show sensitive information"}
       onClick={(e) => { e.stopPropagation(); onToggle(); }}
-      className="press grid size-8 shrink-0 place-items-center rounded-full bg-card/70 text-muted-foreground"
+      className="press grid size-8 shrink-0 place-items-center self-end rounded-full bg-card/70 text-muted-foreground"
     >
-      {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+      {show ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
     </button>
   );
 }
@@ -52,7 +52,7 @@ export function AccountCarousel() {
   const { state } = useApp();
   const nav = useNavigate();
   const [show, setShow] = useState(false);
-  const [showNumber, setShowNumber] = useState(false);
+  
   const [index, setIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
@@ -111,30 +111,23 @@ export function AccountCarousel() {
                       <Share2 className="size-3" /> Share Info
                     </button>
                   </div>
-                  <div className="mt-0.5 flex items-center gap-1.5">
+                  <div className="mt-0.5">
                     <p className="text-[12.5px] tracking-wide text-muted-foreground">
-                      {showNumber ? fullNumber : account.masked}
+                      {show ? fullNumber : account.masked}
                     </p>
-                    <button
-                      aria-label={showNumber ? "Hide account number" : "Reveal account number"}
-                      onClick={(e) => { e.stopPropagation(); setShowNumber(!showNumber); }}
-                      className="press grid size-6 place-items-center rounded-full text-muted-foreground"
-                    >
-                      {showNumber ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                    </button>
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <EyeToggle show={show} onToggle={toggle} />
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
-                    <Icon name="Landmark" className="size-5" />
-                  </span>
-                </div>
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
+                  <Icon name="Landmark" className="size-5" />
+                </span>
               </div>
 
-              <div>
-                <p className="text-[27px] leading-tight font-semibold">{show ? money(account.balance) : hidden}</p>
-                <p className="text-[12.5px] text-muted-foreground">Available Balance</p>
+              <div className="flex items-end justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[27px] leading-tight font-semibold">{show ? money(account.balance) : hidden}</p>
+                  <p className="text-[12.5px] text-muted-foreground">Available Balance</p>
+                </div>
+                <EyeToggle show={show} onToggle={toggle} />
               </div>
             </div>
           </div>
@@ -149,20 +142,22 @@ export function AccountCarousel() {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate text-[13px] text-muted-foreground">{card.name}</p>
-                  <p className="text-[12.5px] tracking-wide text-muted-foreground">{card.masked}</p>
+                  <p className="text-[12.5px] tracking-wide text-muted-foreground">
+                    {show ? card.masked : "•••• •••• •••• ••••"}
+                  </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <EyeToggle show={show} onToggle={toggle} />
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card">
-                    <Icon name="CreditCard" className="size-5" />
-                  </span>
-                </div>
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card">
+                  <Icon name="CreditCard" className="size-5" />
+                </span>
               </div>
-              <div>
-                <p className="text-[27px] leading-tight font-semibold">
-                  {show ? money(Math.max(0, card.limit - outstanding)) : hidden}
-                </p>
-                <p className="text-[12.5px] text-muted-foreground">Available limit</p>
+              <div className="flex items-end justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[27px] leading-tight font-semibold">
+                    {show ? money(Math.max(0, card.limit - outstanding)) : hidden}
+                  </p>
+                  <p className="text-[12.5px] text-muted-foreground">Available limit</p>
+                </div>
+                <EyeToggle show={show} onToggle={toggle} />
               </div>
             </div>
           </div>
@@ -209,20 +204,20 @@ function GoalSlide({
               Target {show ? money(goal.target) : hidden}
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <EyeToggle show={show} onToggle={onToggle} />
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card">
-              <Icon name={goal.icon} className="size-5" />
-            </span>
-          </div>
+          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card">
+            <Icon name={goal.icon} className="size-5" />
+          </span>
         </div>
-        <div>
-          <p className="text-[27px] leading-tight font-semibold">{show ? money(goal.saved) : hidden}</p>
-          {show ? (
-            <ProgressBar className="mt-1" value={pct} />
-          ) : (
-            <div className="mt-1 h-2 w-full rounded-full bg-muted" />
-          )}
+        <div className="flex items-end justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-[27px] leading-tight font-semibold">{show ? money(goal.saved) : hidden}</p>
+            {show ? (
+              <ProgressBar className="mt-1" value={pct} />
+            ) : (
+              <div className="mt-1 h-2 w-full rounded-full bg-muted" />
+            )}
+          </div>
+          <EyeToggle show={show} onToggle={onToggle} />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <CarouselAction label="Contribute" onClick={() => go("goal-setting")} />
