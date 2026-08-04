@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { GripVertical } from "lucide-react";
 import { cx } from "./kit";
 
-const HOLD_MS = 3000;
+const HOLD_MS = 2200;
 const MOVE_CANCEL_PX = 10;
 const EDGE_PX = 90;
 
@@ -42,6 +42,7 @@ export function ReorderableStack({
   const pointerY = useRef(0);
   const autoScroll = useRef<number | null>(null);
 
+  const [pressIndex, setPressIndex] = useState<number | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const [offset, setOffset] = useState(0);
@@ -49,6 +50,7 @@ export function ReorderableStack({
   const clearHold = () => {
     if (holdTimer.current) window.clearTimeout(holdTimer.current);
     holdTimer.current = null;
+    setPressIndex(null);
   };
 
   const stopAutoScroll = () => {
@@ -85,6 +87,13 @@ export function ReorderableStack({
     const heights = rects.map((r) => r.height);
     const gap = rects.length > 1 ? Math.max(0, rects[1]!.top - rects[0]!.bottom) : 12;
     geometry.current = { tops, heights, gap };
+    // clear any accidental text selection created by the long press
+    try {
+      window.getSelection()?.removeAllRanges();
+    } catch {
+      /* selection API unavailable */
+    }
+    setPressIndex(null);
     haptic(15);
     setDragIndex(index);
     setTargetIndex(index);
@@ -157,8 +166,17 @@ export function ReorderableStack({
     startPt.current = { x: e.pageX, y: e.pageY };
     pointerY.current = e.clientY;
     clearHold();
+    setPressIndex(index);
     holdTimer.current = window.setTimeout(() => measure(index), HOLD_MS);
   };
+
+  useEffect(() => {
+    const cancelOnScroll = () => {
+      if (dragIndex === null) clearHold();
+    };
+    window.addEventListener("scroll", cancelOnScroll, { passive: true });
+    return () => window.removeEventListener("scroll", cancelOnScroll);
+  }, [dragIndex]);
 
   const handlePointerMoveIdle = (e: React.PointerEvent) => {
     if (dragIndex !== null || !startPt.current || !holdTimer.current) return;
@@ -180,6 +198,8 @@ export function ReorderableStack({
     <div ref={containerRef} className={cx("flex flex-col gap-3", className)}>
       {items.map((item, i) => {
         const dragging = dragIndex === i;
+        const pressing = pressIndex === i;
+        const lockSelection = dragging || pressing;
         return (
           <div
             key={item.id}
@@ -196,6 +216,12 @@ export function ReorderableStack({
               zIndex: dragging ? 30 : undefined,
               position: "relative",
               touchAction: dragIndex !== null ? "none" : undefined,
+              userSelect: lockSelection ? "none" : undefined,
+              WebkitUserSelect: lockSelection ? "none" : undefined,
+              WebkitTouchCallout: lockSelection ? "none" : undefined,
+            }}
+            onSelectStart={(e) => {
+              if (lockSelection) e.preventDefault();
             }}
             className={cx(dragging && "rounded-[18px] shadow-xl ring-2 ring-brand")}
           >
