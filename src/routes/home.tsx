@@ -30,7 +30,7 @@ function ArrowPill({ label, onClick }: { label: string; onClick: () => void }) {
     <button
       aria-label={label}
       onClick={onClick}
-      className="press mx-auto -mb-1 mt-1 flex flex-col items-center justify-center p-2 text-black active:opacity-70"
+      className="press mx-auto -mb-1 mt-2 flex flex-col items-center justify-center px-3 py-1 text-black active:opacity-70"
     >
       <ChevronDown className="double-chevron-top size-4" strokeWidth={1.5} />
       <ChevronDown className="double-chevron-bottom -mt-1 size-4" strokeWidth={1.5} />
