@@ -1,7 +1,7 @@
 /* Local mock data for the incremental prototype updates.
    Everything here is prototype/demo data — not live banking data. */
 
-import type { Tint } from "./services";
+import { CATEGORIES, inCategory, type Category, type Tint } from "./services";
 
 /* ---------------- 1. Dashboard modules ---------------- */
 
