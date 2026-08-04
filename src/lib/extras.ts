@@ -1,7 +1,7 @@
 /* Local mock data for the incremental prototype updates.
    Everything here is prototype/demo data — not live banking data. */
 
-import type { Tint } from "./services";
+import { CATEGORIES, inCategory, type Category, type Tint } from "./services";
 
 /* ---------------- 1. Dashboard modules ---------------- */
 
@@ -259,7 +259,9 @@ export const NEXT_REWARD = {
   expiry: "31 Dec 2026",
 };
 
-/* ---------------- 12. Explore groups (3 primary + See All) ---------------- */
+/* ---------------- 12. Category-driven groups (3 primary + See All) ----------------
+   Explore and Pay & Transfer are both generated from the master taxonomy in
+   src/lib/services.ts, so a service can never change category between pages. */
 
 export interface ExploreItem {
   key: string;
@@ -280,98 +282,129 @@ export interface ExploreGroup {
   more: string[];
 }
 
-const it = (serviceId: string, label?: string): ExploreItem => ({ key: serviceId, serviceId, ...(label ? { label } : {}) });
+/** First three services shown as the compact preview for each category. */
+export const CATEGORY_PRIORITY: Record<string, string[]> = {
+  transfers: ["fund-transfer", "other-bank-transfer", "mfs-transfer"],
+  everyday: ["recharge", "qr-payment", "card-payment"],
+  utility: ["bill-electricity", "bill-gas", "bill-internet"],
+  edugov: ["tuition-fee", "visa-fee", "e-challan"],
+  travel: ["air-tickets", "hotel-booking", "movie-tickets"],
+  donations: ["donation", "zakat", "charity-campaigns"],
+  scheduled: ["auto-pay", "scheduled-transfer", "scheduled-recharge"],
+  account: ["accounts", "statements", "account-sharing"],
+  cards: ["my-card", "card-controls", "activate-card"],
+  savings: ["instant-dps", "group-dps", "savings-goals"],
+  loans: ["early-salary", "loans", "loan-calculator"],
+  ai: ["ai-money-manager", "ai-advisor", "voice-assistant"],
+  rewards: ["rewards", "next-reward", "partner-offers"],
+  security: ["ai-support", "security-settings", "disputes"],
+  skybanking: ["personalization", "customize-dashboard", "notifications"],
+};
 
-export const EXPLORE_GROUPS: ExploreGroup[] = [
+const groupFor = (c: Category): ExploreGroup => {
+  const all = inCategory(c.id).map((x) => x.id);
+  const primary = (CATEGORY_PRIORITY[c.id] ?? all.slice(0, 3)).filter((id) => all.includes(id));
+  return {
+    id: c.id,
+    title: c.title,
+    subtitle: c.subtitle,
+    icon: c.icon,
+    tint: c.tint,
+    primary: primary.map((id) => ({ key: id, serviceId: id })),
+    more: all.filter((id) => !primary.includes(id)),
+  };
+};
+
+export const EXPLORE_GROUPS: ExploreGroup[] = CATEGORIES.map(groupFor);
+
+/* ---------------- 13. Pay & Transfer groups (payment categories only) ---------------- */
+
+export interface PayGroup { id: string; title: string; subtitle: string; primary: { id: string; label?: string }[]; more: string[] }
+
+export const PAY_GROUPS: PayGroup[] = CATEGORIES.filter((c) => c.payment).map((c) => {
+  const g = groupFor(c);
+  return {
+    id: c.id,
+    title: c.title,
+    subtitle: c.subtitle,
+    primary: g.primary.map((p) => ({ id: p.serviceId! })),
+    more: g.more,
+  };
+});
+
+/* ---------------- 14. Travel & entertainment demo offers ---------------- */
+
+export interface TravelOffer {
+  serviceId: string;
+  title: string;
+  blurb: string;
+  offer: string;
+  discount: string;
+  maxBenefit: string;
+  minSpend: string;
+  eligible: string;
+  expiry: string;
+  terms: string[];
+  partner: string;
+  partnerUrl?: string;
+}
+
+export const TRAVEL_OFFERS: TravelOffer[] = [
   {
-    id: "skybanking", title: "EBL Skybanking Services", subtitle: "Your everyday banking shortcuts", icon: "Sparkles", tint: "yellow",
-    primary: [
-      { key: "quick-banking", label: "Quick Banking", route: "/home", icon: "LayoutGrid", tint: "yellow" },
-      it("transaction-history", "Recent Transactions"),
-      it("personalization"),
-    ],
-    more: ["customize-dashboard", "notifications", "profile", "tutorials", "upcoming-payments"],
+    serviceId: "air-tickets",
+    title: "Air Tickets",
+    blurb: "Book domestic and international flights through an EBL travel partner.",
+    offer: "Save 10% on selected air-ticket bookings when paying with an eligible EBL card.",
+    discount: "10%",
+    maxBenefit: "৳3,000",
+    minSpend: "৳10,000",
+    eligible: "EBL Credit or Debit Card",
+    expiry: "31 Dec 2026",
+    terms: ["Selected routes and fare classes only", "Discount applied by the partner at checkout", "Demo offer for prototype purposes"],
+    partner: "EBL Travel Partner",
+    partnerUrl: "https://www.ebl.com.bd/",
   },
   {
-    id: "account", title: "Account Services", subtitle: "Balances, statements & details", icon: "Landmark", tint: "green",
-    primary: [it("accounts"), it("statements"), it("account-sharing", "Account Sharing")],
-    more: ["certificates", "receipts", "limits", "account-opening", "beneficiaries"],
+    serviceId: "hotel-booking",
+    title: "Hotel Booking",
+    blurb: "Reserve hotels and resorts with an EBL card benefit.",
+    offer: "Get up to 12% off selected hotel bookings with an eligible EBL card.",
+    discount: "12%",
+    maxBenefit: "৳4,000",
+    minSpend: "৳6,000",
+    eligible: "EBL Credit Card or EBL Savings Account card",
+    expiry: "31 Dec 2026",
+    terms: ["Selected properties only", "Blackout dates may apply", "Demo offer for prototype purposes"],
+    partner: "EBL Hotel Partner",
+    partnerUrl: "https://www.ebl.com.bd/",
   },
   {
-    id: "cards", title: "Card Services", subtitle: "Manage your card", icon: "CreditCard", tint: "purple",
-    primary: [it("my-card"), it("card-payment"), it("card-controls")],
-    more: ["card-services", "add-card", "activate-card", "reset-card-pin"],
+    serviceId: "movie-tickets",
+    title: "Movie Tickets",
+    blurb: "Book cinema tickets, including Star Cineplex shows.",
+    offer: "Get 10% off selected Star Cineplex tickets.",
+    discount: "10%",
+    maxBenefit: "৳300",
+    minSpend: "৳500",
+    eligible: "EBL Credit or Debit Card",
+    expiry: "31 Dec 2026",
+    terms: ["Selected shows and seats only", "Cannot be combined with other campaigns", "Demo offer for prototype purposes"],
+    partner: "Star Cineplex",
   },
   {
-    id: "payments", title: "Payments & Transfers", subtitle: "Send, receive & recharge", icon: "ArrowLeftRight", tint: "yellow",
-    primary: [it("fund-transfer"), it("phone-transfer", "By Mobile Number"), it("recharge", "Mobile Recharge")],
-    more: ["other-bank-transfer", "mfs-transfer", "phone-transfer", "split-pay", "qr-payment", "scheduled-transfer", "scheduled-recharge", "auto-pay"],
-  },
-  {
-    id: "bills", title: "Bills, Education & Lifestyle", subtitle: "Bills, fees & daily life", icon: "Zap", tint: "blue",
-    primary: [it("bill-payment", "Utility Bills"), it("tuition-fee"), it("entertainment")],
-    more: ["bill-electricity", "bill-gas", "bill-water", "bill-internet", "bill-tv", "gift-cards", "gift-netflix", "gift-spotify", "gift-google", "gift-apple", "visa-fee", "e-challan", "education-payments", "e-toll", "donation", "vehicle", "saved-billers", "bill-reminder"],
-  },
-  {
-    id: "savings", title: "Savings & Goals", subtitle: "Grow your money", icon: "PiggyBank", tint: "green",
-    primary: [it("instant-dps"), it("group-dps"), it("goal-setting", "Goal Setting")],
-    more: ["dps", "fdr", "savings-goals", "auto-contribution"],
-  },
-  {
-    id: "loans", title: "Loans & Salary", subtitle: "Borrow and plan repayments", icon: "Banknote", tint: "blue",
-    primary: [it("early-salary", "Early Salary Access"), it("loans", "Loan Services"), it("loan-calculator")],
-    more: [],
-  },
-  {
-    id: "ai", title: "AI & Personal Finance", subtitle: "Smart tools to manage & plan", icon: "Sparkles", tint: "purple",
-    primary: [it("ai-money-manager"), it("ai-advisor", "AI Financial Advisor"), it("voice-assistant")],
-    more: ["budget", "spending-insights"],
-  },
-  {
-    id: "rewards", title: "Rewards & Offers", subtitle: "Points, levels & partners", icon: "Award", tint: "yellow",
-    primary: [it("rewards"), it("next-reward"), it("partner-offers")],
-    more: ["reward-offers"],
-  },
-  {
-    id: "islamic", title: "EBL Islamic", subtitle: "Shariah-compliant banking", icon: "Moon", tint: "green",
-    primary: [it("islamic-mode", "Switch to EBL Islamic"), it("islamic-accounts"), it("islamic-savings")],
-    more: ["islamic", "zakat"],
-  },
-  {
-    id: "security", title: "Security & Support", subtitle: "Protect your account & get help", icon: "ShieldCheck", tint: "blue",
-    primary: [it("ai-support", "AI Support"), it("security-settings", "Security"), it("disputes", "Disputes")],
-    more: ["help-support", "human-support", "faqs", "reset-login-pin", "fingerprint-setup", "faceid-setup", "biometric-reset", "trusted-devices", "login-history", "active-sessions", "accessibility", "language"],
+    serviceId: "star-cineplex",
+    title: "Star Cineplex",
+    blurb: "Star Cineplex ticket benefit for EBL cardholders.",
+    offer: "Get 10% off selected Star Cineplex tickets.",
+    discount: "10%",
+    maxBenefit: "৳300",
+    minSpend: "৳500",
+    eligible: "EBL Credit or Debit Card",
+    expiry: "31 Dec 2026",
+    terms: ["Selected shows only", "Demo offer for prototype purposes"],
+    partner: "Star Cineplex",
   },
 ];
 
-/* ---------------- 13. Pay & Transfer groups ---------------- */
+export const travelOfferFor = (serviceId: string) => TRAVEL_OFFERS.find((t) => t.serviceId === serviceId);
 
-export interface PayGroup { title: string; subtitle: string; primary: { id: string; label?: string }[]; more: string[] }
-
-export const PAY_GROUPS: PayGroup[] = [
-  {
-    title: "Transfers", subtitle: "Fund Transfer to any account",
-    primary: [{ id: "fund-transfer", label: "To EBL" }, { id: "other-bank-transfer", label: "Other Bank" }, { id: "mfs-transfer", label: "MFS" }],
-    more: ["phone-transfer", "beneficiaries", "split-pay", "transaction-history"],
-  },
-  {
-    title: "Payments", subtitle: "Top up, cards and recharge",
-    primary: [{ id: "qr-payment" }, { id: "card-payment" }, { id: "recharge", label: "Mobile Recharge" }],
-    more: ["qr-payment", "gift-cards", "donation", "e-toll"],
-  },
-  {
-    title: "Utility Bills", subtitle: "Never miss a due date",
-    primary: [{ id: "bill-electricity", label: "Electricity" }, { id: "bill-gas", label: "Gas" }, { id: "bill-internet", label: "Internet" }],
-    more: ["bill-water", "bill-tv", "bill-payment", "saved-billers", "bill-reminder"],
-  },
-  {
-    title: "Education & Government Fees", subtitle: "Fees, tolls and official payments",
-    primary: [{ id: "tuition-fee" }, { id: "visa-fee" }, { id: "e-challan" }],
-    more: ["education-payments", "e-toll", "zakat"],
-  },
-  {
-    title: "Scheduled", subtitle: "Set it once and relax",
-    primary: [{ id: "auto-pay" }, { id: "scheduled-transfer" }, { id: "scheduled-recharge" }],
-    more: ["auto-contribution", "upcoming-payments"],
-  },
-];

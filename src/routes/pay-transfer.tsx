@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { AppShell, FullSheet } from "@/components/AppShell";
+import { AppShell } from "@/components/AppShell";
 import { SectionCard, ServiceTile, ListRow, SearchField } from "@/components/kit";
 import { useApp, money } from "@/lib/store";
-import { byId, searchServices } from "@/lib/services";
-import { PAY_GROUPS, type PayGroup } from "@/lib/extras";
+import { byId, searchServices, categoryTitle } from "@/lib/services";
+import { PAY_GROUPS } from "@/lib/extras";
 
 export const Route = createFileRoute("/pay-transfer")({
   head: () => ({
@@ -24,7 +24,6 @@ function PayTransferPage() {
   const nav = useNavigate();
   const { state } = useApp();
   const [q, setQ] = useState("");
-  const [seeAll, setSeeAll] = useState<PayGroup | null>(null);
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const results = searchServices(q);
 
@@ -45,7 +44,7 @@ function PayTransferPage() {
       {q ? (
         <SectionCard title="Results" subtitle={`${results.length} services`}>
           {results.map((r) => (
-            <ListRow key={r.id} icon={r.icon} tint={r.tint} title={r.title} subtitle={r.description} onClick={() => go(r.id)} />
+            <ListRow key={r.id} icon={r.icon} tint={r.tint} title={r.title} subtitle={categoryTitle(r.category)} onClick={() => go(r.id)} />
           ))}
           {results.length === 0 && <p className="py-6 text-center text-[13.5px] text-muted-foreground">Nothing found for “{q}”.</p>}
         </SectionCard>
@@ -71,10 +70,10 @@ function PayTransferPage() {
 
           {PAY_GROUPS.map((g) => (
             <SectionCard
-              key={g.title}
+              key={g.id}
               title={g.title}
               subtitle={g.subtitle}
-              {...(g.more.length ? { action: "See All", onAction: () => setSeeAll(g) } : {})}
+              {...(g.more.length ? { action: "See All", onAction: () => nav({ to: "/category/$categoryId", params: { categoryId: g.id } }) } : {})}
             >
               <div className="grid grid-cols-3">
                 {g.primary.map((p) => tile(p.id, p.label))}
@@ -84,17 +83,6 @@ function PayTransferPage() {
         </>
       )}
 
-      <FullSheet open={!!seeAll} onClose={() => setSeeAll(null)} title={seeAll?.title ?? "Services"}>
-        <SectionCard title="All services" subtitle={seeAll?.subtitle}>
-          <div className="grid grid-cols-3">
-            {[...(seeAll?.primary.map((p) => p.id) ?? []), ...(seeAll?.more ?? [])].map((id) => {
-              const s = byId(id);
-              if (!s) return null;
-              return <ServiceTile key={id} icon={s.icon} tint={s.tint} label={s.title} onClick={() => { setSeeAll(null); go(id); }} />;
-            })}
-          </div>
-        </SectionCard>
-      </FullSheet>
     </AppShell>
   );
 }

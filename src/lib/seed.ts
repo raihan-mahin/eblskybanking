@@ -373,3 +373,32 @@ export function migrateState(state: AppState): AppState {
     migration: MIGRATION_VERSION,
   };
 }
+
+/* ---------------- Categorization migration (idempotent, data-preserving) ----------------
+   Only service ids are remapped — transactions, balances, goals, rewards,
+   complaints, favorites, pinned services and settings are preserved as-is. */
+
+const RETIRED_SERVICE_IDS: Record<string, string> = {
+  "add-money": "mfs-transfer",
+  "islamic-mode": "zakat",
+  "islamic-accounts": "accounts",
+  islamic: "zakat",
+  "help-support": "help-support",
+};
+
+const remapId = (id: string) => RETIRED_SERVICE_IDS[id] ?? id;
+const uniq = (list: string[]) => Array.from(new Set(list));
+
+export function remapServiceCategories(state: AppState): AppState {
+  return {
+    ...state,
+    quickBanking: uniq(state.quickBanking.map(remapId)),
+    personalization: {
+      ...state.personalization,
+      pinned: uniq(state.personalization.pinned.map(remapId)),
+    },
+    recent: state.recent.map((r) => ({ ...r, serviceId: remapId(r.serviceId) })),
+    recentEntities: state.recentEntities.map((r) => ({ ...r, serviceId: remapId(r.serviceId) })),
+    transactions: state.transactions.map((t) => ({ ...t, serviceId: remapId(t.serviceId) })),
+  };
+}

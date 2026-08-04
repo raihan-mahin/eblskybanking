@@ -6,7 +6,7 @@ import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
-import { searchServices, SERVICES } from "@/lib/services";
+import { searchServices, SERVICES, categoryTitle } from "@/lib/services";
 
 
 const TABS = [
@@ -80,7 +80,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
         {[
           ["profile", "Profile", "IdCard"], ["accounts", "Accounts", "Landmark"], ["rewards", "Rewards", "Award"],
           ["personalization", "Personalization", "Star"], ["customize-dashboard", "Customize Dashboard", "ListChecks"],
-          ["islamic-mode", "EBL Islamic Mode", "Moon"], ["disputes", "Transaction Disputes", "ShieldCheck"],
+          ["disputes", "Transaction Disputes", "ShieldCheck"],
           ["security-settings", "Security", "ShieldCheck"],
           ["accessibility", "Accessibility", "Accessibility"], ["notifications", "Notifications", "Bell"],
           ["help-support", "Help and Support", "LifeBuoy"],
@@ -191,7 +191,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
               onClick={() => { remember(q); onClose(); nav({ to: e.route }); }} />
           ))}
           {services.slice(0, 20).map((s) => (
-            <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={s.description} onClick={() => openService(s.id)} />
+            <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={categoryTitle(s.category)} onClick={() => openService(s.id)} />
           ))}
           {services.length === 0 && extras.length === 0 && (
             <div className="py-6 text-center">

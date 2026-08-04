@@ -302,9 +302,9 @@ export const KB: KbTopic[] = [
   {
     id: "bill-how", label: "Bill Payment Problem", category: "Bills & Payments",
     keywords: ["bill", "electricity", "gas bill", "water bill", "internet bill", "desco", "wasa", "bill payment"],
-    answer: "Electricity, gas, water, internet and TV bills are all paid from Bill Payment.",
-    steps: ["Open Bill Payment and choose the biller.", "Enter the account or meter number.", "Review the amount and confirm."],
-    actions: [{ label: "Open Bill Payment", target: "bill-payment" }, { label: "Report an Issue", target: "__case" }, HUMAN],
+    answer: "Electricity, gas, water, internet, TV and telephone bills are all under Utility Bills. For example, open Utility Bills and choose Internet.",
+    steps: ["Open Utility Bills and choose the biller.", "Enter the account or meter number.", "Review the amount and confirm."],
+    actions: [{ label: "Open Utility Bills", target: "bill-electricity" }, { label: "Report an Issue", target: "__case" }, HUMAN],
   },
   {
     id: "bill-not-updated", label: "Bill paid but not updated", category: "Bills & Payments",
@@ -316,16 +316,35 @@ export const KB: KbTopic[] = [
   {
     id: "auto-pay", label: "Auto Pay & saved billers", category: "Bills & Payments",
     keywords: ["auto pay", "autopay", "saved biller", "bill reminder", "scheduled bill"],
-    answer: "Auto Pay pays a saved biller automatically on your chosen schedule.",
+    answer: "Auto Pay is under Scheduled Payments and pays a saved biller automatically on your chosen schedule.",
     steps: ["Open Auto Pay.", "Pick the biller, amount and frequency.", "Confirm to activate."],
     actions: [{ label: "Open Auto Pay", target: "auto-pay" }, { label: "Saved Billers", target: "saved-billers" }],
   },
   {
     id: "tuition", label: "Tuition fee", category: "Bills & Payments",
     keywords: ["tuition", "school fee", "university fee", "education payment"],
-    answer: "Tuition Fee retrieves the payable amount after you enter the student details.",
-    steps: ["Open Tuition Fee.", "Select level and institution.", "Retrieve the amount and confirm."],
+    answer: "Open Education & Government and choose Tuition Fee. It retrieves the payable amount after you enter the student details.",
+    steps: ["Open Education & Government.", "Choose Tuition Fee and select level and institution.", "Retrieve the amount and confirm."],
     actions: [{ label: "Open Tuition Fee", target: "tuition-fee" }],
+  },
+  {
+    id: "movie-ticket", label: "Movie tickets", category: "Bills & Payments",
+    keywords: ["movie", "cinema", "star cineplex", "movie ticket", "film"],
+    answer: "Open Travel & Entertainment and choose Movie Tickets. Star Cineplex has a demo EBL card offer.",
+    steps: ["Open Travel & Entertainment.", "Choose Movie Tickets or Star Cineplex.", "Review the offer and continue to the partner."],
+    actions: [{ label: "Open Movie Tickets", target: "movie-tickets" }],
+  },
+  {
+    id: "travel-booking", label: "Air tickets & hotels", category: "Bills & Payments",
+    keywords: ["air ticket", "flight", "hotel", "booking", "travel"],
+    answer: "Open Travel & Entertainment and choose Air Tickets or Hotel Booking to see your EBL card offer before continuing to the partner.",
+    actions: [{ label: "Open Air Tickets", target: "air-tickets" }, { label: "Open Hotel Booking", target: "hotel-booking" }],
+  },
+  {
+    id: "donation-zakat", label: "Donations & zakat", category: "Bills & Payments",
+    keywords: ["donation", "donate", "zakat", "charity", "giving"],
+    answer: "Open Donations & Giving and choose Donations or Zakat.",
+    actions: [{ label: "Open Donations", target: "donation" }, { label: "Open Zakat", target: "zakat" }],
   },
 
   // ---------------- Accounts & Savings ----------------

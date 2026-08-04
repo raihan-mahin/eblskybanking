@@ -32,13 +32,6 @@ function MyBankingPage() {
       <SectionCard title="Manage" subtitle="Sharing, layout and banking mode">
         <ListRow icon="Share2" tint="blue" title="Share account details" subtitle="Copy, share sheet or NFC tap" onClick={() => go("account-sharing")} />
         <ListRow icon="ListChecks" tint="purple" title="Personalization" subtitle="Customize your Home dashboard" onClick={() => go("personalization")} />
-        <ListRow
-          icon="Moon"
-          tint="green"
-          title="EBL Islamic mode"
-          subtitle={state.islamic.mode === "islamic" ? "Islamic mode is on" : "Switch to Shariah-compliant banking"}
-          onClick={() => go("islamic-mode")}
-        />
         <ListRow icon="ShieldCheck" tint="pink" title="Transaction disputes" subtitle={`${state.disputes.length} cases`} onClick={() => go("disputes")} />
       </SectionCard>
 
