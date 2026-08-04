@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 // Lightweight, locally drawn SVG marks approximating the Bangladeshi MFS brands.
 // No remote assets, no icon library.
 
@@ -50,7 +52,7 @@ export function UpayMark({ className = "" }: { className?: string }) {
   );
 }
 
-export const MFS_MARKS: Record<string, (p: { className?: string }) => JSX.Element> = {
+export const MFS_MARKS: Record<string, (p: { className?: string }) => ReactElement> = {
   bKash: BkashMark,
   Nagad: NagadMark,
   Rocket: RocketMark,
