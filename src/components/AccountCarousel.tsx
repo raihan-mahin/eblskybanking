@@ -102,24 +102,24 @@ export function AccountCarousel() {
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate text-[13px] text-muted-foreground">{account.name}</p>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); go("account-sharing"); }}
-                      className="press inline-flex shrink-0 items-center gap-1 rounded-full bg-card px-2 py-0.5 text-[11px] font-medium text-primary"
-                    >
-                      <Share2 className="size-3" /> Share Info
-                    </button>
-                  </div>
+                  <p className="truncate text-[13px] text-muted-foreground">{account.name}</p>
                   <div className="mt-0.5">
                     <p className="text-[12.5px] tracking-wide text-muted-foreground">
                       {show ? fullNumber : account.masked}
                     </p>
                   </div>
                 </div>
-                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
-                  <Icon name="Landmark" className="size-5" />
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); go("account-sharing"); }}
+                    className="press inline-flex shrink-0 items-center gap-1 rounded-full bg-card px-2 py-0.5 text-[11px] font-medium text-primary"
+                  >
+                    <Share2 className="size-3" /> Share Info
+                  </button>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tint-yellow">
+                    <Icon name="Landmark" className="size-5" />
+                  </span>
+                </div>
               </div>
 
               <div className="flex items-end justify-between gap-2">
