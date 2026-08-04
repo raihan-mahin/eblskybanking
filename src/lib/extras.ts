@@ -24,20 +24,13 @@ export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
 
 /* ---------------- 2. Quick Banking defaults ---------------- */
 
-export const DEFAULT_QUICK = ["fund-transfer", "recharge", "bill-payment"];
+export const DEFAULT_QUICK = ["fund-transfer", "recharge", "mfs-transfer"];
 
 /** More Services — priority list; the first three not already shown in Quick Banking are used. */
 export const MORE_SERVICES_PRIORITY: string[] = [
-  "dps",
-  "card-payment",
-  "early-salary",
-  "tuition-fee",
-  "bill-payment",
-  "goal-setting",
   "group-dps",
-  "rewards",
-  "split-pay",
-  "qr-payment",
+  "card-payment",
+  "bill-internet",
 ];
 
 export const QUICK_CATALOGUE = [
