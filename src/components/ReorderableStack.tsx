@@ -123,11 +123,7 @@ export function ReorderableStack({
     autoScroll.current = window.setInterval(() => {
       const y = pointerY.current;
       const dy = y < EDGE_PX ? -8 : y > window.innerHeight - EDGE_PX ? 8 : 0;
-      if (dy) {
-        window.scrollBy(0, dy);
-        const delta = (startPt.current ? window.scrollY : 0) && 0;
-        void delta;
-      }
+      if (dy) window.scrollBy(0, dy);
     }, 16);
 
     window.addEventListener("pointermove", onMove, { passive: false });
