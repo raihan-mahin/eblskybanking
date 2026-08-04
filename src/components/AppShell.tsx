@@ -42,8 +42,8 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
               <ChevronLeft className="size-6" />
             </button>
           ) : title ? null : (
-            <button onClick={() => setMenu(true)} className="press my-0.5 grid size-12 place-items-center rounded-full bg-foreground text-white">
-              <User className="size-7" />
+            <button onClick={() => setMenu(true)} aria-label="Open profile menu" className="press my-0.5 size-12 overflow-hidden rounded-full bg-foreground ring-2 ring-white/70">
+              <img src={profilePhoto.url} alt={state.user.name} className="size-full object-cover object-top" />
             </button>
           )}
           <div className="min-w-0 flex-1">
