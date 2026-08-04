@@ -26,34 +26,35 @@ export const Route = createFileRoute("/home")({
   component: HomePage,
 });
 
+function ArrowPill({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      aria-label={label}
+      onClick={onClick}
+      className="press arrow-pill mx-auto -mb-1 mt-1 grid size-9 place-items-center rounded-full border border-border bg-card text-primary shadow-sm active:bg-muted"
+    >
+      <ChevronDown className="size-4" />
+    </button>
+  );
+}
+
 function HomePage() {
   const { state, patch } = useApp();
   const nav = useNavigate();
   const [tab, setTab] = useState("quick");
   const [allQuick, setAllQuick] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
 
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
   const nepal = state.goals.find((g) => g.title === "Nepal Trip") ?? state.goals[0];
 
 
   const pinned = state.personalization.pinned.filter((id) => byId(id));
-  const byUsage = SERVICES.slice()
-    .sort((a, b) => (state.usage[b.id] ?? 0) - (state.usage[a.id] ?? 0))
-    .filter((s) => (state.usage[s.id] ?? 0) > 0)
-    .map((s) => s.id);
-  const quickIds = [...new Set([...pinned, ...byUsage, ...state.quickBanking, ...DEFAULT_QUICK])]
+  const quickIds = [...new Set([...pinned, ...DEFAULT_QUICK, ...state.quickBanking])]
     .filter((id) => byId(id))
     .slice(0, 3);
 
-  const moreIds = MORE_SERVICES_PRIORITY.filter((id) => byId(id) && !quickIds.includes(id)).slice(0, 3);
+  const moreIds = MORE_SERVICES_PRIORITY.filter((id) => byId(id)).slice(0, 3);
 
-  const shownIds = new Set([...quickIds, ...moreIds]);
-  const expandedGroups = CATEGORIES.map((c) => ({
-    id: c.id,
-    label: c.title.split(",")[0]!.split("&")[0]!.trim(),
-    items: SERVICES.filter((s) => s.category === c.id && !shownIds.has(s.id)).slice(0, 6),
-  })).filter((g) => g.items.length > 0);
 
   const togglePin = (id: string) => {
     const p = state.personalization;
