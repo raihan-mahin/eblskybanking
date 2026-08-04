@@ -31,7 +31,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
   return (
     <>
       <header className="bg-brand px-[18px] pt-4 pb-8">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {back ? (
             <button onClick={() => nav({ to: "/home" })} className="press grid size-10 place-items-center rounded-full">
               <ChevronLeft className="size-6" />
@@ -47,7 +47,7 @@ export function AppHeader({ title, back }: { title?: string; back?: boolean }) {
             ) : (
               <>
                 <p className="text-[13.5px]">{state.user.greeting}</p>
-                <p className="truncate text-[19px] leading-tight font-semibold">{state.user.name}</p>
+                <p className="text-[17px] leading-tight font-semibold">{state.user.name}</p>
               </>
             )}
           </div>

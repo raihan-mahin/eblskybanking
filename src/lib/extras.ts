@@ -17,11 +17,9 @@ export const DASHBOARD_MODULES: DashboardModule[] = [
   { id: "more", label: "More Services", description: "Six everyday shortcuts" },
 
   { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
-  { id: "rewards", label: "Rewards", description: "Points, level and progress" },
+  { id: "rewards", label: "Rewards", description: "Next reward and progress" },
   { id: "transactions", label: "Recent Transactions", description: "Latest account activity" },
   { id: "goals", label: "DPS, Savings & Goals", description: "Featured goal progress" },
-  { id: "cards", label: "Cards", description: "Card status and controls" },
-  { id: "recommended", label: "Recommended for You", description: "Suggested next steps" },
 ];
 
 export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
