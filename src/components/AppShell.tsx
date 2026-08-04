@@ -190,7 +190,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
           {services.length === 0 && extras.length === 0 && (
             <div className="py-6 text-center">
               <p className="text-[13.5px] text-muted-foreground">No matches for “{q}”.</p>
-              <div className="mt-3"><Button variant="secondary" onClick={() => setQ("")}>Clear search</Button></div>
+              <div className="mt-3"><Button variant="outline" onClick={() => setQ("")}>Clear search</Button></div>
             </div>
           )}
         </div>
