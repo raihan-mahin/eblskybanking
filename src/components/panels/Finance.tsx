@@ -8,167 +8,171 @@ import type { Goal } from "@/lib/types";
 
 /* ---------------- Rewards ---------------- */
 
+interface RewardOption { id: string; title: string; cost: number; value: string; icon: string; expiry: string; demo?: boolean }
+
+const FEATURED_REWARDS: RewardOption[] = [
+  { id: "rw-cineplex", title: "10% off at Star Cineplex", cost: 500, value: "10% off", icon: "Tv", expiry: "31 Dec 2026", demo: true },
+  { id: "rw-gentlepark", title: "10% off at Gentle Park", cost: 700, value: "10% off", icon: "ShoppingBag", expiry: "30 Nov 2026", demo: true },
+  { id: "rw-dining", title: "15% off selected dining", cost: 600, value: "15% off", icon: "Gift", expiry: "31 Oct 2026", demo: true },
+];
+
 export function RewardsPanel() {
   const { state, patch, notify } = useApp();
   const toast = useToast();
   const nav = useNavigate();
-  const [auth, setAuth] = useState<null | string>(null);
+  const [confirm, setConfirm] = useState<RewardOption | null>(null);
+  const [sheet, setSheet] = useState<null | "missions" | "rewards" | "history" | "vouchers">(null);
   const pts = state.rewards.points;
   const lvl = levelFor(pts);
   const nx = nextLevel(pts);
+  const pct = nx.ceil > nx.floor ? ((pts - nx.floor) / (nx.ceil - nx.floor)) * 100 : 100;
 
-  const LEVELS = [
-    { name: "Bronze", min: 0, color: "#B87333" },
-    { name: "Silver", min: 1000, color: "#9CA3AF" },
-    { name: "Gold", min: 3000, color: "#FFC400" },
-    { name: "Platinum", min: 6000, color: "#E5E7EB" },
-  ];
-  const SEGMENTS = [
-    { from: 0, to: 1000, color: "#B87333" },
-    { from: 1000, to: 3000, color: "#9CA3AF" },
-    { from: 3000, to: 6000, color: "#FFC400" },
+  const allRewards: RewardOption[] = [
+    ...FEATURED_REWARDS,
+    ...state.rewards.offers.map((o) => ({ id: o.id, title: o.title, cost: o.cost, value: o.value, icon: "BadgePercent", expiry: "31 Dec 2026", demo: true })),
   ];
 
-  let filledSegments = 0;
-  let segmentPct = 0;
-  for (const seg of SEGMENTS) {
-    if (pts >= seg.to) {
-      filledSegments++;
-    } else {
-      segmentPct = ((pts - seg.from) / (seg.to - seg.from)) * 100;
-      break;
-    }
-  }
-
-  const redeem = (id: string) => {
-    const offer = state.rewards.offers.find((o) => o.id === id)!;
-    if (offer.cost > pts) return toast.show("Not enough points for this reward");
+  const redeem = (o: RewardOption) => {
+    if (o.cost > pts) return toast.show("Not enough points for this reward");
     patch({
       rewards: {
         ...state.rewards,
-        points: pts - offer.cost,
-        history: [{ id: "H" + Date.now(), title: `Redeemed ${offer.title}`, points: -offer.cost, date: "Today" }, ...state.rewards.history],
+        points: pts - o.cost,
+        history: [{ id: "H" + Date.now(), title: `Redeemed ${o.title}`, points: -o.cost, date: "Today" }, ...state.rewards.history],
       },
+      giftCards: [
+        { id: "V" + Date.now(), brand: o.title, value: o.cost, code: "EBL-" + Math.random().toString(36).slice(2, 8).toUpperCase(), date: "Today" },
+        ...state.giftCards,
+      ],
     });
-    notify("Reward redeemed", `${offer.title} — ${offer.cost} points used.`, "reward");
-    toast.show(`${offer.title} redeemed`);
+    notify("Reward redeemed", `${o.title} — ${o.cost} points used.`, "reward");
+    toast.show(`${o.title} added to My Vouchers`);
   };
+
+  const MissionRow = ({ m }: { m: { id: string; title: string; progress: number; goal: number; points: number } }) => (
+    <div className="border-b border-border py-2.5 last:border-0">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[14px] font-medium">{m.title}</p>
+        <span className="shrink-0 text-[12.5px] text-accent">+{m.points} pts</span>
+      </div>
+      <div className="mt-1.5"><ProgressBar value={(m.progress / m.goal) * 100} /></div>
+      <p className="mt-1 text-[12px] text-muted-foreground">{m.progress} of {m.goal}</p>
+    </div>
+  );
+
+  const RewardRow = ({ o }: { o: RewardOption }) => (
+    <div className="flex items-center gap-3 border-b border-border py-3 last:border-0">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand/20">
+        <Icon name={o.icon} className="size-5" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[14px] font-medium">{o.title}</p>
+        <p className="text-[12px] text-muted-foreground">{o.cost} points · expires {o.expiry}</p>
+        {o.demo && <span className="mt-1 inline-block rounded-full bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground">Demo Offer</span>}
+      </div>
+      <Button className="w-[86px] shrink-0 py-1.5" variant={o.cost > pts ? "outline" : "primary"} disabled={o.cost > pts}
+        onClick={() => setConfirm(o)}>Redeem</Button>
+    </div>
+  );
+
+  const HistoryRow = ({ h }: { h: { id: string; title: string; points: number; date: string } }) => (
+    <div className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
+      <div>
+        <p className="text-[14px]">{h.title}</p>
+        <p className="text-[12px] text-muted-foreground">{h.date}</p>
+      </div>
+      <span className={cx("text-[13.5px] font-medium", h.points < 0 ? "text-error" : "text-success")}>
+        {h.points > 0 ? "+" : ""}{h.points}
+      </span>
+    </div>
+  );
 
   return (
     <>
-      <SectionCard>
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-[12px] text-muted-foreground">Available points</p>
-            <p className="text-[28px] font-bold leading-tight text-primary">{pts.toLocaleString()}</p>
-            <div className="mt-1 flex items-center gap-1.5">
+      <SectionCard className="!py-3.5">
+        <div className="flex items-center gap-4">
+          <CircularProgress size={112} value={pct} label={pts.toLocaleString()} sub="points" />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
               <span className="grid size-5 place-items-center rounded-full bg-brand">
                 <Icon name="Crown" className="size-3 text-[#123B82]" />
               </span>
-              <span className="text-[13px] font-semibold text-[#B8860B]">{lvl} Level</span>
+              <span className="text-[15px] font-semibold text-[#B8860B]">{lvl} Level</span>
             </div>
-          </div>
-          <button
-            onClick={() => nav({ to: "/service/$serviceId", params: { serviceId: "partner-offers" } })}
-            className="press rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-primary"
-          >
-            My Vouchers
-          </button>
-        </div>
-
-        <div className="mt-4 flex items-center">
-          {LEVELS.flatMap((level, i) => {
-            const completed = pts >= level.min;
-            const current = level.name === lvl;
-            const last = i === LEVELS.length - 1;
-            const dot = (
-              <div key={`dot-${level.name}`} className="flex flex-col items-center gap-1.5">
-                <span
-                  className={cx(
-                    "grid size-5 place-items-center rounded-full",
-                    current && "bg-brand ring-2 ring-brand/30 text-[#123B82]",
-                    completed && !current && "text-white",
-                    !completed && !current && "bg-muted text-muted-foreground",
-                  )}
-                  style={completed && !current ? { backgroundColor: level.color } : undefined}
-                >
-                  {current ? <Icon name="Crown" className="size-3" /> : completed ? <Icon name="Check" className="size-3" /> : <Icon name="Lock" className="size-3" />}
-                </span>
-                <span className={cx("text-[10.5px] font-medium", current ? "font-semibold text-[#B8860B]" : "text-muted-foreground")}>
-                  {level.name}
-                </span>
-              </div>
-            );
-            if (last) return [dot];
-            const line = (
-              <div key={`line-${level.name}`} className="relative mx-1 h-0.5 flex-1 bg-border">
-                {i < filledSegments && <div className="absolute inset-y-0 left-0 bg-current" style={{ backgroundColor: SEGMENTS[i]!.color }} />}
-                {i === filledSegments && filledSegments < SEGMENTS.length && (
-                  <div className="absolute inset-y-0 left-0 bg-current" style={{ width: `${segmentPct}%`, backgroundColor: SEGMENTS[i]!.color }} />
-                )}
-              </div>
-            );
-            return [dot, line];
-          })}
-        </div>
-
-        <p className="mt-2.5 text-[12.5px] text-muted-foreground">
-          {nx.need > 0 ? `${nx.need.toLocaleString()} points needed to reach ${nx.name}.` : "Top level reached"}
-        </p>
-      </SectionCard>
-
-      <SectionCard title="Monthly points">
-        <MiniBarChart data={[120, 210, 180, 260, 190, 240]} labels={["Dec", "Jan", "Feb", "Mar", "Apr", "May"]} />
-      </SectionCard>
-
-      <SectionCard title="Bonus missions">
-        {state.rewards.missions.map((m) => (
-          <div key={m.id} className="border-b border-border py-3 last:border-0">
-            <div className="flex items-center justify-between">
-              <p className="text-[14.5px] font-medium">{m.title}</p>
-              <span className="text-[12.5px] text-accent">+{m.points} pts</span>
-            </div>
-            <div className="mt-2"><ProgressBar value={(m.progress / m.goal) * 100} /></div>
-            <p className="mt-1 text-[12px] text-muted-foreground">
-              {m.progress}/{m.goal} · expires {m.expiry} {m.progress >= m.goal && "· Completed"}
+            <p className="mt-1 text-[12.5px] text-muted-foreground">
+              {nx.need > 0 ? `${nx.need.toLocaleString()} points to ${nx.name}` : "Top level reached"}
             </p>
+            <button onClick={() => setSheet("vouchers")} className="press mt-2.5 rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-primary">
+              My Vouchers
+            </button>
           </div>
-        ))}
+        </div>
       </SectionCard>
 
-      <SectionCard title="Redeem points">
-        {state.rewards.offers.map((o) => (
-          <div key={o.id} className="flex items-center justify-between border-b border-border py-3 last:border-0">
-            <div>
-              <p className="text-[14.5px] font-medium">{o.title}</p>
-              <p className="text-[12.5px] text-muted-foreground">{o.cost} points · worth {o.value}</p>
+      <SectionCard title="Monthly points" className="!py-3.5">
+        <MiniBarChart data={[120, 210, 180, 260, 190, state.rewards.monthPoints || 240]} labels={["Dec", "Jan", "Feb", "Mar", "Apr", "May"]} />
+        <p className="mt-2 text-[12.5px] text-muted-foreground">You earned {(state.rewards.monthPoints || 1250).toLocaleString()} points this month.</p>
+      </SectionCard>
+
+      <SectionCard title="Bonus missions" action="See More Missions" onAction={() => setSheet("missions")} className="!py-3.5">
+        {state.rewards.missions.slice(0, 3).map((m) => <MissionRow key={m.id} m={m} />)}
+      </SectionCard>
+
+      <SectionCard title="Redeem points" action="See More Rewards" onAction={() => setSheet("rewards")} className="!py-3.5">
+        {FEATURED_REWARDS.map((o) => <RewardRow key={o.id} o={o} />)}
+      </SectionCard>
+
+      <SectionCard title="Recent Reward History" action="See Full History" onAction={() => setSheet("history")} className="!py-3.5">
+        {state.rewards.history.slice(0, 2).map((h) => <HistoryRow key={h.id} h={h} />)}
+      </SectionCard>
+
+      <Sheet open={!!confirm} onClose={() => setConfirm(null)} title="Confirm redemption">
+        {confirm && (
+          <>
+            <div className="space-y-2 rounded-2xl bg-muted p-3.5">
+              {[["Reward", confirm.title], ["Points required", confirm.cost.toLocaleString()], ["Current points", pts.toLocaleString()], ["Remaining after redemption", Math.max(0, pts - confirm.cost).toLocaleString()]].map(([l, v]) => (
+                <div key={l} className="flex items-center justify-between gap-3 text-[13.5px]">
+                  <span className="text-muted-foreground">{l}</span>
+                  <span className="text-right font-medium">{v}</span>
+                </div>
+              ))}
             </div>
-            <Button className="w-24 py-2" variant={o.cost > pts ? "outline" : "primary"} disabled={o.cost > pts}
-              onClick={() => setAuth(o.id)}>Redeem</Button>
-          </div>
-        ))}
-      </SectionCard>
-
-      <SectionCard title="Reward history">
-        {state.rewards.history.slice(0, 12).map((h) => (
-          <div key={h.id} className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
-            <div>
-              <p className="text-[14px]">{h.title}</p>
-              <p className="text-[12px] text-muted-foreground">{h.date}</p>
+            <div className="mt-4 flex gap-2.5">
+              <Button variant="outline" className="flex-1" onClick={() => setConfirm(null)}>Cancel</Button>
+              <Button className="flex-1" onClick={() => { redeem(confirm); setConfirm(null); }}>Confirm</Button>
             </div>
-            <span className={cx("text-[13.5px] font-medium", h.points < 0 ? "text-error" : "text-success")}>
-              {h.points > 0 ? "+" : ""}{h.points}
-            </span>
-          </div>
-        ))}
-      </SectionCard>
+          </>
+        )}
+      </Sheet>
 
-      <AuthenticationSheet open={!!auth} onClose={() => setAuth(null)} purpose="Confirm redemption"
-        onSuccess={() => { if (auth) redeem(auth); setAuth(null); }} />
+      <Sheet open={sheet === "missions"} onClose={() => setSheet(null)} title="All missions">
+        {state.rewards.missions.map((m) => <MissionRow key={m.id} m={m} />)}
+      </Sheet>
+
+      <Sheet open={sheet === "rewards"} onClose={() => setSheet(null)} title="All rewards">
+        {allRewards.map((o) => <RewardRow key={o.id} o={o} />)}
+      </Sheet>
+
+      <Sheet open={sheet === "history"} onClose={() => setSheet(null)} title="Reward history">
+        {state.rewards.history.map((h) => <HistoryRow key={h.id} h={h} />)}
+      </Sheet>
+
+      <Sheet open={sheet === "vouchers"} onClose={() => setSheet(null)} title="My Vouchers">
+        {state.giftCards.length === 0
+          ? <p className="py-4 text-[13.5px] text-muted-foreground">No vouchers yet. Redeem points to collect vouchers.</p>
+          : state.giftCards.map((v) => (
+            <div key={v.id} className="border-b border-border py-2.5 last:border-0">
+              <p className="text-[14px] font-medium">{v.brand}</p>
+              <p className="text-[12px] text-muted-foreground">Code {v.code} · {v.date}</p>
+            </div>
+          ))}
+      </Sheet>
+
       {toast.node}
     </>
   );
 }
+
 
 /* ---------------- AI Money Manager ---------------- */
 
