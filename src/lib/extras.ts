@@ -14,7 +14,7 @@ export interface DashboardModule {
 
 export const DASHBOARD_MODULES: DashboardModule[] = [
   { id: "quick", label: "Quick Banking / Favorites", description: "Your top services and saved shortcuts" },
-  { id: "more", label: "More Services", description: "Six everyday shortcuts" },
+  { id: "more", label: "More Services", description: "Three everyday shortcuts" },
   { id: "goals", label: "DPS, Savings & Goals", description: "Featured goal progress" },
   { id: "insights", label: "Smart Insight", description: "One personalised money insight" },
   { id: "rewards", label: "Rewards", description: "Next reward and progress" },
@@ -24,18 +24,21 @@ export const DEFAULT_DASHBOARD_ORDER = DASHBOARD_MODULES.map((m) => m.id);
 
 /* ---------------- 2. Quick Banking defaults ---------------- */
 
-export const DEFAULT_QUICK = ["fund-transfer", "bill-payment", "recharge"];
+export const DEFAULT_QUICK = ["fund-transfer", "recharge", "bill-payment"];
 
-/** More Services — six shortcuts shown in a compact 3-column grid (two balanced rows). */
-export const MORE_SERVICES: { id: string; label: string; route?: string }[] = [
-  { id: "fund-transfer", label: "Fund Transfer" },
-  { id: "recharge", label: "Mobile Recharge" },
-  { id: "bill-payment", label: "Utility Bills" },
-  { id: "tuition-fee", label: "Tuition Fee" },
-  { id: "card-payment", label: "Card Payment" },
-  { id: "explore-services", label: "Explore Services", route: "/explore" },
+/** More Services — priority list; the first three not already shown in Quick Banking are used. */
+export const MORE_SERVICES_PRIORITY: string[] = [
+  "dps",
+  "card-payment",
+  "early-salary",
+  "tuition-fee",
+  "bill-payment",
+  "goal-setting",
+  "group-dps",
+  "rewards",
+  "split-pay",
+  "qr-payment",
 ];
-
 
 export const QUICK_CATALOGUE = [
   "fund-transfer", "bill-payment", "recharge", "split-pay", "qr-payment",
