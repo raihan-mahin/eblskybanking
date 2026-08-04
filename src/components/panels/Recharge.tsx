@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { BadgeCheck, Contact } from "lucide-react";
+import { BadgeCheck, Check, Contact } from "lucide-react";
+import { OPERATOR_MARKS } from "@/components/OperatorLogos";
 import { SectionCard, FormField, TextInput, Button, SegmentedTabs, ListRow, cx } from "@/components/kit";
+
 import { TxnFlow } from "@/components/TxnFlow";
 import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "@/components/ContactPicker";
 import { useApp, money } from "@/lib/store";
