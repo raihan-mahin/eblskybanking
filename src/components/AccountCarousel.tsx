@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, ChevronRight as Chevron, Eye, EyeOff, Share2 } from "lucide-react";
 import { useApp, money } from "@/lib/store";
-import { cx, StatusBadge, ProgressBar } from "./kit";
+import { cx, ProgressBar } from "./kit";
 import { Icon } from "./Icon";
 
 /** Every carousel card uses exactly this frame — same width, height, radius, padding. */
