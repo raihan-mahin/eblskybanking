@@ -42,12 +42,48 @@ function ArrowPill({ label, onClick }: { label: string; onClick: () => void }) {
 function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved: number; target: number }; go: (id: string) => void }) {
   const [idx, setIdx] = useState(0);
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const drag = useRef<{ x: number; left: number; active: boolean; moved: boolean } | null>(null);
 
   const onScroll = () => {
     const el = trackRef.current;
     if (!el) return;
     const i = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
     setIdx(i > 0 ? 1 : 0);
+  };
+
+  const slideTo = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+    setIdx(i);
+  };
+
+  // Pointer-drag fallback (desktop / preview emulation); native touch scrolling handles phones.
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return;
+    const el = trackRef.current;
+    if (!el) return;
+    drag.current = { x: e.clientX, left: el.scrollLeft, active: true, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    const el = trackRef.current;
+    if (!d?.active || !el) return;
+    const dx = e.clientX - d.x;
+    if (!d.moved && Math.abs(dx) < 6) return;
+    d.moved = true;
+    el.scrollLeft = d.left - dx;
+  };
+  const endDrag = (e: React.PointerEvent) => {
+    const d = drag.current;
+    const el = trackRef.current;
+    drag.current = null;
+    if (!d?.moved || !el) return;
+    e.preventDefault();
+    const dx = e.clientX - d.x;
+    const cur = Math.round(d.left / Math.max(1, el.clientWidth));
+    const next = Math.abs(dx) > 40 ? (dx < 0 ? cur + 1 : cur - 1) : cur;
+    slideTo(Math.min(1, Math.max(0, next)));
   };
 
   return (
@@ -60,10 +96,15 @@ function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved
       <div
         ref={trackRef}
         onScroll={onScroll}
-        className="-mx-1 flex snap-x snap-mandatory items-stretch overflow-x-auto overflow-y-hidden scroll-smooth px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ touchAction: "pan-y pinch-zoom", overscrollBehaviorX: "contain" }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={() => { drag.current = null; }}
+        onClickCapture={(e) => { if (drag.current?.moved) { e.preventDefault(); e.stopPropagation(); } }}
+        className="-mx-1 flex snap-x snap-mandatory items-stretch overflow-x-auto overflow-y-hidden px-1 [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ touchAction: "pan-x pan-y pinch-zoom", overscrollBehaviorX: "contain" }}
       >
-        <div className="w-full shrink-0 snap-center py-2">
+        <div className="w-full shrink-0 snap-start py-2">
           {goal && (
             <>
               <div className="flex items-center justify-between text-[14.5px] font-medium">
@@ -78,7 +119,7 @@ function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved
             </>
           )}
         </div>
-        <div className="flex w-full shrink-0 snap-center py-2">
+        <div className="flex w-full shrink-0 snap-start py-2">
           <button onClick={() => go("instant-dps")} className="press w-full rounded-2xl bg-tint-blue p-3 text-left">
             <p className="text-[14.5px] font-semibold text-primary">Instant DPS</p>
             <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">Start your DPS in seconds</p>
@@ -89,8 +130,10 @@ function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved
 
       <div className="mt-1 flex justify-center gap-1.5">
         {[0, 1].map((i) => (
-          <span
+          <button
             key={i}
+            aria-label={`Go to card ${i + 1}`}
+            onClick={() => slideTo(i)}
             className={cx("h-1.5 rounded-full transition-all", i === idx ? "w-4 bg-primary" : "w-1.5 bg-border")}
           />
         ))}
