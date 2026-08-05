@@ -64,8 +64,12 @@ export function RewardsPanel() {
 
   const RewardRow = ({ o }: { o: RewardOption }) => (
     <div className="flex items-center gap-3 border-b border-border py-3 last:border-0">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand/20">
-        <Icon name={o.icon} className="size-5" />
+      <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-brand/20">
+        {o.logo ? (
+          <img src={o.logo} alt="" className={cx("object-contain", o.logoFill ? "size-full" : "size-[26px]")} />
+        ) : (
+          <Icon name={o.icon} className="size-5" />
+        )}
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[14px] font-medium">{o.title}</p>
