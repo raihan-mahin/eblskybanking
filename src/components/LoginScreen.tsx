@@ -109,8 +109,9 @@ export function LoginScreen() {
           >
             <span className="text-[14px] text-muted-foreground">Save ID</span>
             <span
+              style={{ borderRadius: 8 }}
               className={cx(
-                "grid size-7 place-items-center rounded-md border",
+                "grid size-7 place-items-center border",
                 saveId ? "border-success bg-success" : "border-border bg-background",
               )}
             >
