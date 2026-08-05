@@ -5,14 +5,16 @@ import { AuthenticationSheet } from "@/components/AuthenticationSheet";
 import { Icon } from "@/components/Icon";
 import { useApp, money, levelFor, nextLevel } from "@/lib/store";
 import type { Goal } from "@/lib/types";
+import starCineplexLogo from "@/assets/star-cineplex.png.asset.json";
+import gentleParkLogo from "@/assets/gentle-park.png.asset.json";
 
 /* ---------------- Rewards ---------------- */
 
-interface RewardOption { id: string; title: string; cost: number; value: string; icon: string; expiry: string; demo?: boolean }
+interface RewardOption { id: string; title: string; cost: number; value: string; icon: string; expiry: string; demo?: boolean; logo?: string; logoFill?: boolean }
 
 const FEATURED_REWARDS: RewardOption[] = [
-  { id: "rw-cineplex", title: "10% off at Star Cineplex", cost: 500, value: "10% off", icon: "Tv", expiry: "31 Dec 2026", demo: true },
-  { id: "rw-gentlepark", title: "10% off at Gentle Park", cost: 700, value: "10% off", icon: "ShoppingBag", expiry: "30 Nov 2026", demo: true },
+  { id: "rw-cineplex", title: "10% off at Star Cineplex", cost: 500, value: "10% off", icon: "Tv", expiry: "31 Dec 2026", demo: true, logo: starCineplexLogo.url, logoFill: true },
+  { id: "rw-gentlepark", title: "10% off at Gentle Park", cost: 700, value: "10% off", icon: "ShoppingBag", expiry: "30 Nov 2026", demo: true, logo: gentleParkLogo.url },
   { id: "rw-dining", title: "15% off selected dining", cost: 600, value: "15% off", icon: "Gift", expiry: "31 Oct 2026", demo: true },
 ];
 
@@ -62,8 +64,12 @@ export function RewardsPanel() {
 
   const RewardRow = ({ o }: { o: RewardOption }) => (
     <div className="flex items-center gap-3 border-b border-border py-3 last:border-0">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand/20">
-        <Icon name={o.icon} className="size-5" />
+      <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-brand/20">
+        {o.logo ? (
+          <img src={o.logo} alt="" className={cx("object-contain", o.logoFill ? "size-full" : "size-[26px]")} />
+        ) : (
+          <Icon name={o.icon} className="size-5" />
+        )}
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[14px] font-medium">{o.title}</p>
