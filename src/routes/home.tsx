@@ -151,7 +151,7 @@ function HomePage() {
   const [allQuick, setAllQuick] = useState(false);
 
   const go = (id: string) => nav({ to: "/service/$serviceId", params: { serviceId: id } });
-  const nepal = state.goals.find((g) => g.title === "Nepal Trip") ?? state.goals[0];
+  const nepal = state.goals.find((g) => g.title === "Srilanka\u00a0Trip") ?? state.goals[0];
 
 
   const pinned = state.personalization.pinned.filter((id) => byId(id));
@@ -274,8 +274,8 @@ function HomePage() {
     insights: (
       <SectionCard key="insights" title="Smart Insights" action="See All" onAction={() => go("spending-insights")} className="!py-2.5">
         <div className="rounded-2xl bg-tint-green p-2.5">
-          <p className="text-[14.5px] font-semibold text-primary">Your Nepal adventure is getting closer</p>
-          <p className="mt-1 text-[13.5px] leading-snug">Just ৳37,500 to go. Nepal is calling!!</p>
+          <p className="text-[14.5px] font-semibold text-primary">Your Srilanka\u00a0adventure is getting closer</p>
+          <p className="mt-1 text-[13.5px] leading-snug">Just ৳37,500 to go. Srilanka\u00a0is calling!!</p>
           <div className="mt-1.5 flex gap-2">
             <button onClick={() => go("goal-setting")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">Contribute</button>
             <button onClick={() => go("savings-goals")} className="press rounded-lg bg-card px-3 py-1.5 text-[12.5px] font-medium text-primary">View Goal</button>
