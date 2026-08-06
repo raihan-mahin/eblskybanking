@@ -125,7 +125,7 @@ export const seedState = (): AppState => ({
     { id: "t12", title: "DPS Contribution", serviceId: "dps", category: "Savings", amount: 2000, fee: 0, direction: "debit", status: "success", date: "3 May, 2025", points: 20, ref: "EBL8241012" },
     { id: "t13", title: "Gas Bill — Titas", serviceId: "bill-gas", category: "Bills", amount: 1080, fee: 0, direction: "debit", status: "success", date: "2 May, 2025", points: 10, ref: "EBL8241013" },
     { id: "t14", title: "MFS Transfer — Nagad", serviceId: "mfs-transfer", category: "Transfer", amount: 2500, fee: 15, direction: "debit", status: "failed", date: "1 May, 2025", points: 0, ref: "EBL8241014" },
-    { id: "t15", title: "Group DPS — Srilanka\u00a0Trip", serviceId: "group-dps", category: "Savings", amount: 500, fee: 0, direction: "debit", status: "success", date: "15 Apr, 2025", points: 5, ref: "EBL8241015" },
+    { id: "t15", title: "Group DPS — Sri Lanka\u00a0Trip", serviceId: "group-dps", category: "Savings", amount: 500, fee: 0, direction: "debit", status: "success", date: "15 Apr, 2025", points: 5, ref: "EBL8241015" },
   ],
   notifications: [
     { id: "n1", title: "Transfer successful", body: "৳3,000 sent to bKash wallet.", date: "Today, 6:45 PM", read: false, kind: "txn" },
@@ -162,7 +162,7 @@ export const seedState = (): AppState => ({
     { id: "m5", number: "01521-334455", operator: "Teletalk" },
   ],
   goals: [
-    { id: "g1", title: "Srilanka\u00a0Trip", icon: "Plane", target: 100000, saved: 62500, monthly: 5000, date: "Dec 2025", auto: true },
+    { id: "g1", title: "Sri Lanka\u00a0Trip", icon: "Plane", target: 100000, saved: 62500, monthly: 5000, date: "Dec 2025", auto: true },
     { id: "g2", title: "New iPhone", icon: "Smartphone", target: 150000, saved: 10000, monthly: 6000, date: "Oct 2026", auto: false },
   ],
   dps: [
@@ -173,7 +173,7 @@ export const seedState = (): AppState => ({
   groupDps: [
     {
       id: "gd1",
-      title: "Srilanka\u00a0Trip",
+      title: "Sri Lanka\u00a0Trip",
       target: 100000,
       saved: 62500,
       monthly: 500,
@@ -208,7 +208,7 @@ export const seedState = (): AppState => ({
   ],
   schedules: [
     { id: "sc1", name: "Family Transfer", serviceType: "Transfer", recipient: "Ammu · DBBL", amount: 10000, frequency: "Monthly", start: "01 Jun 2025", account: "EBL Savings Account", reminder: true, active: true, autoPay: false, history: [{ date: "01 May 2025", amount: 10000, status: "Success" }] },
-    { id: "sc2", name: "Srilanka\u00a0Trip Saving", serviceType: "DPS", recipient: "Group DPS — Srilanka\u00a0Trip", amount: 500, frequency: "Monthly", start: "15 Jun 2025", account: "EBL Savings Account", reminder: true, active: true, autoPay: false, history: [] },
+    { id: "sc2", name: "Sri Lanka\u00a0Trip Saving", serviceType: "DPS", recipient: "Group DPS — Sri Lanka\u00a0Trip", amount: 500, frequency: "Monthly", start: "15 Jun 2025", account: "EBL Savings Account", reminder: true, active: true, autoPay: false, history: [] },
     { id: "sc3", name: "Monthly Recharge", serviceType: "Recharge", recipient: "01712-345678", amount: 300, frequency: "Monthly", start: "05 Jun 2025", account: "EBL Savings Account", reminder: false, active: false, autoPay: false, history: [] },
   ],
   receipts: Array.from({ length: 10 }).map((_, i) => ({
@@ -277,7 +277,7 @@ export const seedState = (): AppState => ({
     { id: "i1", text: "Your food spending is 15% higher than last month.", action: "View Transactions", target: "transaction-history", tone: "warn" },
     { id: "i2", text: "You have 2 bills due this week.", action: "Enable Auto Pay", target: "auto-pay", tone: "warn" },
     { id: "i3", text: "Your savings rate is 18%.", action: "Set Budget", target: "budget", tone: "good" },
-    { id: "i4", text: "You are ৳37,500 away from your Srilanka\u00a0Trip goal.", action: "Create Goal", target: "goal-setting", tone: "info" },
+    { id: "i4", text: "You are ৳37,500 away from your Sri Lanka\u00a0Trip goal.", action: "Create Goal", target: "goal-setting", tone: "info" },
     { id: "i5", text: "You usually recharge this number near the 5th.", action: "Schedule Recharge", target: "scheduled-transfer", tone: "info" },
     { id: "i6", text: "Internet bill repeats every month — automate it.", action: "Enable Auto Pay", target: "auto-pay", tone: "info" },
     { id: "i7", text: "Card payment due in 6 days.", action: "View Transactions", target: "card-payment", tone: "warn" },
