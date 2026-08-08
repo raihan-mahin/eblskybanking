@@ -204,11 +204,20 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
 
 function ServicePage() {
   const { serviceId } = Route.useParams();
-  const { ref, txn, mobile } = Route.useSearch();
+  const { ref, txn, mobile, ben } = Route.useSearch();
   const { useService, state } = useApp();
   const nav = useNavigate();
   const svc = byId(serviceId);
-  const prefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
+  const refPrefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
+  const benRecord = ben ? state.beneficiaries.find((b) => b.id === ben) : undefined;
+  const benPrefill = benRecord
+    ? benRecord.kind === "mfs"
+      ? { provider: benRecord.bank, wallet: benRecord.account }
+      : benRecord.kind === "other"
+        ? { bank: benRecord.bank, name: benRecord.name, account: benRecord.account }
+        : { beneficiary: `${benRecord.name} · ${benRecord.account}`, account: benRecord.account }
+    : undefined;
+  const prefill = refPrefill ?? benPrefill;
 
   // Retired service: MFS Add Money is no longer available.
   useEffect(() => {
