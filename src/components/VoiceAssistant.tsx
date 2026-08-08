@@ -33,6 +33,30 @@ const COMMANDS: { phrase: string; label: string }[] = [
   { phrase: "go back", label: "Go Back" },
 ];
 
+/** Normalize speech: lowercase, strip punctuation, collapse spaces, drop filler verbs. */
+const normalizeSpeech = (raw: string) =>
+  raw.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+
+const stripLeadIn = (q: string) =>
+  q.replace(/^(please\s+)?(can you\s+|could you\s+)?(go to|take me to|navigate to|show me|show|open up|open|launch|start)\s+/, "").trim();
+
+/** Every visible suggestion maps to one of these intents, so spoken = tapped. */
+const INTENTS: { test: RegExp; run: (ctx: IntentCtx) => void }[] = [
+  { test: /\b(fund transfer|transfer money|send money|money transfer|bank transfer|fund transfers)\b|^transfer$/, run: (c) => c.goService("fund-transfer") },
+  { test: /\b(split pay|split bill|split payment)\b/, run: (c) => c.goService("split-pay") },
+  { test: /\b(electricity|desco|dpdc)\b/, run: (c) => c.goService("bill-electricity") },
+  { test: /\b(gas bill)\b/, run: (c) => c.goService("bill-gas") },
+  { test: /\b(water bill)\b/, run: (c) => c.goService("bill-water") },
+  { test: /\b(recharge|top up|topup|airtime)\b/, run: (c) => c.goService("recharge") },
+  { test: /\b(reward|rewards|points|loyalty)\b/, run: (c) => c.goService("rewards") },
+  { test: /\b(recent transactions|transaction history|transfer history|statement|recent)\b/, run: (c) => c.goService("transaction-history") },
+  { test: /\b(ai support|support|helpline|help|customer care)\b/, run: (c) => c.goService("ai-support") },
+  { test: /\b(mfs|bkash|nagad|rocket|upay|mobile wallet)\b/, run: (c) => c.goService("mfs-transfer") },
+  { test: /\b(qr)\b/, run: (c) => c.goService("qr-payment") },
+];
+
+interface IntentCtx { goService: (id: string) => void }
+
 export function VoiceAssistant() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -52,7 +76,7 @@ export function VoiceAssistant() {
   };
 
   const run = (raw: string) => {
-    const q = raw.toLowerCase().trim();
+    const q = normalizeSpeech(raw);
     setText("");
     setMatches([]);
 
@@ -78,7 +102,6 @@ export function VoiceAssistant() {
     if (/\b(send|transfer|pay|money to|open)\b/.test(q) && tryBeneficiary()) return;
 
     if (q.includes("balance")) return setReply(`Your EBL Savings Account balance is ${money(state.accounts[0].balance)}.`);
-    if (q.includes("recent")) return goService("transaction-history");
     if (q.includes("high contrast")) { patch({ accessibility: { ...state.accessibility, contrast: true } }); return setReply("High contrast is now on."); }
     if (q.includes("text size")) {
       const next = state.accessibility.textSize === "normal" ? "large" : "xlarge";
@@ -87,13 +110,15 @@ export function VoiceAssistant() {
     }
     if (q.includes("go back")) { setOpen(false); return history.back(); }
     if (q.includes("explain")) return setReply("This screen belongs to EBL Sky Banking. Use the bottom navigation for Home, My Banking, QR and Explore, and tap any tile to open a full flow.");
-    if (q.includes("support")) return goService("ai-support");
-    if (q.includes("reward")) return goService("rewards");
-    if (q.includes("electricity")) return goService("bill-electricity");
+
+    // Shared intent map — same actions the visible suggestion chips run.
+    const stripped = stripLeadIn(q);
+    const intent = INTENTS.find((i) => i.test.test(q) || i.test.test(stripped));
+    if (intent) return intent.run({ goService });
 
     if (tryBeneficiary()) return;
 
-    const hit = searchServices(q.replace("open", "").trim())[0];
+    const hit = searchServices(stripLeadIn(q))[0];
     if (hit) return goService(hit.id);
 
     setReply("I could not match that command. Try one of the suggestions below.");
