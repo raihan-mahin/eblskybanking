@@ -3,6 +3,7 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, User, Lock, Eye, EyeOff, ScanFace, Check, Compass, MapPin, Search, Navigation } from "lucide-react";
 import { Button, FormField, TextInput, Sheet, cx } from "./kit";
 import { useApp } from "@/lib/store";
+import promoAsset from "@/assets/promo-newly-introduced.png.asset.json";
 
 const SAVED_ID_KEY = "ebl-saved-user-id";
 
