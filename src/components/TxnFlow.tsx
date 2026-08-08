@@ -152,6 +152,7 @@ export function TxnFlow(p: TxnFlowProps) {
           <span className="inline-flex items-center gap-2 justify-center"><Repeat className="size-4" /> Repeat Transaction</span>
         </Button>
         <Button onClick={() => nav({ to: "/home" })}>Done</Button>
+        <EcoTreeCard />
       </div>
     );
   }
