@@ -25,11 +25,19 @@ import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { byId } from "@/lib/services";
 import { useApp } from "@/lib/store";
 
+interface ServiceSearch {
+  ref?: string;
+  txn?: string;
+  mobile?: string;
+  ben?: string;
+}
+
 export const Route = createFileRoute("/service/$serviceId")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    ref: typeof search["ref"] === "string" ? search["ref"] : undefined,
-    txn: typeof search["txn"] === "string" ? search["txn"] : undefined,
-    mobile: typeof search["mobile"] === "string" ? search["mobile"] : undefined,
+  validateSearch: (search: Record<string, unknown>): ServiceSearch => ({
+    ...(typeof search["ref"] === "string" ? { ref: search["ref"] } : {}),
+    ...(typeof search["txn"] === "string" ? { txn: search["txn"] } : {}),
+    ...(typeof search["mobile"] === "string" ? { mobile: search["mobile"] } : {}),
+    ...(typeof search["ben"] === "string" ? { ben: search["ben"] } : {}),
   }),
   head: ({ params }) => {
     const svc = byId(params.serviceId);
@@ -196,11 +204,20 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
 
 function ServicePage() {
   const { serviceId } = Route.useParams();
-  const { ref, txn, mobile } = Route.useSearch();
+  const { ref, txn, mobile, ben } = Route.useSearch();
   const { useService, state } = useApp();
   const nav = useNavigate();
   const svc = byId(serviceId);
-  const prefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
+  const refPrefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
+  const benRecord = ben ? state.beneficiaries.find((b) => b.id === ben) : undefined;
+  const benPrefill: Record<string, string> | undefined = benRecord
+    ? benRecord.kind === "mfs"
+      ? { provider: benRecord.bank, wallet: benRecord.account }
+      : benRecord.kind === "other"
+        ? { bank: benRecord.bank, name: benRecord.name, account: benRecord.account }
+        : { beneficiary: `${benRecord.name} · ${benRecord.account}`, account: benRecord.account }
+    : undefined;
+  const prefill = refPrefill ?? benPrefill;
 
   // Retired service: MFS Add Money is no longer available.
   useEffect(() => {

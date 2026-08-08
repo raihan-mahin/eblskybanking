@@ -1,9 +1,10 @@
 import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { Bell, ChevronLeft, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
+import { Bell, ChevronLeft, ChevronRight, Home, Landmark, QrCode, Compass, Mic, X, ArrowLeftRight, Headphones, Search } from "lucide-react";
 import profilePhoto from "@/assets/profile.png.asset.json";
 import { useApp } from "@/lib/store";
 import { cx, Sheet, ListRow, SearchField, Button } from "./kit";
+import { Icon } from "./Icon";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
 import { searchServices, SERVICES, categoryTitle } from "@/lib/services";
@@ -124,6 +125,7 @@ const EXTRA_TARGETS = [
 
 function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const nav = useNavigate();
+  const { state } = useApp();
   const [q, setQ] = useState("");
   const [recent, setRecent] = useState<string[]>([]);
 
@@ -151,7 +153,18 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
     ["fund-transfer", "recharge", "bill-payment", "savings-goals", "rewards", "transaction-history"].includes(s.id),
   );
 
+  const beneficiaries = q
+    ? state.beneficiaries.filter((b) => (b.name + " " + b.bank + " " + b.account).toLowerCase().includes(q.toLowerCase())).slice(0, 8)
+    : [];
+
   const openService = (id: string) => { remember(q); onClose(); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
+
+  const openBeneficiary = (b: { id: string; kind: string }) => {
+    remember(q);
+    onClose();
+    const serviceId = b.kind === "mfs" ? "mfs-transfer" : b.kind === "other" ? "other-bank-transfer" : "fund-transfer";
+    nav({ to: "/service/$serviceId", params: { serviceId }, search: { ben: b.id } });
+  };
 
   return (
     <FullSheet open={open} onClose={onClose} title="Search">
@@ -185,7 +198,21 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
 
       {q && (
         <div className="app-card">
-          <p className="mb-1 text-[14.5px] font-semibold text-primary">{services.length + extras.length} results</p>
+          <p className="mb-1 text-[14.5px] font-semibold text-primary">{services.length + extras.length + beneficiaries.length} results</p>
+          {beneficiaries.map((b) => (
+            <button key={b.id} onClick={() => openBeneficiary(b)}
+              className="press flex w-full items-center gap-3 border-b border-border py-3 text-left last:border-0">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-tint-blue">
+                <Icon name="UserPlus" className="size-5 text-foreground" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-medium">{b.name}</span>
+                <span className="block text-[12.5px] text-muted-foreground">Beneficiary</span>
+                <span className="block truncate text-[12.5px] text-muted-foreground">{b.bank} •••• {b.account.slice(-4)}</span>
+              </span>
+              <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
+            </button>
+          ))}
           {extras.map((e) => (
             <ListRow key={e.id} icon={e.icon} tint="yellow" title={e.title} subtitle={e.description}
               onClick={() => { remember(q); onClose(); nav({ to: e.route }); }} />
@@ -193,7 +220,7 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
           {services.slice(0, 20).map((s) => (
             <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={categoryTitle(s.category)} onClick={() => openService(s.id)} />
           ))}
-          {services.length === 0 && extras.length === 0 && (
+          {services.length === 0 && extras.length === 0 && beneficiaries.length === 0 && (
             <div className="py-6 text-center">
               <p className="text-[13.5px] text-muted-foreground">No matches for “{q}”.</p>
               <div className="mt-3"><Button variant="outline" onClick={() => setQ("")}>Clear search</Button></div>
