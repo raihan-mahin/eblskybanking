@@ -7,7 +7,16 @@ import { searchServices } from "@/lib/services";
 import type { AppState } from "@/lib/types";
 import { extractNameQuery, matchBeneficiaries, resolveMatch } from "@/lib/beneficiaryMatch";
 
+const initials = (name: string) =>
+  name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "?";
 
+const maskAccount = (account: string) => {
+  const clean = account.replace(/\s|-/g, "");
+  return clean.length <= 4 ? clean : `•••• ${clean.slice(-4)}`;
+};
+
+const kindLabel = (kind: string) =>
+  kind === "mfs" ? "Mobile wallet" : kind === "other" ? "Other bank" : kind === "own" ? "Own account" : "EBL";
 
 const COMMANDS: { phrase: string; label: string }[] = [
   { phrase: "open fund transfer", label: "Open Fund Transfer" },
