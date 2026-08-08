@@ -124,6 +124,7 @@ const EXTRA_TARGETS = [
 
 function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const nav = useNavigate();
+  const { state } = useApp();
   const [q, setQ] = useState("");
   const [recent, setRecent] = useState<string[]>([]);
 
