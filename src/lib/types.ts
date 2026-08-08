@@ -284,6 +284,8 @@ export interface AppState {
   nfcShares: NfcShare[];
   birthday: { name: string; date: string; offerId: string; read: boolean; saved: boolean; dismissed: boolean };
   supportHandoff: { escalated: boolean; ticketId: string | null };
+  /** Paperless / Eco Tree progress. countedTxnIds prevents double counting. */
+  eco: { count: number; countedTxnIds: ID[] };
   /** One-time local data migration marker. */
   migration?: number;
 }
