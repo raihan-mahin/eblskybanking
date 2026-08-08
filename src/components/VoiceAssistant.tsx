@@ -116,6 +116,21 @@ export function VoiceAssistant() {
           <Button className="w-24" onClick={() => run(text)}>Run</Button>
         </div>
         {reply && <p className="mt-3 rounded-xl bg-tint-blue p-3 text-[13.5px]">{reply}</p>}
+        {matches.length > 0 && (
+          <div className="mt-3 rounded-xl border border-border">
+            {matches.map((b) => (
+              <button key={b.id} onClick={() => openBeneficiary(b)}
+                className="press flex w-full items-center justify-between gap-3 border-b border-border p-3 text-left last:border-0">
+                <span className="min-w-0">
+                  <span className="block truncate text-[14.5px] font-medium">{b.name}</span>
+                  <span className="block text-[12.5px] text-muted-foreground">Beneficiary</span>
+                  <span className="block truncate text-[12.5px] text-muted-foreground">{b.bank} •••• {b.account.slice(-4)}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
         <p className="mt-4 mb-2 text-[13px] font-medium text-muted-foreground">Try saying</p>
         <div className="flex flex-wrap gap-2">
           {COMMANDS.map((c) => (
