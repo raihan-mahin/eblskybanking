@@ -25,7 +25,7 @@ export function LoginScreen() {
   const nav = useNavigate();
   const router = useRouter();
 
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(DEFAULT_USER_ID);
   const [saveId, setSaveId] = useState(false);
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
