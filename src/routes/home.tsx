@@ -232,7 +232,7 @@ function PromoCarousel({ go }: { go: (id: string) => void }) {
             key={p.id}
             onClick={() => go(p.id)}
             aria-label={p.alt}
-            className="press block w-full shrink-0 snap-start overflow-hidden rounded-[18px]"
+            className="press block w-full shrink-0 snap-start overflow-hidden rounded-none"
           >
             <img src={p.src} alt={p.alt} className="h-[104px] w-full object-cover" style={{ objectPosition: p.pos }} />
           </button>
