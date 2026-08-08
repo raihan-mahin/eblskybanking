@@ -152,7 +152,18 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
     ["fund-transfer", "recharge", "bill-payment", "savings-goals", "rewards", "transaction-history"].includes(s.id),
   );
 
+  const beneficiaries = q
+    ? state.beneficiaries.filter((b) => (b.name + " " + b.bank + " " + b.account).toLowerCase().includes(q.toLowerCase())).slice(0, 8)
+    : [];
+
   const openService = (id: string) => { remember(q); onClose(); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
+
+  const openBeneficiary = (b: { id: string; kind: string }) => {
+    remember(q);
+    onClose();
+    const serviceId = b.kind === "mfs" ? "mfs-transfer" : b.kind === "other" ? "other-bank-transfer" : "fund-transfer";
+    nav({ to: "/service/$serviceId", params: { serviceId }, search: { ben: b.id } });
+  };
 
   return (
     <FullSheet open={open} onClose={onClose} title="Search">
