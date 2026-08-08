@@ -113,6 +113,40 @@ export function matchBeneficiaries<T extends BenLike>(
     .sort((a, b) => b.score - a.score);
 }
 
+/**
+ * Shared lookup used by BOTH Home Search (typed) and the Voice Assistant (spoken).
+ * Plain substring hits (case-insensitive, trimmed) always win, then fuzzy ranking.
+ */
+export function searchBeneficiaries<T extends BenLike>(
+  query: string,
+  beneficiaries: readonly T[],
+  limit = 8,
+): T[] {
+  const raw = query.trim().toLowerCase();
+  if (!raw) return [];
+
+  const direct = beneficiaries.filter((b) =>
+    `${b.name} ${b.bank} ${b.account}`.toLowerCase().includes(raw),
+  );
+
+  const name = extractNameQuery(query);
+  const nameDirect = name
+    ? beneficiaries.filter((b) => normalize(b.name).includes(name) || name.includes(normalize(b.name)))
+    : [];
+
+  const fuzzy = matchBeneficiaries(query, beneficiaries).map((r) => r.item);
+
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const b of [...direct, ...nameDirect, ...fuzzy]) {
+    if (seen.has(b.id)) continue;
+    seen.add(b.id);
+    out.push(b);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 /** Decide what the assistant should do with the ranked results. */
 export function resolveMatch<T extends BenLike>(ranked: ScoredBeneficiary<T>[]) {
   if (!ranked.length) return { kind: "none" as const };
@@ -125,3 +159,22 @@ export function resolveMatch<T extends BenLike>(ranked: ScoredBeneficiary<T>[]) 
   return { kind: "many" as const, items: ranked.slice(0, 6).map((r) => r.item) };
 
 }
+
+/** Voice entry point: normalize speech, then resolve to one / many / none. */
+export function resolveSpokenBeneficiary<T extends BenLike>(
+  spoken: string,
+  beneficiaries: readonly T[],
+) {
+  const name = extractNameQuery(spoken);
+  if (name.length < 2) return { kind: "none" as const };
+
+  const exact = beneficiaries.filter((b) => {
+    const n = normalize(b.name);
+    return n === name || n.includes(name) || name.includes(n);
+  });
+  if (exact.length === 1) return { kind: "one" as const, item: exact[0]! };
+  if (exact.length > 1) return { kind: "many" as const, items: exact.slice(0, 6) };
+
+  return resolveMatch(matchBeneficiaries(spoken, beneficiaries));
+}
+

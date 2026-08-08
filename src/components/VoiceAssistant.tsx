@@ -5,7 +5,7 @@ import { Sheet, Button, TextInput, cx } from "./kit";
 import { useApp, money } from "@/lib/store";
 import { searchServices } from "@/lib/services";
 import type { AppState } from "@/lib/types";
-import { extractNameQuery, matchBeneficiaries, resolveMatch } from "@/lib/beneficiaryMatch";
+import { extractNameQuery, resolveSpokenBeneficiary } from "@/lib/beneficiaryMatch";
 
 const initials = (name: string) =>
   name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "?";
@@ -60,8 +60,7 @@ export function VoiceAssistant() {
     const tryBeneficiary = () => {
       const nameQuery = extractNameQuery(q);
       if (nameQuery.length < 2) return false;
-      const ranked = matchBeneficiaries(q, state.beneficiaries);
-      const result = resolveMatch(ranked);
+      const result = resolveSpokenBeneficiary(q, state.beneficiaries);
       if (result.kind === "one") {
         setReply(`Found ${result.item.name}. Opening the transfer screen — enter the amount to continue.`);
         openBeneficiary(result.item);

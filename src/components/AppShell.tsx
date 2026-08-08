@@ -8,6 +8,7 @@ import { Icon } from "./Icon";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
 import { searchServices, SERVICES, categoryTitle } from "@/lib/services";
+import { searchBeneficiaries } from "@/lib/beneficiaryMatch";
 
 
 const TABS = [
@@ -153,9 +154,8 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
     ["fund-transfer", "recharge", "bill-payment", "savings-goals", "rewards", "transaction-history"].includes(s.id),
   );
 
-  const beneficiaries = q
-    ? state.beneficiaries.filter((b) => (b.name + " " + b.bank + " " + b.account).toLowerCase().includes(q.toLowerCase())).slice(0, 8)
-    : [];
+  const beneficiaries = searchBeneficiaries(q, state.beneficiaries);
+
 
   const openService = (id: string) => { remember(q); onClose(); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
 
