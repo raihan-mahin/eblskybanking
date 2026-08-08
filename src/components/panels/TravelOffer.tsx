@@ -3,6 +3,8 @@ import { SectionCard, ListRow, Button, Sheet, StatusBadge } from "../kit";
 import { Icon } from "../Icon";
 import { travelOfferFor } from "@/lib/extras";
 import { byId } from "@/lib/services";
+import starCineplexLogo from "@/assets/star-cineplex-logo.png.asset.json";
+
 
 export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
   const svc = byId(serviceId);
