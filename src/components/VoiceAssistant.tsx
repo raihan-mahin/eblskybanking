@@ -4,6 +4,8 @@ import { Mic } from "lucide-react";
 import { Sheet, Button, TextInput, cx } from "./kit";
 import { useApp, money } from "@/lib/store";
 import { searchServices } from "@/lib/services";
+import type { AppState } from "@/lib/types";
+
 
 const COMMANDS: { phrase: string; label: string }[] = [
   { phrase: "open fund transfer", label: "Open Fund Transfer" },
