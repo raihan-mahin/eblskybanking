@@ -3,6 +3,8 @@ import { SectionCard, ListRow, Button, Sheet, StatusBadge } from "../kit";
 import { Icon } from "../Icon";
 import { travelOfferFor } from "@/lib/extras";
 import { byId } from "@/lib/services";
+import starCineplexLogo from "@/assets/star-cineplex-logo.png.asset.json";
+
 
 export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
   const svc = byId(serviceId);
@@ -33,7 +35,18 @@ export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
             <p className="text-[13.5px] text-muted-foreground">{offer.blurb}</p>
           </div>
         </div>
+        {serviceId === "star-cineplex" && (
+          <div className="mt-4 flex justify-center">
+            <img
+              src={starCineplexLogo.url}
+              alt="Star Cineplex logo"
+              className="h-16 w-auto max-w-[240px] object-contain"
+            />
+          </div>
+        )}
+
       </SectionCard>
+
 
       <SectionCard title="Your EBL offer" subtitle="Personalised for your card">
         <p className="rounded-xl bg-tint-yellow p-3 text-[13.5px] font-medium">{offer.offer}</p>
