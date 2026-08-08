@@ -210,7 +210,7 @@ function ServicePage() {
   const svc = byId(serviceId);
   const refPrefill = ref ? state.recentEntities.find((r) => r.id === ref)?.prefill : undefined;
   const benRecord = ben ? state.beneficiaries.find((b) => b.id === ben) : undefined;
-  const benPrefill = benRecord
+  const benPrefill: Record<string, string> | undefined = benRecord
     ? benRecord.kind === "mfs"
       ? { provider: benRecord.bank, wallet: benRecord.account }
       : benRecord.kind === "other"
