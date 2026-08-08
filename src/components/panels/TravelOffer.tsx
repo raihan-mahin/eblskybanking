@@ -45,8 +45,6 @@ export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
         </div>
       </SectionCard>
 
-
-
       <SectionCard title="Your EBL offer" subtitle="Personalised for your card">
         <p className="rounded-xl bg-tint-yellow p-3 text-[13.5px] font-medium">{offer.offer}</p>
         <ListRow icon="BadgePercent" tint="green" title="Discount" right={<span className="text-[14px] font-semibold">{offer.discount}</span>} />
