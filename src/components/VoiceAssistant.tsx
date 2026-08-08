@@ -76,7 +76,7 @@ export function VoiceAssistant() {
   };
 
   const run = (raw: string) => {
-    const q = raw.toLowerCase().trim();
+    const q = normalizeSpeech(raw);
     setText("");
     setMatches([]);
 
@@ -102,7 +102,6 @@ export function VoiceAssistant() {
     if (/\b(send|transfer|pay|money to|open)\b/.test(q) && tryBeneficiary()) return;
 
     if (q.includes("balance")) return setReply(`Your EBL Savings Account balance is ${money(state.accounts[0].balance)}.`);
-    if (q.includes("recent")) return goService("transaction-history");
     if (q.includes("high contrast")) { patch({ accessibility: { ...state.accessibility, contrast: true } }); return setReply("High contrast is now on."); }
     if (q.includes("text size")) {
       const next = state.accessibility.textSize === "normal" ? "large" : "xlarge";
@@ -111,13 +110,15 @@ export function VoiceAssistant() {
     }
     if (q.includes("go back")) { setOpen(false); return history.back(); }
     if (q.includes("explain")) return setReply("This screen belongs to EBL Sky Banking. Use the bottom navigation for Home, My Banking, QR and Explore, and tap any tile to open a full flow.");
-    if (q.includes("support")) return goService("ai-support");
-    if (q.includes("reward")) return goService("rewards");
-    if (q.includes("electricity")) return goService("bill-electricity");
+
+    // Shared intent map — same actions the visible suggestion chips run.
+    const stripped = stripLeadIn(q);
+    const intent = INTENTS.find((i) => i.test.test(q) || i.test.test(stripped));
+    if (intent) return intent.run({ goService });
 
     if (tryBeneficiary()) return;
 
-    const hit = searchServices(q.replace("open", "").trim())[0];
+    const hit = searchServices(stripLeadIn(q))[0];
     if (hit) return goService(hit.id);
 
     setReply("I could not match that command. Try one of the suggestions below.");
