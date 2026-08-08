@@ -4,6 +4,8 @@ import { Mic } from "lucide-react";
 import { Sheet, Button, TextInput, cx } from "./kit";
 import { useApp, money } from "@/lib/store";
 import { searchServices } from "@/lib/services";
+import type { AppState } from "@/lib/types";
+
 
 const COMMANDS: { phrase: string; label: string }[] = [
   { phrase: "open fund transfer", label: "Open Fund Transfer" },
@@ -25,14 +27,23 @@ export function VoiceAssistant() {
   const [text, setText] = useState("");
   const [reply, setReply] = useState("");
   const [listening, setListening] = useState(false);
+  const [matches, setMatches] = useState<AppState["beneficiaries"]>([]);
   const { state, patch } = useApp();
   const nav = useNavigate();
 
   const goService = (id: string) => { setOpen(false); nav({ to: "/service/$serviceId", params: { serviceId: id } }); };
 
+  const openBeneficiary = (b: { id: string; kind: string }) => {
+    setOpen(false);
+    setMatches([]);
+    const serviceId = b.kind === "mfs" ? "mfs-transfer" : b.kind === "other" ? "other-bank-transfer" : "fund-transfer";
+    nav({ to: "/service/$serviceId", params: { serviceId }, search: { ben: b.id } });
+  };
+
   const run = (raw: string) => {
     const q = raw.toLowerCase().trim();
     setText("");
+    setMatches([]);
     if (q.includes("balance")) return setReply(`Your EBL Savings Account balance is ${money(state.accounts[0].balance)}.`);
     if (q.includes("recent")) return goService("transaction-history");
     if (q.includes("high contrast")) { patch({ accessibility: { ...state.accessibility, contrast: true } }); return setReply("High contrast is now on."); }
@@ -46,10 +57,27 @@ export function VoiceAssistant() {
     if (q.includes("support")) return goService("ai-support");
     if (q.includes("reward")) return goService("rewards");
     if (q.includes("electricity")) return goService("bill-electricity");
+
+    // Saved beneficiaries: voice shortcut into the existing transfer flow.
+    const nameQuery = q.replace(/\b(send|money|to|transfer|pay|open|fund)\b/g, " ").replace(/\s+/g, " ").trim();
+    if (nameQuery.length >= 2) {
+      const bens = state.beneficiaries.filter((b) =>
+        (b.name + " " + b.bank + " " + b.account).toLowerCase().includes(nameQuery));
+      if (bens.length === 1) {
+        setReply(`Found ${bens[0]!.name}. Opening the transfer screen — enter the amount to continue.`);
+        return openBeneficiary(bens[0]!);
+      }
+      if (bens.length > 1) {
+        setMatches(bens.slice(0, 6));
+        return setReply("I found more than one saved beneficiary. Which one did you mean?");
+      }
+    }
+
     const hit = searchServices(q.replace("open", "").trim())[0];
     if (hit) return goService(hit.id);
     setReply("I could not match that command. Try one of the suggestions below.");
   };
+
 
   const listen = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -88,6 +116,21 @@ export function VoiceAssistant() {
           <Button className="w-24" onClick={() => run(text)}>Run</Button>
         </div>
         {reply && <p className="mt-3 rounded-xl bg-tint-blue p-3 text-[13.5px]">{reply}</p>}
+        {matches.length > 0 && (
+          <div className="mt-3 rounded-xl border border-border">
+            {matches.map((b) => (
+              <button key={b.id} onClick={() => openBeneficiary(b)}
+                className="press flex w-full items-center justify-between gap-3 border-b border-border p-3 text-left last:border-0">
+                <span className="min-w-0">
+                  <span className="block truncate text-[14.5px] font-medium">{b.name}</span>
+                  <span className="block text-[12.5px] text-muted-foreground">Beneficiary</span>
+                  <span className="block truncate text-[12.5px] text-muted-foreground">{b.bank} •••• {b.account.slice(-4)}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
         <p className="mt-4 mb-2 text-[13px] font-medium text-muted-foreground">Try saying</p>
         <div className="flex flex-wrap gap-2">
           {COMMANDS.map((c) => (
