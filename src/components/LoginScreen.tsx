@@ -6,6 +6,7 @@ import { useApp } from "@/lib/store";
 import promoAsset from "@/assets/promo-newly-introduced-hq.png.asset.json";
 
 const SAVED_ID_KEY = "ebl-saved-user-id";
+const DEFAULT_USER_ID = "Abu Raihan Mahin";
 
 type Place = { id: string; type: "Branch" | "ATM" | "Agent"; name: string; area: string; hours: string };
 
