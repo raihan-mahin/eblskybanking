@@ -3,7 +3,7 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, User, Lock, Eye, EyeOff, ScanFace, Check, Compass, MapPin, Search, Navigation, X } from "lucide-react";
 import { Button, FormField, TextInput, Sheet, cx } from "./kit";
 import { useApp } from "@/lib/store";
-import promoAsset from "@/assets/promo-newly-introduced.png.asset.json";
+import promoAsset from "@/assets/promo-newly-introduced-hq.png.asset.json";
 
 const SAVED_ID_KEY = "ebl-saved-user-id";
 
@@ -287,19 +287,24 @@ export function LoginScreen() {
       </Sheet>
 
       {promoOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4" onClick={closePromo}>
-          <div className="relative mx-auto w-full max-w-[380px]">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden bg-black/60 px-4 py-6" onClick={closePromo}>
+          <div className="relative mx-auto w-full max-w-[400px]" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={closePromo}
               aria-label="Close"
-              className="press absolute -right-2 -top-2 z-10 grid size-10 place-items-center rounded-full bg-black/50 text-white shadow"
+              className="press absolute -right-1 -top-3 z-10 grid size-10 place-items-center rounded-full bg-black/60 text-white shadow-lg"
             >
               <X className="size-5" strokeWidth={2.5} />
             </button>
             <img
               src={promoAsset.url}
               alt="Newly introduced EBL services"
-              className="max-h-[78vh] w-full object-contain shadow-2xl"
+              width={1880}
+              height={1568}
+              decoding="sync"
+              draggable={false}
+              className="block max-h-[82vh] w-full object-contain shadow-2xl"
+              style={{ imageRendering: "auto" }}
             />
           </div>
         </div>
