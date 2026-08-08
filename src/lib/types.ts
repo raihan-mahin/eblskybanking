@@ -204,6 +204,18 @@ export interface Dispute {
   timeline: DisputeUpdate[];
 }
 
+export interface MoneyRequest {
+  id: ID;
+  direction: "incoming" | "outgoing";
+  name: string;
+  account: string;
+  mobile?: string | undefined;
+  amount: number;
+  note?: string | undefined;
+  status: "Pending" | "Paid" | "Declined";
+  date: string;
+}
+
 export interface NfcShare {
   id: ID;
   accountName: string;
@@ -282,6 +294,8 @@ export interface AppState {
   islamic: { mode: "conventional" | "islamic"; hasAccount: boolean };
   offers: { saved: string[]; used: string[] };
   nfcShares: NfcShare[];
+  /** Request Money (EBL users only) — prototype local state. */
+  moneyRequests: MoneyRequest[];
   birthday: { name: string; date: string; offerId: string; read: boolean; saved: boolean; dismissed: boolean };
   supportHandoff: { escalated: boolean; ticketId: string | null };
   /** Paperless / Eco Tree progress. countedTxnIds prevents double counting. */

@@ -16,6 +16,14 @@ export const BANKS = [
   "United Commercial Bank",
 ];
 
+/** Prototype directory of EBL users reachable by registered mobile number. */
+export const EBL_DIRECTORY: { name: string; mobile: string; account: string }[] = [
+  { name: "Arnav Hasan", mobile: "01712-345678", account: "1102938475601" },
+  { name: "Nabila Rahman", mobile: "01911-556677", account: "1102947766201" },
+  { name: "Kamrul Islam (Bariwala)", mobile: "01611-889900", account: "1102938477887788" },
+  { name: "Sadia Noor", mobile: "01521-334455", account: "1102911223344" },
+];
+
 export const MFS = ["bKash", "Nagad", "Rocket", "Upay"];
 
 /** Frequent Transactions — repeated recipients, billers and actions (prototype data). */
@@ -315,6 +323,11 @@ export const seedState = (): AppState => ({
   islamic: { mode: "conventional", hasAccount: true },
   offers: { saved: [], used: [] },
   nfcShares: [],
+  moneyRequests: [
+    { id: "MR100231", direction: "incoming", name: "Nabila Rahman", account: "1102947766201", mobile: "01911-556677", amount: 1500, note: "Dinner share", status: "Pending", date: "Today, 1:20 PM" },
+    { id: "MR100230", direction: "outgoing", name: "Arnav Hasan", account: "1102938475601", mobile: "01712-345678", amount: 2500, note: "Cab fare", status: "Paid", date: "8 May, 2025" },
+    { id: "MR100229", direction: "outgoing", name: "Sadia Noor", account: "1102911223344", mobile: "01521-334455", amount: 800, status: "Declined", date: "5 May, 2025" },
+  ],
   birthday: { name: "Mahin", date: "Today", offerId: "po-birthday", read: false, saved: false, dismissed: false },
   supportHandoff: { escalated: false, ticketId: null },
   eco: { count: 24, countedTxnIds: [] },

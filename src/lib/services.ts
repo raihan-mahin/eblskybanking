@@ -62,6 +62,7 @@ export const SERVICES: Service[] = [
   s("other-bank-transfer", "Other Bank Transfer", "transfers", "Send to another bank via NPSB/BEFTN", "Landmark", "blue", "transaction", "confirm", ["other bank", "npsb", "beftn", "transfer"]),
   s("mfs-transfer", "MFS Transfer", "transfers", "Send to mobile wallets", "Smartphone", "blue", "transaction", "confirm", ["mfs", "bkash", "nagad", "rocket", "upay", "wallet"]),
   s("phone-transfer", "Send by Mobile Number", "transfers", "Find the linked account by phone number", "Send", "green", "transaction", "confirm", ["phone", "mobile", "number", "send", "transfer"]),
+  s("request-money", "Request Money", "transfers", "Request money from another EBL user", "HandCoins", "green", "transaction", "confirm", ["request", "request money", "ask money", "collect"]),
   s("split-pay", "Split Pay", "transfers", "Split bills & pay together", "Users", "pink", "management", "confirm", ["split", "share", "request"]),
   s("beneficiaries", "Beneficiaries", "transfers", "Manage saved recipients", "UserPlus", "gray", "management", "none", ["beneficiary", "recipient", "saved"]),
   s("transaction-history", "Transfer History", "transfers", "All your transactions", "History", "gray", "information", "none", ["history", "statement", "transactions", "recent"]),
