@@ -218,8 +218,6 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
           )}
         </div>
       )}
-        </div>
-      )}
     </FullSheet>
   );
 }
