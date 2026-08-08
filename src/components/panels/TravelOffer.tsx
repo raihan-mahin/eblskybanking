@@ -24,8 +24,16 @@ export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
     <>
       <SectionCard>
         <div className="flex items-start gap-3">
-          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-tint-yellow">
-            <Icon name={svc?.icon ?? "Plane"} className="size-6" />
+          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-tint-yellow overflow-hidden">
+            {serviceId === "star-cineplex" ? (
+              <img
+                src={starCineplexLogo.url}
+                alt="Star Cineplex logo"
+                className="h-7 w-auto object-contain"
+              />
+            ) : (
+              <Icon name={svc?.icon ?? "Plane"} className="size-6" />
+            )}
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -35,18 +43,7 @@ export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
             <p className="text-[13.5px] text-muted-foreground">{offer.blurb}</p>
           </div>
         </div>
-        {serviceId === "star-cineplex" && (
-          <div className="mt-4 flex justify-center">
-            <img
-              src={starCineplexLogo.url}
-              alt="Star Cineplex logo"
-              className="h-16 w-auto max-w-[240px] object-contain"
-            />
-          </div>
-        )}
-
       </SectionCard>
-
 
       <SectionCard title="Your EBL offer" subtitle="Personalised for your card">
         <p className="rounded-xl bg-tint-yellow p-3 text-[13.5px] font-medium">{offer.offer}</p>
