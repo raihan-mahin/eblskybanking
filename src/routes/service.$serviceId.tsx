@@ -26,10 +26,11 @@ import { byId } from "@/lib/services";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/service/$serviceId")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    ref: typeof search["ref"] === "string" ? search["ref"] : undefined,
-    txn: typeof search["txn"] === "string" ? search["txn"] : undefined,
-    mobile: typeof search["mobile"] === "string" ? search["mobile"] : undefined,
+  validateSearch: (search: Record<string, unknown>): ServiceSearch => ({
+    ...(typeof search["ref"] === "string" ? { ref: search["ref"] } : {}),
+    ...(typeof search["txn"] === "string" ? { txn: search["txn"] } : {}),
+    ...(typeof search["mobile"] === "string" ? { mobile: search["mobile"] } : {}),
+    ...(typeof search["ben"] === "string" ? { ben: search["ben"] } : {}),
   }),
   head: ({ params }) => {
     const svc = byId(params.serviceId);
