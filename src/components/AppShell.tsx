@@ -197,7 +197,12 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
 
       {q && (
         <div className="app-card">
-          <p className="mb-1 text-[14.5px] font-semibold text-primary">{services.length + extras.length} results</p>
+          <p className="mb-1 text-[14.5px] font-semibold text-primary">{services.length + extras.length + beneficiaries.length} results</p>
+          {beneficiaries.map((b) => (
+            <ListRow key={b.id} icon="UserPlus" tint="blue" title={b.name}
+              subtitle={`Beneficiary\n${b.bank} •••• ${b.account.slice(-4)}`}
+              onClick={() => openBeneficiary(b)} />
+          ))}
           {extras.map((e) => (
             <ListRow key={e.id} icon={e.icon} tint="yellow" title={e.title} subtitle={e.description}
               onClick={() => { remember(q); onClose(); nav({ to: e.route }); }} />
@@ -205,12 +210,14 @@ function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }
           {services.slice(0, 20).map((s) => (
             <ListRow key={s.id} icon={s.icon} tint={s.tint} title={s.title} subtitle={categoryTitle(s.category)} onClick={() => openService(s.id)} />
           ))}
-          {services.length === 0 && extras.length === 0 && (
+          {services.length === 0 && extras.length === 0 && beneficiaries.length === 0 && (
             <div className="py-6 text-center">
               <p className="text-[13.5px] text-muted-foreground">No matches for “{q}”.</p>
               <div className="mt-3"><Button variant="outline" onClick={() => setQ("")}>Clear search</Button></div>
             </div>
           )}
+        </div>
+      )}
         </div>
       )}
     </FullSheet>
