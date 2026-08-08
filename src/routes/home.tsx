@@ -13,6 +13,8 @@ import { useApp, money } from "@/lib/store";
 import { byId, TINT_BG } from "@/lib/services";
 
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
+import netflixPromo from "@/assets/netflix-promo.png.asset.json";
+
 
 export const Route = createFileRoute("/home")({
   head: () => ({
