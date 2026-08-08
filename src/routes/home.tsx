@@ -13,6 +13,8 @@ import { useApp, money } from "@/lib/store";
 import { byId, TINT_BG } from "@/lib/services";
 
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
+import netflixPromo from "@/assets/netflix-promo.png.asset.json";
+
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -292,10 +294,24 @@ function HomePage() {
 
 
     goals: (
-      <SectionCard key="goals" className="!py-3">
-        <GoalsCarousel goal={nepal} go={go} />
-      </SectionCard>
+      <div key="goals" className="flex flex-col gap-3">
+        <SectionCard className="!py-3">
+          <GoalsCarousel goal={nepal} go={go} />
+        </SectionCard>
+        <button
+          onClick={() => go("gift-netflix")}
+          aria-label="Netflix payment offer"
+          className="press block w-full overflow-hidden rounded-[18px]"
+        >
+          <img
+            src={netflixPromo.url}
+            alt="Stranger Things — Netflix payment offer"
+            className="h-[104px] w-full object-cover object-[30%_center]"
+          />
+        </button>
+      </div>
     ),
+
 
     more: (
       <SectionCard key="more" title="More services" className="!py-2.5">
@@ -325,6 +341,7 @@ function HomePage() {
           toast("Dashboard updated");
         }}
       />
+
 
       <FullSheet open={allQuick} onClose={() => setAllQuick(false)} title="All Shortcuts">
         <SectionCard title="All shortcuts" subtitle="Pin a service to keep it on Home">
