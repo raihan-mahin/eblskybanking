@@ -131,19 +131,38 @@ export function VoiceAssistant() {
         </div>
         {reply && <p className="mt-3 rounded-xl bg-tint-blue p-3 text-[13.5px]">{reply}</p>}
         {matches.length > 0 && (
-          <div className="mt-3 rounded-xl border border-border">
-            {matches.map((b) => (
-              <button key={b.id} onClick={() => openBeneficiary(b)}
-                className="press flex w-full items-center justify-between gap-3 border-b border-border p-3 text-left last:border-0">
-                <span className="min-w-0">
-                  <span className="block truncate text-[14.5px] font-medium">{b.name}</span>
-                  <span className="block text-[12.5px] text-muted-foreground">Beneficiary</span>
-                  <span className="block truncate text-[12.5px] text-muted-foreground">{b.bank} •••• {b.account.slice(-4)}</span>
-                </span>
-              </button>
-            ))}
+          <div className="mt-3">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-[13px] font-semibold text-heading">Select a beneficiary</p>
+              <button onClick={() => { setMatches([]); setReply("Okay, cancelled. Try saying the full name."); }}
+                className="press text-[12.5px] text-muted-foreground">Cancel</button>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-border">
+              {matches.map((b) => (
+                <button key={b.id} onClick={() => openBeneficiary(b)}
+                  className="press flex w-full items-center gap-3 border-b border-border p-3 text-left last:border-0">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-tint-yellow text-[12.5px] font-semibold text-accent">
+                    {initials(b.name)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[14.5px] font-medium">{b.name}</span>
+                    <span className="block truncate text-[12.5px] text-muted-foreground">
+                      {b.bank} · {maskAccount(b.account)}
+                    </span>
+                  </span>
+                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                    {kindLabel(b.kind)}
+                  </span>
+                  <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[11.5px] text-muted-foreground">
+              Tap a name to continue — nothing is sent until you confirm the amount.
+            </p>
           </div>
         )}
+
 
         <p className="mt-4 mb-2 text-[13px] font-medium text-muted-foreground">Try saying</p>
         <div className="flex flex-wrap gap-2">
