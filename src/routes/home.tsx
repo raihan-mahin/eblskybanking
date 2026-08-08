@@ -14,6 +14,8 @@ import { byId, TINT_BG } from "@/lib/services";
 
 import { DEFAULT_DASHBOARD_ORDER, DEFAULT_QUICK, MORE_SERVICES_PRIORITY, QUICK_CATALOGUE } from "@/lib/extras";
 import netflixPromo from "@/assets/netflix-promo.jpg.asset.json";
+import cineplexPromo from "@/assets/star-cineplex-promo.jpg.asset.json";
+
 
 
 export const Route = createFileRoute("/home")({
