@@ -29,7 +29,7 @@ export const DEFAULT_QUICK = ["fund-transfer", "recharge", "mfs-transfer"];
 /** More Services — priority list; the first three not already shown in Quick Banking are used. */
 export const MORE_SERVICES_PRIORITY: string[] = [
   "group-dps",
-  "card-payment",
+  "request-money",
   "bill-internet",
 ];
 

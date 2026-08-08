@@ -15,6 +15,7 @@ import { SupportPanel, HelpPanel } from "@/components/panels/Support";
 import { SecurityPanel, AccessibilityPanel } from "@/components/panels/Security";
 import { HistoryPanel, BeneficiariesPanel, UpcomingPanel, BudgetPanel, RelatedPanel } from "@/components/panels/Generic";
 import { PhoneTransferPanel } from "@/components/panels/PhoneTransfer";
+import { RequestMoneyPanel } from "@/components/panels/RequestMoney";
 import { RechargePanel } from "@/components/panels/Recharge";
 import { PartnerOffersPanel } from "@/components/panels/PartnerOffers";
 import { DisputesPanel } from "@/components/panels/Disputes";
@@ -30,6 +31,7 @@ interface ServiceSearch {
   txn?: string;
   mobile?: string;
   ben?: string;
+  req?: string;
 }
 
 export const Route = createFileRoute("/service/$serviceId")({
@@ -38,6 +40,7 @@ export const Route = createFileRoute("/service/$serviceId")({
     ...(typeof search["txn"] === "string" ? { txn: search["txn"] } : {}),
     ...(typeof search["mobile"] === "string" ? { mobile: search["mobile"] } : {}),
     ...(typeof search["ben"] === "string" ? { ben: search["ben"] } : {}),
+    ...(typeof search["req"] === "string" ? { req: search["req"] } : {}),
   }),
   head: ({ params }) => {
     const svc = byId(params.serviceId);
@@ -75,6 +78,7 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
     case "to-my-account":
       return <FundTransferPanel initialPrefill={prefill} />;
     case "phone-transfer": return <PhoneTransferPanel initialMobile={mobile ?? prefill?.["mobile"]} />;
+    case "request-money": return <RequestMoneyPanel />;
     case "recharge": return <RechargePanel initial={prefill} />;
     case "partner-offers": return <PartnerOffersPanel />;
     case "disputes": return <DisputesPanel txnId={txn} />;
@@ -204,7 +208,7 @@ function PanelFor({ id, prefill, txn, mobile }: PanelArgs) {
 
 function ServicePage() {
   const { serviceId } = Route.useParams();
-  const { ref, txn, mobile, ben } = Route.useSearch();
+  const { ref, txn, mobile, ben, req } = Route.useSearch();
   const { useService, state } = useApp();
   const nav = useNavigate();
   const svc = byId(serviceId);
@@ -217,7 +221,12 @@ function ServicePage() {
         ? { bank: benRecord.bank, name: benRecord.name, account: benRecord.account }
         : { beneficiary: `${benRecord.name} · ${benRecord.account}`, account: benRecord.account }
     : undefined;
-  const prefill = refPrefill ?? benPrefill;
+  // Pay Now on an incoming money request prefills the existing EBL transfer flow.
+  const reqRecord = req ? (state.moneyRequests ?? []).find((m) => m.id === req) : undefined;
+  const reqPrefill: Record<string, string> | undefined = reqRecord
+    ? { beneficiary: `${reqRecord.name} · ${reqRecord.account}`, account: reqRecord.account, amount: String(reqRecord.amount) }
+    : undefined;
+  const prefill = reqPrefill ?? refPrefill ?? benPrefill;
 
   // Retired service: MFS Add Money is no longer available.
   useEffect(() => {

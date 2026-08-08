@@ -73,7 +73,7 @@ export function FundTransferPanel({ initialPrefill }: { initialPrefill?: Record<
 
       <SectionCard title="Split Pay" subtitle="Manage split payments easily">
         <div className="grid grid-cols-2 gap-2">
-          <ListRow icon="HeartHandshake" tint="yellow" title="Request Money" subtitle="Request from friends" onClick={() => go("split-pay")} className="border-0" />
+          <ListRow icon="HeartHandshake" tint="yellow" title="Request Money" subtitle="Request from EBL users" onClick={() => go("request-money")} className="border-0" />
           <ListRow icon="Send" tint="green" title="Pay Request" subtitle="Pay requested money" onClick={() => go("split-pay")} className="border-0" />
         </div>
       </SectionCard>
