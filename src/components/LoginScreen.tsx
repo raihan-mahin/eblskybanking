@@ -285,6 +285,25 @@ export function LoginScreen() {
           )}
         </div>
       </Sheet>
+
+      {promoOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4" onClick={closePromo}>
+          <div className="relative mx-auto w-full max-w-[380px]">
+            <button
+              onClick={closePromo}
+              aria-label="Close"
+              className="press absolute -right-2 -top-2 z-10 grid size-10 place-items-center rounded-full bg-black/50 text-white shadow"
+            >
+              <X className="size-5" strokeWidth={2.5} />
+            </button>
+            <img
+              src={promoAsset.url}
+              alt="Newly introduced EBL services"
+              className="max-h-[78vh] w-full rounded-2xl object-contain shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
