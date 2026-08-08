@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Mic } from "lucide-react";
+import { ChevronRight, Mic } from "lucide-react";
 import { Sheet, Button, TextInput, cx } from "./kit";
 import { useApp, money } from "@/lib/store";
 import { searchServices } from "@/lib/services";
