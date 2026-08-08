@@ -40,6 +40,7 @@ export function LoginScreen() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"All" | Place["type"]>("All");
   const [near, setNear] = useState<string | null>(null);
+  const [promoOpen, setPromoOpen] = useState(false);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem(SAVED_ID_KEY) : null;
