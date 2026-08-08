@@ -5,6 +5,8 @@ import { Sheet, Button, TextInput, cx } from "./kit";
 import { useApp, money } from "@/lib/store";
 import { searchServices } from "@/lib/services";
 import type { AppState } from "@/lib/types";
+import { extractNameQuery, matchBeneficiaries, resolveMatch } from "@/lib/beneficiaryMatch";
+
 
 
 const COMMANDS: { phrase: string; label: string }[] = [
@@ -59,19 +61,20 @@ export function VoiceAssistant() {
     if (q.includes("electricity")) return goService("bill-electricity");
 
     // Saved beneficiaries: voice shortcut into the existing transfer flow.
-    const nameQuery = q.replace(/\b(send|money|to|transfer|pay|open|fund)\b/g, " ").replace(/\s+/g, " ").trim();
+    const nameQuery = extractNameQuery(q);
     if (nameQuery.length >= 2) {
-      const bens = state.beneficiaries.filter((b) =>
-        (b.name + " " + b.bank + " " + b.account).toLowerCase().includes(nameQuery));
-      if (bens.length === 1) {
-        setReply(`Found ${bens[0]!.name}. Opening the transfer screen — enter the amount to continue.`);
-        return openBeneficiary(bens[0]!);
+      const ranked = matchBeneficiaries(q, state.beneficiaries);
+      const result = resolveMatch(ranked);
+      if (result.kind === "one") {
+        setReply(`Found ${result.item.name}. Opening the transfer screen — enter the amount to continue.`);
+        return openBeneficiary(result.item);
       }
-      if (bens.length > 1) {
-        setMatches(bens.slice(0, 6));
-        return setReply("I found more than one saved beneficiary. Which one did you mean?");
+      if (result.kind === "many") {
+        setMatches(result.items);
+        return setReply(`I found ${result.items.length} saved beneficiaries that sound like “${nameQuery}”. Which one did you mean?`);
       }
     }
+
 
     const hit = searchServices(q.replace("open", "").trim())[0];
     if (hit) return goService(hit.id);
