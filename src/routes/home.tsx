@@ -324,6 +324,7 @@ function HomePage() {
           patch({ dashboard: { ...state.dashboard, order: ids } });
           toast("Dashboard updated");
         }}
+        afterItem={{ goals: <NetflixBanner onClick={() => go("gift-netflix")} /> }}
       />
 
       <FullSheet open={allQuick} onClose={() => setAllQuick(false)} title="All Shortcuts">
