@@ -25,7 +25,7 @@ export function VoiceAssistant() {
   const [text, setText] = useState("");
   const [reply, setReply] = useState("");
   const [listening, setListening] = useState(false);
-  const [matches, setMatches] = useState<typeof initialBens>([]);
+  const [matches, setMatches] = useState<AppState["beneficiaries"]>([]);
   const { state, patch } = useApp();
   const nav = useNavigate();
 
