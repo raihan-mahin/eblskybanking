@@ -117,7 +117,11 @@ export function matchBeneficiaries<T extends BenLike>(
 export function resolveMatch<T extends BenLike>(ranked: ScoredBeneficiary<T>[]) {
   if (!ranked.length) return { kind: "none" as const };
   const [top, second] = ranked;
-  const confident = top!.score >= 0.82 && (!second || top!.score - second.score >= 0.12);
+  // Sole candidate above the floor, or a clear leader over the runner-up.
+  const confident = !second
+    ? top!.score >= 0.6
+    : top!.score >= 0.82 && top!.score - second.score >= 0.12;
   if (confident) return { kind: "one" as const, item: top!.item };
   return { kind: "many" as const, items: ranked.slice(0, 6).map((r) => r.item) };
+
 }
