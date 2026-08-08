@@ -299,7 +299,7 @@ export function LoginScreen() {
             <img
               src={promoAsset.url}
               alt="Newly introduced EBL services"
-              className="max-h-[78vh] w-full rounded-2xl object-contain shadow-2xl"
+              className="max-h-[78vh] w-full object-contain shadow-2xl"
             />
           </div>
         </div>
