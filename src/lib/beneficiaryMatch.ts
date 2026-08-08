@@ -66,8 +66,9 @@ export interface ScoredBeneficiary<T extends BenLike> {
 export function matchBeneficiaries<T extends BenLike>(
   query: string,
   beneficiaries: readonly T[],
-  minScore = 0.55,
+  minScore = 0.45,
 ): ScoredBeneficiary<T>[] {
+
   const qTokens = extractNameQuery(query).split(" ").filter(Boolean);
   if (!qTokens.length) return [];
 
