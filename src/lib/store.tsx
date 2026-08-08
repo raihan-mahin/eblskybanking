@@ -168,7 +168,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        const merged = { ...seedState(), ...parsed, migration: parsed.migration } as AppState;
+        // Never restore an authenticated session: every fresh app open must
+        // start at the Login screen. All other persisted data is preserved.
+        const merged = { ...seedState(), ...parsed, migration: parsed.migration, loggedIn: false } as AppState;
         dispatch({ type: "hydrate", payload: remapServiceCategories(migrateState(merged)) });
       }
     } catch {

@@ -6,6 +6,7 @@ import { useApp } from "@/lib/store";
 import promoAsset from "@/assets/promo-newly-introduced-hq.png.asset.json";
 
 const SAVED_ID_KEY = "ebl-saved-user-id";
+const DEFAULT_USER_ID = "Abu Raihan Mahin";
 
 type Place = { id: string; type: "Branch" | "ATM" | "Agent"; name: string; area: string; hours: string };
 
@@ -25,7 +26,7 @@ export function LoginScreen() {
   const nav = useNavigate();
   const router = useRouter();
 
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(DEFAULT_USER_ID);
   const [saveId, setSaveId] = useState(false);
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
