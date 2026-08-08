@@ -5,6 +5,7 @@ import { Button, FormField, TextInput, Select, AmountInput, SectionCard, ErrorSt
 import { AuthenticationSheet } from "./AuthenticationSheet";
 import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "./ContactPicker";
 import { MFS_MARKS } from "./MfsLogos";
+import { EcoTreeCard } from "./EcoTree";
 
 import { maskMobile } from "@/lib/extras";
 import { useApp, money, pointsFor } from "@/lib/store";
