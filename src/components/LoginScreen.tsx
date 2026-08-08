@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, User, Lock, Eye, EyeOff, ScanFace, Check, Compass, MapPin, Search, Navigation } from "lucide-react";
+import { ArrowLeft, User, Lock, Eye, EyeOff, ScanFace, Check, Compass, MapPin, Search, Navigation, X } from "lucide-react";
 import { Button, FormField, TextInput, Sheet, cx } from "./kit";
 import { useApp } from "@/lib/store";
+import promoAsset from "@/assets/promo-newly-introduced.png.asset.json";
 
 const SAVED_ID_KEY = "ebl-saved-user-id";
 
@@ -39,6 +40,7 @@ export function LoginScreen() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"All" | Place["type"]>("All");
   const [near, setNear] = useState<string | null>(null);
+  const [promoOpen, setPromoOpen] = useState(false);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem(SAVED_ID_KEY) : null;
@@ -48,6 +50,11 @@ export function LoginScreen() {
   const enter = () => {
     if (saveId && userId.trim()) window.localStorage.setItem(SAVED_ID_KEY, userId.trim());
     if (!saveId) window.localStorage.removeItem(SAVED_ID_KEY);
+    setPromoOpen(true);
+  };
+
+  const closePromo = () => {
+    setPromoOpen(false);
     patch({ loggedIn: true, demoMode: true });
     nav({ to: "/home" });
   };
@@ -278,6 +285,25 @@ export function LoginScreen() {
           )}
         </div>
       </Sheet>
+
+      {promoOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4" onClick={closePromo}>
+          <div className="relative mx-auto w-full max-w-[380px]">
+            <button
+              onClick={closePromo}
+              aria-label="Close"
+              className="press absolute -right-2 -top-2 z-10 grid size-10 place-items-center rounded-full bg-black/50 text-white shadow"
+            >
+              <X className="size-5" strokeWidth={2.5} />
+            </button>
+            <img
+              src={promoAsset.url}
+              alt="Newly introduced EBL services"
+              className="max-h-[78vh] w-full object-contain shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
