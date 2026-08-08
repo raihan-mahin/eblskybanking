@@ -40,10 +40,11 @@ export function TravelOfferPanel({ serviceId }: { serviceId: string }) {
             <img
               src={starCineplexLogo.url}
               alt="Star Cineplex logo"
-              className="h-14 w-auto max-w-[200px] object-contain"
+              className="h-16 w-auto max-w-[240px] object-contain"
             />
           </div>
         )}
+
       </SectionCard>
 
 
