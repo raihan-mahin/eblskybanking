@@ -33,6 +33,30 @@ const COMMANDS: { phrase: string; label: string }[] = [
   { phrase: "go back", label: "Go Back" },
 ];
 
+/** Normalize speech: lowercase, strip punctuation, collapse spaces, drop filler verbs. */
+const normalizeSpeech = (raw: string) =>
+  raw.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+
+const stripLeadIn = (q: string) =>
+  q.replace(/^(please\s+)?(can you\s+|could you\s+)?(go to|take me to|navigate to|show me|show|open up|open|launch|start)\s+/, "").trim();
+
+/** Every visible suggestion maps to one of these intents, so spoken = tapped. */
+const INTENTS: { test: RegExp; run: (ctx: IntentCtx) => void }[] = [
+  { test: /\b(fund transfer|transfer money|send money|money transfer|bank transfer|fund transfers)\b|^transfer$/, run: (c) => c.goService("fund-transfer") },
+  { test: /\b(split pay|split bill|split payment)\b/, run: (c) => c.goService("split-pay") },
+  { test: /\b(electricity|desco|dpdc)\b/, run: (c) => c.goService("bill-electricity") },
+  { test: /\b(gas bill)\b/, run: (c) => c.goService("bill-gas") },
+  { test: /\b(water bill)\b/, run: (c) => c.goService("bill-water") },
+  { test: /\b(recharge|top up|topup|airtime)\b/, run: (c) => c.goService("recharge") },
+  { test: /\b(reward|rewards|points|loyalty)\b/, run: (c) => c.goService("rewards") },
+  { test: /\b(recent transactions|transaction history|transfer history|statement|recent)\b/, run: (c) => c.goService("transaction-history") },
+  { test: /\b(ai support|support|helpline|help|customer care)\b/, run: (c) => c.goService("ai-support") },
+  { test: /\b(mfs|bkash|nagad|rocket|upay|mobile wallet)\b/, run: (c) => c.goService("mfs-transfer") },
+  { test: /\b(qr)\b/, run: (c) => c.goService("qr-payment") },
+];
+
+interface IntentCtx { goService: (id: string) => void }
+
 export function VoiceAssistant() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
