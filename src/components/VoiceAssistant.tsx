@@ -5,6 +5,8 @@ import { Sheet, Button, TextInput, cx } from "./kit";
 import { useApp, money } from "@/lib/store";
 import { searchServices } from "@/lib/services";
 import type { AppState } from "@/lib/types";
+import { extractNameQuery, matchBeneficiaries, resolveMatch } from "@/lib/beneficiaryMatch";
+
 
 
 const COMMANDS: { phrase: string; label: string }[] = [
