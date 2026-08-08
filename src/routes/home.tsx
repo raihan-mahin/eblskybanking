@@ -298,19 +298,10 @@ function HomePage() {
         <SectionCard className="!py-3">
           <GoalsCarousel goal={nepal} go={go} />
         </SectionCard>
-        <button
-          onClick={() => go("gift-netflix")}
-          aria-label="Netflix payment offer"
-          className="press -mx-[18px] block w-[calc(100%+36px)] overflow-hidden rounded-[18px]"
-        >
-          <img
-            src={netflixPromo.url}
-            alt="Netflix payment offer"
-            className="h-[104px] w-full object-cover object-[45%_center]"
-          />
-        </button>
+        <PromoCarousel go={go} />
       </div>
     ),
+
 
 
     more: (
