@@ -8,6 +8,7 @@ import { Icon } from "./Icon";
 import { VoiceAssistant } from "./VoiceAssistant";
 import { BirthdayNotice } from "./BirthdayNotice";
 import { searchServices, SERVICES, categoryTitle } from "@/lib/services";
+import { searchBeneficiaries } from "@/lib/beneficiaryMatch";
 
 
 const TABS = [
