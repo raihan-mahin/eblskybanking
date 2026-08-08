@@ -1,39 +1,51 @@
 import { useApp } from "@/lib/store";
 
-/** Compact tree that gets slightly fuller as the paperless counter grows. */
+/** Elegant compact tree: foliage and branches reveal gradually as the count grows. */
 function TreeMark({ count }: { count: number }) {
-  // Growth ring: every transaction adds a leaf, up to a full canopy.
-  const leaves = [
-    { cx: 32, cy: 26, r: 11 },
-    { cx: 22, cy: 33, r: 9 },
-    { cx: 42, cy: 33, r: 9 },
-    { cx: 27, cy: 19, r: 7.5 },
-    { cx: 38, cy: 19, r: 7.5 },
-    { cx: 17, cy: 25, r: 6 },
-    { cx: 47, cy: 25, r: 6 },
-    { cx: 32, cy: 14, r: 6.5 },
+  const branches = [
+    "M32 44 L22 34",
+    "M32 40 L42 30",
+    "M32 32 L24 24",
+    "M32 28 L40 20",
   ];
-  const grown = Math.min(leaves.length, 2 + (count % (leaves.length - 1)));
-  const branch = count > 2;
+  const leaves = [
+    { cx: 32, cy: 24, rx: 12, ry: 11 },
+    { cx: 21, cy: 31, rx: 9, ry: 8 },
+    { cx: 43, cy: 30, rx: 9, ry: 8 },
+    { cx: 24, cy: 19, rx: 8, ry: 7 },
+    { cx: 41, cy: 18, rx: 8, ry: 7 },
+    { cx: 32, cy: 13, rx: 8, ry: 7 },
+    { cx: 15, cy: 25, rx: 6.5, ry: 6 },
+    { cx: 49, cy: 24, rx: 6.5, ry: 6 },
+  ];
+  const step = count % leaves.length;
+  const grown = Math.min(leaves.length, 2 + step);
+  const branchCount = Math.min(branches.length, 1 + Math.floor(step / 2));
 
   return (
-    <svg viewBox="0 0 64 64" className="size-14 shrink-0" role="img" aria-label={`Eco tree with ${count} paperless transactions`}>
-      <circle cx="32" cy="32" r="32" className="fill-tint-green" />
-      <path d="M32 54V30" stroke="currentColor" className="text-success" strokeWidth="3" strokeLinecap="round" />
-      {branch && (
-        <>
-          <path d="M32 38l-7-6" stroke="currentColor" className="text-success" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M32 34l7-6" stroke="currentColor" className="text-success" strokeWidth="2.2" strokeLinecap="round" />
-        </>
-      )}
+    <svg
+      viewBox="0 0 64 60"
+      className="size-16 shrink-0"
+      role="img"
+      aria-label={`Eco tree, ${count} paperless transactions`}
+    >
+      <circle cx="32" cy="30" r="30" className="fill-tint-green" />
+      {/* ground */}
+      <ellipse cx="32" cy="52" rx="14" ry="2.4" className="fill-success" opacity="0.18" />
+      {/* trunk */}
+      <path d="M32 52 C31 44 31 38 32 26" className="stroke-success" strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.85" />
+      {branches.slice(0, branchCount).map((d, i) => (
+        <path key={d} d={d} className="stroke-success" strokeWidth="2" strokeLinecap="round" fill="none" opacity={0.7 - i * 0.05} />
+      ))}
       {leaves.slice(0, grown).map((l, i) => (
-        <circle
+        <ellipse
           key={i}
           cx={l.cx}
           cy={l.cy}
-          r={l.r}
-          className="fill-success animate-scale-in"
-          opacity={i === grown - 1 ? 0.95 : 0.75}
+          rx={l.rx}
+          ry={l.ry}
+          className={i === grown - 1 ? "fill-success animate-scale-in" : "fill-success"}
+          opacity={i === grown - 1 ? 0.95 : 0.6 + (i % 3) * 0.08}
         />
       ))}
     </svg>

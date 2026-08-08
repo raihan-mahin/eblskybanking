@@ -141,6 +141,7 @@ export function TxnFlow(p: TxnFlowProps) {
             <Row k="Status" v="Success" />
           </dl>
         </div>
+        <EcoTreeCard />
         <div className="grid grid-cols-2 gap-2">
           <Button variant="outline" onClick={() => notify("Receipt downloaded", `${p.title} receipt saved to your device.`)}>
             <span className="inline-flex items-center gap-2 justify-center"><Download className="size-4" /> Download</span>
@@ -153,7 +154,6 @@ export function TxnFlow(p: TxnFlowProps) {
           <span className="inline-flex items-center gap-2 justify-center"><Repeat className="size-4" /> Repeat Transaction</span>
         </Button>
         <Button onClick={() => nav({ to: "/home" })}>Done</Button>
-        <EcoTreeCard />
       </div>
     );
   }
