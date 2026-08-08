@@ -25,6 +25,13 @@ import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 import { byId } from "@/lib/services";
 import { useApp } from "@/lib/store";
 
+interface ServiceSearch {
+  ref?: string;
+  txn?: string;
+  mobile?: string;
+  ben?: string;
+}
+
 export const Route = createFileRoute("/service/$serviceId")({
   validateSearch: (search: Record<string, unknown>): ServiceSearch => ({
     ...(typeof search["ref"] === "string" ? { ref: search["ref"] } : {}),
