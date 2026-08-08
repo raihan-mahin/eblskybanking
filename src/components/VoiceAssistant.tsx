@@ -46,6 +46,29 @@ export function VoiceAssistant() {
     const q = raw.toLowerCase().trim();
     setText("");
     setMatches([]);
+
+    // Saved beneficiaries: voice shortcut into the existing transfer flow.
+    const tryBeneficiary = () => {
+      const nameQuery = extractNameQuery(q);
+      if (nameQuery.length < 2) return false;
+      const ranked = matchBeneficiaries(q, state.beneficiaries);
+      const result = resolveMatch(ranked);
+      if (result.kind === "one") {
+        setReply(`Found ${result.item.name}. Opening the transfer screen — enter the amount to continue.`);
+        openBeneficiary(result.item);
+        return true;
+      }
+      if (result.kind === "many") {
+        setMatches(result.items);
+        setReply(`I found ${result.items.length} saved beneficiaries that sound like “${nameQuery}”. Which one did you mean?`);
+        return true;
+      }
+      return false;
+    };
+
+    // An explicit transfer intent should reach beneficiaries before generic keywords.
+    if (/\b(send|transfer|pay|money to|open)\b/.test(q) && tryBeneficiary()) return;
+
     if (q.includes("balance")) return setReply(`Your EBL Savings Account balance is ${money(state.accounts[0].balance)}.`);
     if (q.includes("recent")) return goService("transaction-history");
     if (q.includes("high contrast")) { patch({ accessibility: { ...state.accessibility, contrast: true } }); return setReply("High contrast is now on."); }
@@ -60,26 +83,14 @@ export function VoiceAssistant() {
     if (q.includes("reward")) return goService("rewards");
     if (q.includes("electricity")) return goService("bill-electricity");
 
-    // Saved beneficiaries: voice shortcut into the existing transfer flow.
-    const nameQuery = extractNameQuery(q);
-    if (nameQuery.length >= 2) {
-      const ranked = matchBeneficiaries(q, state.beneficiaries);
-      const result = resolveMatch(ranked);
-      if (result.kind === "one") {
-        setReply(`Found ${result.item.name}. Opening the transfer screen — enter the amount to continue.`);
-        return openBeneficiary(result.item);
-      }
-      if (result.kind === "many") {
-        setMatches(result.items);
-        return setReply(`I found ${result.items.length} saved beneficiaries that sound like “${nameQuery}”. Which one did you mean?`);
-      }
-    }
-
+    if (tryBeneficiary()) return;
 
     const hit = searchServices(q.replace("open", "").trim())[0];
     if (hit) return goService(hit.id);
+
     setReply("I could not match that command. Try one of the suggestions below.");
   };
+
 
 
   const listen = () => {
