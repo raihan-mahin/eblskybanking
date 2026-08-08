@@ -317,6 +317,7 @@ export const seedState = (): AppState => ({
   nfcShares: [],
   birthday: { name: "Mahin", date: "Today", offerId: "po-birthday", read: false, saved: false, dismissed: false },
   supportHandoff: { escalated: false, ticketId: null },
+  eco: { count: 24, countedTxnIds: [] },
   migration: MIGRATION_VERSION,
 
 });

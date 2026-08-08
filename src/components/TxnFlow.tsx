@@ -5,6 +5,7 @@ import { Button, FormField, TextInput, Select, AmountInput, SectionCard, ErrorSt
 import { AuthenticationSheet } from "./AuthenticationSheet";
 import { ContactPicker, pickDeviceContact, normalizeBdMobile, isValidBdMobile } from "./ContactPicker";
 import { MFS_MARKS } from "./MfsLogos";
+import { EcoTreeCard } from "./EcoTree";
 
 import { maskMobile } from "@/lib/extras";
 import { useApp, money, pointsFor } from "@/lib/store";
@@ -152,6 +153,7 @@ export function TxnFlow(p: TxnFlowProps) {
           <span className="inline-flex items-center gap-2 justify-center"><Repeat className="size-4" /> Repeat Transaction</span>
         </Button>
         <Button onClick={() => nav({ to: "/home" })}>Done</Button>
+        <EcoTreeCard />
       </div>
     );
   }
