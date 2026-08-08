@@ -106,8 +106,13 @@ function reducer(state: AppState, action: Action): AppState {
           (m.id === "mi4" && p.category === "Savings");
         return hit ? { ...m, progress: Math.min(m.goal, m.progress + 1) } : m;
       });
+      const eco = state.eco ?? { count: 0, countedTxnIds: [] };
+      const alreadyCounted = eco.countedTxnIds.includes(txn.id);
       return {
         ...state,
+        eco: alreadyCounted
+          ? eco
+          : { count: eco.count + 1, countedTxnIds: [txn.id, ...eco.countedTxnIds].slice(0, 50) },
         accounts,
         transactions: [txn, ...state.transactions],
         receipts: [
