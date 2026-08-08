@@ -306,7 +306,7 @@ function HomePage() {
           <img
             src={netflixPromo.url}
             alt="Netflix payment offer"
-            className="h-[104px] w-full object-cover object-center"
+            className="h-[104px] w-full object-cover object-[45%_center]"
           />
         </button>
       </div>
