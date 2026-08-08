@@ -146,6 +146,113 @@ function GoalsCarousel({ goal, go }: { goal?: { id: string; title: string; saved
   );
 }
 
+const PROMOS = [
+  { id: "gift-netflix", src: netflixPromo.url, alt: "Netflix payment offer", pos: "45% center" },
+  { id: "star-cineplex", src: cineplexPromo.url, alt: "Star Cineplex 10% cash back offer", pos: "center" },
+];
+
+function PromoCarousel({ go }: { go: (id: string) => void }) {
+  const [idx, setIdx] = useState(0);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const paused = useRef(false);
+  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
+
+  const slideTo = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+    setIdx(i);
+  };
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (paused.current) return;
+      const el = trackRef.current;
+      if (!el) return;
+      const cur = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
+      const next = (cur + 1) % PROMOS.length;
+      el.scrollTo({ left: next * el.clientWidth, behavior: "smooth" });
+      setIdx(next);
+    }, 3000);
+    return () => clearInterval(t);
+  }, []);
+
+  const onScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setIdx(Math.round(el.scrollLeft / Math.max(1, el.clientWidth)));
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    paused.current = true;
+    if (e.pointerType === "touch") return;
+    const el = trackRef.current;
+    if (!el) return;
+    drag.current = { x: e.clientX, left: el.scrollLeft, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    const el = trackRef.current;
+    if (!d || !el) return;
+    const dx = e.clientX - d.x;
+    if (!d.moved && Math.abs(dx) < 6) return;
+    d.moved = true;
+    el.scrollLeft = d.left - dx;
+  };
+  const endDrag = (e: React.PointerEvent) => {
+    const d = drag.current;
+    const el = trackRef.current;
+    drag.current = null;
+    setTimeout(() => { paused.current = false; }, 1500);
+    if (!d?.moved || !el) return;
+    e.preventDefault();
+    const dx = e.clientX - d.x;
+    const cur = Math.round(d.left / Math.max(1, el.clientWidth));
+    const next = Math.abs(dx) > 40 ? (dx < 0 ? cur + 1 : cur - 1) : cur;
+    slideTo(Math.min(PROMOS.length - 1, Math.max(0, next)));
+  };
+
+  return (
+    <div className="-mx-[18px] w-[calc(100%+36px)]">
+      <div
+        ref={trackRef}
+        onScroll={onScroll}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={() => { drag.current = null; paused.current = false; }}
+        onTouchStart={() => { paused.current = true; }}
+        onTouchEnd={() => { setTimeout(() => { paused.current = false; }, 1500); }}
+        onClickCapture={(e) => { if (drag.current?.moved) { e.preventDefault(); e.stopPropagation(); } }}
+        className="flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ touchAction: "pan-x pan-y pinch-zoom", overscrollBehaviorX: "contain" }}
+      >
+        {PROMOS.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => go(p.id)}
+            aria-label={p.alt}
+            className="press block w-full shrink-0 snap-start overflow-hidden rounded-[18px]"
+          >
+            <img src={p.src} alt={p.alt} className="h-[104px] w-full object-cover" style={{ objectPosition: p.pos }} />
+          </button>
+        ))}
+      </div>
+      <div className="mt-1 flex justify-center gap-1.5">
+        {PROMOS.map((p, i) => (
+          <button
+            key={p.id}
+            aria-label={`Go to promo ${i + 1}`}
+            onClick={() => slideTo(i)}
+            className={cx("h-1.5 rounded-full transition-all", i === idx ? "w-4 bg-primary" : "w-1.5 bg-border")}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
 
 
 function HomePage() {
