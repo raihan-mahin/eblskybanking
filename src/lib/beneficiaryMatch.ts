@@ -74,30 +74,39 @@ export function matchBeneficiaries<T extends BenLike>(
 
   const digits = query.replace(/\D/g, "");
 
+  const joined = qTokens.join(" ");
+
   const scored = beneficiaries.map((b) => {
-    const nameTokens = normalize(b.name).split(" ").filter(Boolean);
+    const fullName = normalize(b.name);
+    const nameTokens = fullName.split(" ").filter(Boolean);
     const bankTokens = normalize(b.bank).split(" ").filter(Boolean);
 
-    let total = 0;
-    for (const q of qTokens) {
-      const best = Math.max(
+    const bests = qTokens.map((q) =>
+      Math.max(
         0,
         ...nameTokens.map((t) => tokenScore(q, t)),
         ...bankTokens.map((t) => tokenScore(q, t) * 0.55),
-      );
-      total += best;
-    }
-    let score = total / qTokens.length;
+      ),
+    );
+    const avg = bests.reduce((a, v) => a + v, 0) / bests.length;
+    const bestSingle = Math.max(...bests);
+
+    // Extra spoken words ("send five hundred to ammu") must not drown a strong name hit.
+    let score = Math.max(avg, bestSingle * 0.9);
 
     // Reward covering more of the stored name (full-name utterances beat single-token ones).
     const covered = nameTokens.filter((t) => qTokens.some((q) => tokenScore(q, t) >= 0.7)).length;
     score += (covered / Math.max(1, nameTokens.length)) * 0.12;
+
+    // Direct substring of the saved name is a strong, speech-friendly signal.
+    if (joined.length >= 3 && fullName.includes(joined)) score += 0.25;
 
     // Account-number mention is a strong signal.
     if (digits.length >= 4 && b.account.replace(/\D/g, "").includes(digits)) score += 0.35;
 
     return { item: b, score: Math.min(1, score) };
   });
+
 
   return scored
     .filter((s) => s.score >= minScore)
