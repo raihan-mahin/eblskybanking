@@ -50,6 +50,11 @@ export function LoginScreen() {
   const enter = () => {
     if (saveId && userId.trim()) window.localStorage.setItem(SAVED_ID_KEY, userId.trim());
     if (!saveId) window.localStorage.removeItem(SAVED_ID_KEY);
+    setPromoOpen(true);
+  };
+
+  const closePromo = () => {
+    setPromoOpen(false);
     patch({ loggedIn: true, demoMode: true });
     nav({ to: "/home" });
   };
