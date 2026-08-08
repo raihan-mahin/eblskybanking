@@ -18,7 +18,7 @@ const digits = (v: string) => v.replace(/\D/g, "");
 export function RequestMoneyPanel() {
   const nav = useNavigate();
   const { state, patch, notify } = useApp();
-  const { toast, show } = useToast();
+  const { message: toastMsg, show } = useToast();
 
   const [tab, setTab] = useState("new");
   const [q, setQ] = useState("");
@@ -154,7 +154,7 @@ export function RequestMoneyPanel() {
     <>
       <SegmentedTabs
         tabs={[{ id: "new", label: "New Request" }, { id: "requests", label: `Requests${incoming.length ? ` (${incoming.length})` : ""}` }]}
-        active={tab}
+        value={tab}
         onChange={setTab}
       />
 
@@ -172,7 +172,7 @@ export function RequestMoneyPanel() {
             filtered.map((c) => (
               <ListRow
                 key={c.name + c.account}
-                icon={c.ebl ? "UserCheck" : "UserX"}
+                icon={c.ebl ? "UserPlus" : "Users"}
                 tint={c.ebl ? "green" : "gray"}
                 title={c.name}
                 subtitle={c.ebl ? `EBL · ${c.mobile ?? c.account}` : "Not an EBL user"}
@@ -223,7 +223,7 @@ export function RequestMoneyPanel() {
           </SectionCard>
         </>
       )}
-      <Toast message={toast} />
+      <Toast message={toastMsg} />
     </>
   );
 }
