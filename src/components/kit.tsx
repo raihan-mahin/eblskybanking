@@ -270,8 +270,10 @@ export function SearchField({ value, onChange, placeholder }: { value: string; o
   return (
     <div className="flex items-center gap-2.5 rounded-2xl bg-muted px-4 py-3">
       <Search className="size-5 text-muted-foreground" />
+      {/* 16px minimum keeps iOS/Android from auto-zooming the page on focus. */}
       <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full bg-transparent text-[14.5px] outline-none placeholder:text-muted-foreground" />
+        type="search" enterKeyHint="search" autoCapitalize="none" autoCorrect="off" spellCheck={false}
+        className="w-full bg-transparent text-[16px] leading-[1.2] outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden" />
     </div>
   );
 }
